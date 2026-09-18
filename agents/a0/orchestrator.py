@@ -270,8 +270,7 @@ def run_orchestration(
         if not chat_reply:
             chat_reply = (
                 "Xin chào bạn! Tôi là Hướng dẫn viên ảo kiêm Điều phối viên hệ thống V-AI tại VinWonders Nha Trang. "
-                "Tôi có thể hỗ trợ bạn thông tin về các phân khu vui chơi và phối hợp cùng Chuyên gia Mật độ (A2) "
-                "và Chuyên gia Lập lịch (A1) để lên kế hoạch trải nghiệm tối ưu cho cả đoàn. "
+                "Tôi có thể hỗ trợ bạn thông tin về các phân khu vui chơi và lên kế hoạch trải nghiệm tối ưu cho cả đoàn. "
                 "Bạn muốn bắt đầu lên lịch trình tham quan lúc mấy giờ?"
             )
         chat_dur = int((time.time() - t_chat) * 1000)
@@ -532,7 +531,7 @@ def run_orchestration(
     else:
 
         reply_lines = [
-            f"Dạ, Agent A0 đã phối hợp cùng Agent A2 (Phân tích mật độ) và Agent A1 (Lập lịch trình) để thiết lập {len(plans)} phương án tối ưu cho đoàn của bạn:\n"
+            f"Dạ, V-AI đã thiết lập {len(plans)} phương án tối ưu cho đoàn của bạn:\n"
         ]
         for idx, p in enumerate(plans, 1):
             reply_lines.append(
@@ -621,8 +620,7 @@ def run_orchestration_stream(
         if not accumulated_reply:
             fallback = (
                 "Xin chào bạn! Tôi là Hướng dẫn viên ảo kiêm Điều phối viên hệ thống V-AI tại VinWonders Nha Trang. "
-                "Tôi có thể hỗ trợ bạn thông tin về các phân khu vui chơi và phối hợp cùng Chuyên gia Mật độ (A2) "
-                "và Chuyên gia Lập lịch (A1) để lên kế hoạch trải nghiệm tối ưu cho cả đoàn. "
+                "Tôi có thể hỗ trợ bạn thông tin về các phân khu vui chơi và lên kế hoạch trải nghiệm tối ưu cho cả đoàn. "
                 "Bạn muốn bắt đầu lên lịch trình tham quan lúc mấy giờ?"
             )
             accumulated_reply = fallback
@@ -869,7 +867,7 @@ def run_orchestration_stream(
 
     if not accumulated_reply:
         reply_lines = [
-            f"Dạ, Agent A0 đã phối hợp cùng Agent A2 (Phân tích mật độ) và Agent A1 (Lập lịch trình) để thiết lập {len(plans)} phương án tối ưu cho đoàn của bạn:\n\n"
+            f"Dạ, V-AI đã thiết lập {len(plans)} phương án tối ưu cho đoàn của bạn:\n\n"
         ]
         for idx, p in enumerate(plans, 1):
             reply_lines.append(
@@ -899,4 +897,3 @@ def run_orchestration_stream(
     )
 
     yield f"event: done\ndata: {json.dumps({'session_id': session_id, 'turn_id': turn_id, 'status': 'completed', 'reply': accumulated_reply, 'plans': plans, 'crowd_analysis': crowd_analysis, 'events': get_events(session_id)}, ensure_ascii=False)}\n\n"
-

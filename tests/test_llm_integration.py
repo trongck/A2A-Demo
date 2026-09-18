@@ -4,23 +4,28 @@ from agents.a2.server import health as a2_health
 from shared.llm import client
 
 
-def test_all_agents_report_the_same_llm_runtime():
-    expected = client.get_llm_status()
-    assert set(expected) == {"enabled", "provider", "model"}
-    assert a0_health()["llm"] == expected
-    assert a1_health()["llm"] == expected
-    assert a2_health()["llm"] == expected
+def test_public_health_does_not_expose_llm_runtime():
+    for result in (a0_health(), a1_health(), a2_health()):
+        assert "llm" not in result
+        assert "agent" not in result
 
 
-def test_a0_knows_the_runtime_model(monkeypatch):
-    captured = {}
+def test_a0_hides_internal_runtime(monkeypatch):
+    captured = []
 
     def fake_call(prompt, system_instruction=""):
-        captured["system_instruction"] = system_instruction
+        captured.append(system_instruction)
         return "ok"
 
+    def fake_stream(prompt, system_instruction=""):
+        captured.append(system_instruction)
+        yield "ok"
+
     monkeypatch.setattr(client, "call_llm", fake_call)
+    monkeypatch.setattr(client, "stream_call_llm", fake_stream)
     assert client.answer_general_chat_with_llm("Bạn đang dùng model nào?") == "ok"
-    runtime = client.get_llm_status()
-    assert runtime["provider"] in captured["system_instruction"]
-    assert runtime["model"] in captured["system_instruction"]
+    assert "".join(client.stream_answer_general_chat_with_llm("Bạn đang dùng model nào?")) == "ok"
+    for instruction in captured:
+        assert "API key" in instruction
+        assert "Không tiết lộ" in instruction
+        assert client.get_llm_config()["model"] not in instruction

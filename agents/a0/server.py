@@ -18,7 +18,6 @@ import uvicorn
 
 from agents.a0.orchestrator import run_orchestration, run_orchestration_stream
 
-from shared.llm import get_llm_status
 from shared.memory.database import (
     get_events,
     get_messages,
@@ -76,7 +75,7 @@ def root() -> dict[str, Any]:
 
 @app.get("/health")
 def health_check() -> dict[str, Any]:
-    return {"status": "ok", "service": "v_ai_a0_orchestrator", "port": 8000, "llm": get_llm_status()}
+    return {"status": "ok", "service": "v_ai", "port": 8000}
 
 
 @app.get("/api/presets")

@@ -64,11 +64,10 @@ export default function Home() {
   const [events, setEvents] = useState<EventRecord[]>([]);
   const [inputMessage, setInputMessage] = useState<string>("");
   const [isStreaming, setIsStreaming] = useState<boolean>(false);
-  const [thinkingStage, setThinkingStage] = useState<string | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
   const [selectedEvent, setSelectedEvent] = useState<EventRecord | null>(null);
   const [copied, setCopied] = useState<boolean>(false);
-  const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
+  const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
 
   const chatEndRef = useRef<HTMLDivElement>(null);
 
@@ -78,14 +77,13 @@ export default function Home() {
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, isStreaming, thinkingStage]);
+  }, [messages, isStreaming]);
 
   async function createNewSession() {
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
     }
     setIsStreaming(false);
-    setThinkingStage(null);
 
     try {
       const res = await fetch(`${API_BASE}/api/session/new`, {
@@ -134,7 +132,6 @@ export default function Home() {
     // Thêm tin nhắn của User vào giao diện
     setMessages((prev) => [...prev, { role: "user", content: userText }]);
     setIsStreaming(true);
-    setThinkingStage("Đang phân tích yêu cầu...");
 
     // Thêm tin nhắn Assistant rỗng để nhận streaming tokens
     setMessages((prev) => [
@@ -183,10 +180,7 @@ export default function Home() {
           try {
             const data = JSON.parse(dataMatch[1]);
 
-            if (eventType === "thinking") {
-              setThinkingStage(data.message || "Đang xử lý...");
-            } else if (eventType === "token") {
-              setThinkingStage(null);
+            if (eventType === "token") {
               accumulatedText += data.token;
               setMessages((prev) => {
                 const copy = [...prev];
@@ -201,7 +195,6 @@ export default function Home() {
                 return copy;
               });
             } else if (eventType === "done") {
-              setThinkingStage(null);
               setIsStreaming(false);
               setMessages((prev) => {
                 const copy = [...prev];
@@ -259,7 +252,6 @@ export default function Home() {
       }
     } finally {
       setIsStreaming(false);
-      setThinkingStage(null);
       abortControllerRef.current = null;
       setMessages((prev) =>
         prev.map((m) => (m.isStreaming ? { ...m, isStreaming: false } : m))
@@ -271,7 +263,6 @@ export default function Home() {
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
       setIsStreaming(false);
-      setThinkingStage(null);
     }
   }
 
@@ -440,14 +431,9 @@ export default function Home() {
                         />
                       </div>
                       <div className="flex-1 min-w-0 flex flex-col gap-1">
-                        {/* Author Header & Dynamic Status */}
+                        {/* Author Header */}
                         <div className="flex items-center gap-2">
                           <span className="font-bold text-sm text-[#2563eb]">V-AI</span>
-                          {m.isStreaming && !m.content && (
-                            <span className="text-xs text-[#71717a] font-normal">
-                              Đang xử lý
-                            </span>
-                          )}
                           {m.isStreaming && m.content && (
                             <span className="text-[11px] text-[#71717a] font-normal flex items-center gap-1">
                               <span className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse" />
@@ -456,20 +442,14 @@ export default function Home() {
                           )}
                         </div>
 
-                        {/* TTFT Thinking State (matches reference: logo on left, status + dots) */}
                         {m.isStreaming && !m.content ? (
-                          <div className="flex items-center gap-2 text-xs text-[#71717a] mt-0.5 animate-in fade-in duration-200">
-                            <span className="inline-flex gap-1 items-center">
+                          <div className="flex items-center gap-2 text-xs text-[#71717a] mt-0.5">
+                            <span className="inline-flex gap-1 items-center" aria-hidden="true">
                               <span className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-bounce [animation-delay:-0.3s]" />
                               <span className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-bounce [animation-delay:-0.15s]" />
                               <span className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-bounce" />
                             </span>
-                            <span className="text-[#52525b] font-medium">Đang suy nghĩ...</span>
-                            {thinkingStage && (
-                              <span className="text-[11px] text-[#a1a1aa] border-l border-[#e6e3da] pl-2 hidden sm:inline font-mono">
-                                {thinkingStage}
-                              </span>
-                            )}
+                            <span>V-AI đang suy nghĩ...</span>
                           </div>
                         ) : (
                           /* Rendered Streaming Markdown */
@@ -556,9 +536,6 @@ export default function Home() {
                                 .replace(/^[ \t]*[•●○][ \t]+/gm, "- ")
                                 .replace(/\n{3,}/g, "\n\n")}
                             </ReactMarkdown>
-                            {m.isStreaming && (
-                              <span className="inline-block w-1.5 h-4 ml-1 bg-[#18181b] animate-pulse align-middle rounded-xs" />
-                            )}
                           </div>
                         )}
 

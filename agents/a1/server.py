@@ -32,7 +32,6 @@ from a2a.types import (
 from shared.llm import (
     generate_plan_rationale_with_llm,
     generate_unfeasible_explanation_with_llm,
-    get_llm_status,
     is_llm_available,
 )
 
@@ -590,7 +589,7 @@ app = app_builder.build()
 
 @app.get("/health")
 def health() -> dict[str, Any]:
-    return {"status": "ok", "agent": "a1_planner_specialist", "port": "8001", "llm": get_llm_status()}
+    return {"status": "ok", "service": "v_ai_internal", "port": "8001"}
 
 
 class DirectPlanRequest(BaseModel):
