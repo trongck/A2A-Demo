@@ -201,44 +201,64 @@ def classify_and_extract_intent_with_llm(
     user_message: str,
     current_profile: dict[str, Any],
 ) -> dict[str, Any]:
-    """Phân loại ý định của người dùng (general_chat, plan_itinerary, adjust_plan) và trích xuất thực thể."""
+    """A0 phân loại, đo completeness và chuẩn bị handoff theo kiến trúc hiện tại."""
     if not is_llm_available():
         return {
+            "status": "need_clarification",
             "intent": "plan_itinerary",
             "entities": {},
+            "completeness": "0/2",
+            "filled_criteria": {},
+            "clarification": {},
+            "fallback_text": "",
+            "forward_payload": {},
         }
 
     system_instruction = (
-        "Bạn là bộ phân loại ý định (Intent Classifier) và trích xuất thực thể (Entity Extractor) thông minh cho VinWonders.\n"
-        "Nhiệm vụ của bạn:\n"
-        "1. Xác định intent của người dùng:\n"
-        "   - 'plan_itinerary': Bất kỳ khi nào khách nhờ gợi ý trò chơi, gợi ý điểm tham quan, hỏi chơi gì, lên kế hoạch, lập lịch trình, tư vấn hoạt động, hoặc cung cấp thông tin đoàn khách (chiều cao, số người, thời gian chơi...).\n"
-        "   - 'general_chat': CHỈ KHI khách chỉ thuần túy chào hỏi xã giao ('chào bạn', 'hello', 'hi'), hỏi bạn là ai/tên gì, hoặc hỏi giờ mở cửa/thời tiết/giá vé đơn thuần mà KHÔNG nhờ gợi ý hay tư vấn trò chơi/điểm chơi/lịch trình.\n"
-        "   - 'adjust_plan': Khách đang muốn chỉnh sửa lịch trình đã có (chỉ đi trong nhà, đổi giờ, bớt trò...).\n"
-        "2. Trích xuất các thực thể từ tin nhắn:\n"
+        "Bạn là A0, bộ điều phối của V-AI. Bạn chỉ phân loại, trích xuất và quyết định handoff; không tự trả lời nội dung du lịch.\n"
+        "Kiến trúc cố định: A0 gọi A2 phân tích mật độ, sau đó gọi A1 lập lịch và validator.\n"
+        "Intent hợp lệ:\n"
+        "- general_chat: chào hỏi hoặc hỏi V-AI có thể làm gì.\n"
+        "- plan_itinerary: muốn gợi ý điểm chơi hoặc lập lịch tại VinWonders Nha Trang.\n"
+        "- adjust_plan: muốn sửa lịch trình hiện có.\n"
+        "- out_of_scope: không liên quan du lịch/VinWonders.\n"
+        "- too_ambiguous: quá mơ hồ để xác định intent sau khi xét hồ sơ.\n"
+        "Với plan_itinerary/adjust_plan, hai nhóm tiêu chí bắt buộc theo thứ tự là group_members và time_window; điểm đến mặc định là VinWonders Nha Trang. "
+        "Không bịa giá trị còn thiếu. Tiêu chí tùy chọn không làm giảm completeness.\n"
+        "Trích xuất entities:\n"
         "   - height_cm: Chiều cao trẻ em (số nguyên, ví dụ 120, hoặc null)\n"
         "   - age_years: Tuổi (số nguyên hoặc null)\n"
+        "   - group_size: Số người trong đoàn (số nguyên hoặc null)\n"
+        "   - group_members: danh sách thành viên chỉ khi tin nhắn/hồ sơ có đủ tuổi và chiều cao từng người; thiếu thì []\n"
         "   - indoor_only: true nếu chỉ muốn chơi trong nhà, false nếu ngoài trời, null nếu không nói\n"
         "   - min_activity_count: số điểm chơi tối thiểu mong muốn (số nguyên hoặc null)\n"
         "   - time_hours: số giờ dự kiến chơi (số thực/nguyên, ví dụ 2, hoặc null)\n"
         "   - start_time: giờ bắt đầu nếu có nhắc đến (ví dụ '14:00', hoặc null)\n"
         "   - end_time: giờ kết thúc nếu có nhắc đến (ví dụ '16:00', hoặc null)\n"
         "   - max_wait_minutes: thời gian chờ tối đa mỗi điểm nếu khách giới hạn (hoặc null)\n"
-        "Trả về định dạng JSON thuần túy:\n"
+        "Trả đúng JSON thuần túy, questions tối đa 2 mục và mỗi options tối đa 4 lựa chọn, luôn kết thúc bằng 'Khác/tự nhập':\n"
         "{\n"
-        '  "intent": "general_chat" | "plan_itinerary" | "adjust_plan",\n'
+        '  "status": "ready" | "need_clarification" | "out_of_scope" | "too_ambiguous",\n'
+        '  "intent": "general_chat" | "plan_itinerary" | "adjust_plan" | null,\n'
+        '  "completeness": "0/2",\n'
+        '  "filled_criteria": {},\n'
         '  "entities": {\n'
         '    "height_cm": null,\n'
         '    "age_years": null,\n'
+        '    "group_size": null,\n'
+        '    "group_members": [],\n'
         '    "indoor_only": null,\n'
         '    "min_activity_count": null,\n'
         '    "time_hours": null,\n'
         '    "start_time": null,\n'
         '    "end_time": null,\n'
         '    "max_wait_minutes": null\n'
-        "  }\n"
+        "  },\n"
+        '  "clarification": {"message": "", "questions": []},\n'
+        '  "fallback_text": "",\n'
+        '  "forward_payload": {}\n'
         "}\n"
-        "Không dùng markdown, chỉ xuất chuỗi JSON."
+        "general_chat có status ready. out_of_scope/too_ambiguous phải có intent=null, không có questions và chỉ điền fallback_text."
     )
 
     prompt = (
@@ -248,19 +268,39 @@ def classify_and_extract_intent_with_llm(
 
     raw = call_llm(prompt, system_instruction)
     if not raw:
-        return {"intent": "plan_itinerary", "entities": {}}
+        return {
+            "status": "need_clarification", "intent": "plan_itinerary", "entities": {},
+            "completeness": "0/2", "filled_criteria": {}, "clarification": {},
+            "fallback_text": "", "forward_payload": {},
+        }
 
     try:
         clean = raw.strip()
         if clean.startswith("```"):
             clean = clean.split("\n", 1)[1].rsplit("```", 1)[0].strip()
         data = json.loads(clean)
+        status = data.get("status", "need_clarification")
+        if status not in {"ready", "need_clarification", "out_of_scope", "too_ambiguous"}:
+            status = "need_clarification"
+        intent = data.get("intent")
+        if intent not in {"general_chat", "plan_itinerary", "adjust_plan", None}:
+            intent = None
         return {
-            "intent": data.get("intent", "plan_itinerary"),
+            "status": status,
+            "intent": intent,
             "entities": data.get("entities", {}),
+            "completeness": data.get("completeness", ""),
+            "filled_criteria": data.get("filled_criteria", {}),
+            "clarification": data.get("clarification", {}),
+            "fallback_text": data.get("fallback_text", ""),
+            "forward_payload": data.get("forward_payload", {}),
         }
     except Exception:
-        return {"intent": "plan_itinerary", "entities": {}}
+        return {
+            "status": "need_clarification", "intent": "plan_itinerary", "entities": {},
+            "completeness": "0/2", "filled_criteria": {}, "clarification": {},
+            "fallback_text": "", "forward_payload": {},
+        }
 
 
 def extract_intent_with_llm(user_message: str, current_profile: dict[str, Any]) -> dict[str, Any] | None:

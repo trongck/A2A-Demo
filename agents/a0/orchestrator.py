@@ -19,11 +19,9 @@ from shared.security.config import V_AI_INTERNAL_SECRET, INTERNAL_AUTH_ENABLED
 from shared.llm import (
     answer_general_chat_with_llm,
     classify_and_extract_intent_with_llm,
-    generate_clarification_with_llm,
     generate_unfeasible_explanation_with_llm,
     is_llm_available,
     stream_answer_general_chat_with_llm,
-    stream_generate_clarification_with_llm,
     stream_generate_unfeasible_explanation_with_llm,
     stream_synthesize_chat_response_with_llm,
     synthesize_chat_response_with_llm,
@@ -112,22 +110,36 @@ def extract_or_update_request(
     user_message: str,
     current_session: dict[str, Any],
     preset_data: dict[str, Any] | None = None,
-) -> tuple[dict[str, Any], bool, list[str], str]:
+) -> tuple[dict[str, Any], bool, list[str], str, dict[str, Any]]:
     """Trích xuất và chuẩn hóa yêu cầu của người dùng kết hợp LLM và quy tắc logic."""
     profile = copy.deepcopy(current_session.get("profile", {}))
-    missing_fields = []
+    missing_fields: list[str] = []
 
     # Nếu người dùng nạp từ preset (ví dụ preset gia đình)
     if preset_data:
         profile.update(preset_data)
 
     intent_type = "plan_itinerary"
+    routing: dict[str, Any] = {
+        "status": "need_clarification",
+        "intent": intent_type,
+        "completeness": "0/2",
+        "filled_criteria": {},
+        "clarification": {},
+        "fallback_text": "",
+        "forward_payload": {},
+    }
 
     # 1. Thử phân loại intent và trích xuất thực thể qua LLM
     if is_llm_available():
         try:
             llm_result = classify_and_extract_intent_with_llm(user_message, profile)
-            intent_type = llm_result.get("intent", "plan_itinerary")
+            routing.update(llm_result)
+            llm_status = llm_result.get("status")
+            if llm_status in {"out_of_scope", "too_ambiguous"}:
+                intent_type = llm_status
+            else:
+                intent_type = llm_result.get("intent") or "plan_itinerary"
             entities = llm_result.get("entities", {})
 
             if entities.get("indoor_only") is not None:
@@ -138,23 +150,35 @@ def extract_or_update_request(
                 profile.setdefault("hard_constraints", {})["max_wait_minutes_per_stop"] = entities["max_wait_minutes"]
 
             if entities.get("height_cm") is not None:
-                h = int(entities["height_cm"])
-                if not profile.get("group_members"):
-                    profile["group_members"] = [
-                        {"member_id": "adult_1", "age_years": 32, "height_cm": 170},
-                        {"member_id": "child_1", "age_years": 10, "height_cm": h},
-                    ]
-                else:
-                    for m in profile["group_members"]:
-                        if "child" in m.get("member_id", "") or m.get("age_years", 0) < 18:
-                            m["height_cm"] = h
+                profile.setdefault("pending_group_details", {})["height_cm"] = int(entities["height_cm"])
+
+            if entities.get("age_years") is not None:
+                profile.setdefault("pending_group_details", {})["age_years"] = int(entities["age_years"])
+
+            if entities.get("group_size") is not None:
+                profile.setdefault("pending_group_details", {})["group_size"] = int(entities["group_size"])
+
+            extracted_members = entities.get("group_members")
+            if isinstance(extracted_members, list) and extracted_members:
+                complete_members = []
+                for index, member in enumerate(extracted_members, 1):
+                    if (
+                        not isinstance(member, dict)
+                        or member.get("age_years") is None
+                        or member.get("height_cm") is None
+                    ):
+                        complete_members = []
+                        break
+                    complete_members.append({
+                        "member_id": member.get("member_id") or f"member_{index}",
+                        "age_years": int(member["age_years"]),
+                        "height_cm": int(member["height_cm"]),
+                    })
+                if complete_members:
+                    profile["group_members"] = complete_members
 
             if entities.get("time_hours") is not None:
-                hours = float(entities["time_hours"])
-                profile["start_at"] = "2026-09-18T14:00:00+07:00"
-                end_hour = 14 + int(hours)
-                end_min = int((hours - int(hours)) * 60)
-                profile["end_by"] = f"2026-09-18T{end_hour:02d}:{end_min:02d}:00+07:00"
+                profile["pending_duration_hours"] = float(entities["time_hours"])
 
             if entities.get("start_time"):
                 st = str(entities["start_time"]).strip()
@@ -176,8 +200,20 @@ def extract_or_update_request(
         "gợi ý", "lập lịch", "lên lịch", "lịch trình", "kế hoạch", "chơi gì",
         "trò chơi", "điểm chơi", "tham quan", "tư vấn", "lộ trình",
     ]
-    if any(k in msg_lower for k in planning_keywords):
+    is_hitl_summary = "thông tin bổ sung đã xác nhận:" in msg_lower
+    if is_hitl_summary:
         intent_type = "plan_itinerary"
+    elif intent_type not in {"out_of_scope", "too_ambiguous"} and any(k in msg_lower for k in planning_keywords):
+        intent_type = "plan_itinerary"
+
+    if not is_llm_available():
+        normalized = re.sub(r"[^a-z0-9à-ỹ]+", " ", msg_lower).strip()
+        if normalized in {"hi", "hello", "xin chào", "chào", "chào bạn"}:
+            intent_type = "general_chat"
+        elif any(k in msg_lower for k in ("giá vàng", "chứng khoán", "tiền ảo", "bóng đá")):
+            intent_type = "out_of_scope"
+        elif normalized in {"giúp tôi", "tư vấn", "hỗ trợ tôi", "tôi cần giúp"}:
+            intent_type = "too_ambiguous"
 
     if "chỉ trong nhà" in msg_lower or "chỉ đi trong nhà" in msg_lower or "indoor" in msg_lower:
         hard = profile.setdefault("hard_constraints", {})
@@ -192,31 +228,122 @@ def extract_or_update_request(
         hard = profile.setdefault("hard_constraints", {})
         hard["min_activity_count"] = int(match_min_act.group(1))
 
+    match_duration = re.search(r"(\d+(?:[.,]\d+)?)\s*(?:tiếng|giờ)", msg_lower)
+    if match_duration:
+        profile["pending_duration_hours"] = float(match_duration.group(1).replace(",", "."))
+
+    if is_hitl_summary and "đoàn mình gồm những ai?:" in msg_lower:
+        composition_match = re.search(r"đoàn mình gồm những ai\?:\s*([^\n]+)", msg_lower)
+        age_band_match = re.search(r"trẻ nhỏ nhất thuộc nhóm tuổi nào\?:\s*([^\n]+)", msg_lower)
+        height_band_match = re.search(r"trẻ thấp nhất thuộc khoảng chiều cao nào\?:\s*([^\n]+)", msg_lower)
+        composition = composition_match.group(1) if composition_match else ""
+        age_band = age_band_match.group(1) if age_band_match else ""
+        height_band = height_band_match.group(1) if height_band_match else ""
+
+        adult_match = re.search(r"(\d+)\s*người\s*(?:lớn|từ\s*18)", composition)
+        child_match = re.search(r"(\d+)\s*trẻ", composition)
+        adult_count = int(adult_match.group(1)) if adult_match else 0
+        child_count = int(child_match.group(1)) if child_match else 0
+
+        child_age = None
+        if "dưới 6 tuổi" in age_band:
+            child_age = 5
+        elif "6–11 tuổi" in age_band or "6-11 tuổi" in age_band:
+            child_age = 6
+        elif "12–17 tuổi" in age_band or "12-17 tuổi" in age_band:
+            child_age = 12
+        else:
+            exact_age = re.search(r"(\d{1,2})\s*tuổi", age_band)
+            if exact_age:
+                child_age = int(exact_age.group(1))
+
+        child_height = None
+        height_ranges = {
+            "dưới 100 cm": 99,
+            "100–104 cm": 100,
+            "100-104 cm": 100,
+            "105–109 cm": 105,
+            "105-109 cm": 105,
+            "110–119 cm": 110,
+            "110-119 cm": 110,
+            "120–129 cm": 120,
+            "120-129 cm": 120,
+            "130 cm trở lên": 130,
+        }
+        for label, lower_bound in height_ranges.items():
+            if label in height_band:
+                child_height = lower_bound
+                break
+        if child_height is None:
+            exact_height = re.search(r"(\d{2,3})\s*cm", height_band)
+            if exact_height:
+                child_height = int(exact_height.group(1))
+
+        no_children = "không có trẻ em" in age_band and "không có trẻ em" in height_band
+        group_is_complete = (
+            adult_count + child_count > 0
+            and ((child_count == 0 and no_children) or (child_count > 0 and child_age and child_height))
+        )
+        if group_is_complete:
+            profile["group_members"] = [
+                {"member_id": f"adult_{index}", "age_years": 18, "height_cm": 130}
+                for index in range(1, adult_count + 1)
+            ] + [
+                {"member_id": f"child_{index}", "age_years": child_age, "height_cm": child_height}
+                for index in range(1, child_count + 1)
+            ]
+            profile["group_profile_ranges"] = {
+                "composition": composition,
+                "youngest_child_age": age_band,
+                "shortest_child_height": height_band,
+            }
+
+    # Tương thích với bản HITL cũ đã lưu trong lịch sử phiên.
+    if "thông_tin_thành_viên:" in msg_lower:
+        member_pairs = [
+            (int(age), int(height))
+            for age, height in re.findall(r"(\d{1,3})\s*tuổi.{0,40}?(\d{2,3})\s*cm", msg_lower)
+            if 0 < int(age) <= 120 and 50 <= int(height) <= 250
+        ]
+        expected_count_match = re.search(r"(\d+)\s*người", msg_lower)
+        expected_count = int(expected_count_match.group(1)) if expected_count_match else None
+        if member_pairs and (expected_count is None or expected_count == len(member_pairs)):
+            profile["group_members"] = [
+                {"member_id": f"member_{index}", "age_years": age, "height_cm": height}
+                for index, (age, height) in enumerate(member_pairs, 1)
+            ]
+
     # Nếu chưa có thông tin thành viên
     if not profile.get("group_members"):
         match_height = re.search(r"cao\s+(\d+)\s*cm", msg_lower)
         if match_height:
-            h = int(match_height.group(1))
-            profile["group_members"] = [
-                {"member_id": "adult_1", "age_years": 32, "height_cm": 170},
-                {"member_id": "child_1", "age_years": 10, "height_cm": h},
-            ]
-        elif intent_type != "general_chat":
-            missing_fields.append("chiều_cao_trẻ_em")
+            profile.setdefault("pending_group_details", {})["height_cm"] = int(match_height.group(1))
+        match_age = re.search(r"(\d{1,2})\s*tuổi", msg_lower)
+        if match_age:
+            profile.setdefault("pending_group_details", {})["age_years"] = int(match_age.group(1))
+        if intent_type not in {"general_chat", "out_of_scope", "too_ambiguous"}:
+            missing_fields.append("thông_tin_thành_viên")
 
     if not profile.get("start_at") or not profile.get("end_by"):
-        match_time = re.search(r"(\d{1,2})\s*tiếng|(\d{1,2})\s*giờ", msg_lower)
-        if match_time:
-            profile["start_at"] = "2026-09-18T14:00:00+07:00"
-            profile["end_by"] = "2026-09-18T16:00:00+07:00"
-        elif not profile.get("start_at") and intent_type != "general_chat":
+        explicit_window = re.search(
+            r"(?:từ\s*)?(\d{1,2})(?::(\d{2}))?\s*h?\s*(?:đến|tới|-|–)\s*(\d{1,2})(?::(\d{2}))?\s*h?",
+            msg_lower,
+        )
+        if explicit_window:
+            start_hour, start_minute, end_hour, end_minute = explicit_window.groups()
+            profile["start_at"] = f"2026-09-18T{int(start_hour):02d}:{int(start_minute or 0):02d}:00+07:00"
+            profile["end_by"] = f"2026-09-18T{int(end_hour):02d}:{int(end_minute or 0):02d}:00+07:00"
+        elif "cả ngày" in msg_lower:
+            profile["start_at"] = "2026-09-18T09:00:00+07:00"
+            profile["end_by"] = "2026-09-18T20:00:00+07:00"
+        elif intent_type not in {"general_chat", "out_of_scope", "too_ambiguous"}:
             missing_fields.append("khung_giờ_tham_quan")
 
     # Mặc định các thông số tiêu chuẩn nếu chưa có
     profile.setdefault("start_node_id", "start_sea_hub")
     profile.setdefault("end_node_id", "start_sea_hub")
     profile.setdefault("number_of_plans", 2)
-    profile.setdefault("hard_constraints", {
+    hard_defaults = {
         "indoor_only": False,
         "max_thrill_level": "moderate",
         "max_wait_minutes_per_stop": 20,
@@ -225,15 +352,128 @@ def extract_or_update_request(
         "allow_unknown_crowd": False,
         "excluded_service_ids": [],
         "min_activity_count": 3,
-    })
-    profile.setdefault("preferences", {
+    }
+    hard_constraints = profile.setdefault("hard_constraints", {})
+    for key, value in hard_defaults.items():
+        hard_constraints.setdefault(key, value)
+
+    preference_defaults = {
         "prioritize_low_crowd": True,
         "meal_required": False,
         "plan_styles": ["gentle", "more_rides"],
-    })
+    }
+    preferences = profile.setdefault("preferences", {})
+    for key, value in preference_defaults.items():
+        preferences.setdefault(key, value)
 
-    is_complete = len(missing_fields) == 0 and intent_type != "general_chat"
-    return profile, is_complete, missing_fields, intent_type
+    filled_criteria: dict[str, Any] = {"điểm_đến": "VinWonders Nha Trang"}
+    if profile.get("group_members"):
+        filled_criteria["thông_tin_thành_viên"] = profile["group_members"]
+    if profile.get("start_at") and profile.get("end_by"):
+        filled_criteria["khung_giờ_tham_quan"] = {
+            "start_at": profile["start_at"],
+            "end_by": profile["end_by"],
+        }
+
+    clarification_questions = []
+    if "thông_tin_thành_viên" in missing_fields:
+        clarification_questions.extend([
+            {
+                "criteria_key": "group_composition",
+                "question": "Đoàn mình gồm những ai?",
+                "options": [
+                    "1 người từ 18 tuổi",
+                    "2 người từ 18 tuổi",
+                    "1 người lớn và 1 trẻ em",
+                    "Nhóm khác – nhập số lượng người lớn và trẻ em",
+                    "Khác/tự nhập",
+                ],
+            },
+            {
+                "criteria_key": "child_age_band",
+                "question": "Trẻ nhỏ nhất thuộc nhóm tuổi nào?",
+                "options": [
+                    "Không có trẻ em",
+                    "Dưới 6 tuổi",
+                    "Từ 6–11 tuổi",
+                    "Từ 12–17 tuổi",
+                    "Khác/tự nhập",
+                ],
+            },
+            {
+                "criteria_key": "child_height_band",
+                "question": "Trẻ thấp nhất thuộc khoảng chiều cao nào?",
+                "options": [
+                    "Không có trẻ em",
+                    "Dưới 100 cm",
+                    "Từ 100–104 cm",
+                    "Từ 105–109 cm",
+                    "Từ 110–119 cm",
+                    "Từ 120–129 cm",
+                    "Từ 130 cm trở lên",
+                    "Khác/tự nhập",
+                ],
+            },
+        ])
+    if "khung_giờ_tham_quan" in missing_fields:
+        clarification_questions.append({
+            "criteria_key": "visit_time",
+            "question": "Đoàn mình muốn bắt đầu và kết thúc lúc mấy giờ?",
+            "options": ["09:00–12:00", "13:00–16:00", "Cả ngày", "Khác/tự nhập"],
+        })
+
+    if intent_type == "out_of_scope":
+        routing.update({
+            "status": "out_of_scope",
+            "intent": None,
+            "completeness": "",
+            "filled_criteria": {},
+            "clarification": {},
+            "fallback_text": (
+                "Mình chuyên hỗ trợ trải nghiệm tại VinWonders Nha Trang. "
+                "Bạn muốn hỏi về điểm vui chơi hay lên lịch trình tham quan không?"
+            ),
+            "forward_payload": {},
+        })
+    elif intent_type == "too_ambiguous":
+        routing.update({
+            "status": "too_ambiguous",
+            "intent": None,
+            "completeness": "",
+            "filled_criteria": {},
+            "clarification": {},
+            "fallback_text": (
+                "Bạn muốn mình hỗ trợ thông tin điểm vui chơi hay thiết kế lịch trình tại VinWonders Nha Trang?"
+            ),
+            "forward_payload": {},
+        })
+    elif intent_type == "general_chat":
+        routing.update({
+            "status": "ready",
+            "intent": "general_chat",
+            "completeness": "0/0",
+            "filled_criteria": {},
+            "clarification": {},
+            "fallback_text": "",
+            "forward_payload": {},
+        })
+    else:
+        completed_count = 2 - len(missing_fields)
+        routing.update({
+            "status": "ready" if not missing_fields else "need_clarification",
+            "intent": intent_type,
+            "completeness": f"{completed_count}/2",
+            "filled_criteria": filled_criteria,
+            "clarification": ({
+                "message": "Mình cần thêm một chút thông tin để lên lịch an toàn nhé.",
+                "questions": clarification_questions,
+            } if missing_fields else {}),
+            "fallback_text": "",
+            "forward_payload": profile if not missing_fields else {},
+        })
+
+    is_complete = len(missing_fields) == 0 and intent_type in {"plan_itinerary", "adjust_plan"}
+    return profile, is_complete, missing_fields, intent_type, routing
 
 
 
@@ -272,20 +512,44 @@ def run_orchestration(
 
     # 2. Phân loại yêu cầu & Chuẩn hóa dữ liệu
     t_start = time.time()
-    updated_profile, is_complete, missing_fields, intent_type = extract_or_update_request(
+    updated_profile, is_complete, missing_fields, intent_type, routing = extract_or_update_request(
         user_message=user_message,
         current_session=session,
         preset_data=preset_data,
     )
     extract_duration = int((time.time() - t_start) * 1000)
 
-    # 3a. Nếu là General Chat (chào hỏi, hỏi thông tin công viên)
+    # 3a. Ngoài phạm vi / quá mơ hồ: A0 dừng điều phối, không gọi A2/A1.
+    if intent_type in {"out_of_scope", "too_ambiguous"}:
+        fallback_text = routing["fallback_text"]
+        add_message(session_id, turn_id, "assistant", fallback_text)
+        record_event(
+            session_id=session_id,
+            turn_id=turn_id,
+            event_type="a0_route",
+            sender="A0",
+            receiver="User",
+            summary=f"A0 dừng điều phối với trạng thái {intent_type}.",
+            payload=routing,
+            duration_ms=extract_duration,
+            status="info",
+        )
+        return {
+            "session_id": session_id,
+            "turn_id": turn_id,
+            "status": intent_type,
+            "reply": fallback_text,
+            "plans": [],
+            "routing": routing,
+        }
+
+    # 3b. Nếu là General Chat (chào hỏi, hỏi thông tin công viên)
     if intent_type == "general_chat":
         t_chat = time.time()
         chat_reply = answer_general_chat_with_llm(user_message)
         if not chat_reply:
             chat_reply = (
-                "Xin chào bạn! Tôi là Hướng dẫn viên ảo kiêm Điều phối viên hệ thống V-AI tại VinWonders Nha Trang. "
+                "Xin chào bạn! Mình là V-AI, người bạn đồng hành tại VinWonders Nha Trang. "
                 "Tôi có thể hỗ trợ bạn thông tin về các phân khu vui chơi và lên kế hoạch trải nghiệm tối ưu cho cả đoàn. "
                 "Bạn muốn bắt đầu lên lịch trình tham quan lúc mấy giờ?"
             )
@@ -308,23 +572,17 @@ def run_orchestration(
             "status": "completed",
             "reply": chat_reply,
             "plans": [],
+            "routing": routing,
         }
 
-    # 3b. Xử lý trường hợp thiếu thông tin bắt buộc khi lập lịch
+    # 3c. Xử lý trường hợp thiếu thông tin bắt buộc khi lập lịch
     if not is_complete:
         t_clarify = time.time()
-        clarification_msg = None
-        if is_llm_available():
-            try:
-                clarification_msg = generate_clarification_with_llm(user_message, missing_fields)
-            except Exception as e:
-                logger.warning("LLM clarification error: %s", e)
-
-        if not clarification_msg:
-            clarification_msg = (
-                "Chào bạn! Để tôi có thể gợi ý lịch trình vui chơi VinWonders an toàn và phù hợp nhất cho cả đoàn, "
-                f"bạn vui lòng cho biết thêm: {', '.join(missing_fields).replace('_', ' ')} nhé!"
-            )
+        clarification = routing.get("clarification", {})
+        clarification_msg = clarification.get("message") or (
+            "Mình cần thêm một chút thông tin để lên lịch an toàn nhé."
+        )
+        memory_version = update_session(session_id, profile=updated_profile, scenario_id=scenario_id)
         clarify_duration = int((time.time() - t_clarify) * 1000)
         add_message(session_id, turn_id, "assistant", clarification_msg)
         record_event(
@@ -333,8 +591,13 @@ def run_orchestration(
             event_type="a0_intent",
             sender="A0",
             receiver="User",
-            summary=f"Yêu cầu thiếu dữ liệu: {missing_fields}. A0 hỏi làm rõ bằng LLM.",
-            payload={"missing_fields": missing_fields, "response": clarification_msg},
+            summary=f"Yêu cầu thiếu dữ liệu: {missing_fields}. A0 đã lưu hồ sơ từng phần ở v{memory_version}.",
+            payload={
+                "missing_fields": missing_fields,
+                "response": clarification_msg,
+                "clarification": clarification,
+                "memory_version": memory_version,
+            },
             duration_ms=clarify_duration,
             status="warning",
         )
@@ -345,6 +608,9 @@ def run_orchestration(
             "reply": clarification_msg,
             "plans": [],
             "missing_fields": missing_fields,
+            "clarification": clarification,
+            "routing": routing,
+            "memory_version": memory_version,
         }
 
 
@@ -409,6 +675,7 @@ def run_orchestration(
             "status": "failed",
             "reply": "Xin lỗi quý khách, hệ thống phân tích mật độ hiện đang bận. Vui lòng thử lại trong giây lát.",
             "plans": [],
+            "routing": routing,
         }
 
     crowd_analysis = a2_resp["result"]
@@ -506,6 +773,7 @@ def run_orchestration(
             "reply": explanation,
             "plans": [],
             "unfeasible_reasons": unfeasible_reasons,
+            "routing": routing,
         }
 
     # Lưu phương án vào SQLite
@@ -584,6 +852,7 @@ def run_orchestration(
         "reply": full_reply,
         "plans": plans,
         "crowd_analysis": crowd_analysis,
+        "routing": routing,
     }
 
 
@@ -618,12 +887,39 @@ def run_orchestration_stream(
     yield f"event: thinking\ndata: {json.dumps({'stage': 'intent', 'message': 'Agent A0 đang phân tích nội dung và ràng buộc...'}, ensure_ascii=False)}\n\n"
 
     t_start = time.time()
-    updated_profile, is_complete, missing_fields, intent_type = extract_or_update_request(
+    updated_profile, is_complete, missing_fields, intent_type, routing = extract_or_update_request(
         user_message=user_message,
         current_session=session,
         preset_data=preset_data,
     )
     extract_duration = int((time.time() - t_start) * 1000)
+
+    if intent_type in {"out_of_scope", "too_ambiguous"}:
+        fallback_text = routing["fallback_text"]
+        yield f"event: token\ndata: {json.dumps({'token': fallback_text}, ensure_ascii=False)}\n\n"
+        add_message(session_id, turn_id, "assistant", fallback_text)
+        record_event(
+            session_id=session_id,
+            turn_id=turn_id,
+            event_type="a0_route",
+            sender="A0",
+            receiver="User",
+            summary=f"A0 dừng điều phối với trạng thái {intent_type}.",
+            payload=routing,
+            duration_ms=extract_duration,
+            status="info",
+        )
+        done_payload = {
+            "session_id": session_id,
+            "turn_id": turn_id,
+            "status": intent_type,
+            "reply": fallback_text,
+            "plans": [],
+            "routing": routing,
+            "events": get_events(session_id),
+        }
+        yield f"event: done\ndata: {json.dumps(done_payload, ensure_ascii=False)}\n\n"
+        return
 
     # 1. Nhánh General Chat
     if intent_type == "general_chat":
@@ -664,21 +960,12 @@ def run_orchestration_stream(
     # 2. Nhánh thiếu thông tin khi lập lịch
     if not is_complete:
         yield f"event: thinking\ndata: {json.dumps({'stage': 'clarifying', 'message': 'Agent A0 đang chuẩn bị câu hỏi làm rõ các tiêu chí an toàn...'}, ensure_ascii=False)}\n\n"
-        accumulated_reply = ""
-        try:
-            for token in stream_generate_clarification_with_llm(user_message, missing_fields):
-                accumulated_reply += token
-                yield f"event: token\ndata: {json.dumps({'token': token}, ensure_ascii=False)}\n\n"
-        except Exception as e:
-            logger.warning("Stream clarification error: %s", e)
-
-        if not accumulated_reply:
-            fallback = (
-                "Chào bạn! Để tôi có thể gợi ý lịch trình vui chơi VinWonders an toàn và phù hợp nhất cho cả đoàn, "
-                f"bạn vui lòng cho biết thêm: {', '.join(missing_fields).replace('_', ' ')} nhé!"
-            )
-            accumulated_reply = fallback
-            yield f"event: token\ndata: {json.dumps({'token': fallback}, ensure_ascii=False)}\n\n"
+        clarification = routing.get("clarification", {})
+        accumulated_reply = clarification.get("message") or (
+            "Mình cần thêm một chút thông tin để lên lịch an toàn nhé."
+        )
+        memory_version = update_session(session_id, profile=updated_profile, scenario_id=scenario_id)
+        yield f"event: token\ndata: {json.dumps({'token': accumulated_reply}, ensure_ascii=False)}\n\n"
 
         add_message(session_id, turn_id, "assistant", accumulated_reply)
         clarify_duration = int((time.time() - t_start) * 1000)
@@ -688,12 +975,29 @@ def run_orchestration_stream(
             event_type="a0_intent",
             sender="A0",
             receiver="User",
-            summary=f"Yêu cầu thiếu dữ liệu: {missing_fields}. A0 hỏi làm rõ bằng LLM Stream.",
-            payload={"missing_fields": missing_fields, "response": accumulated_reply},
+            summary=f"Yêu cầu thiếu dữ liệu: {missing_fields}. A0 đã lưu hồ sơ từng phần ở v{memory_version}.",
+            payload={
+                "missing_fields": missing_fields,
+                "response": accumulated_reply,
+                "clarification": clarification,
+                "memory_version": memory_version,
+            },
             duration_ms=clarify_duration,
             status="warning",
         )
-        yield f"event: done\ndata: {json.dumps({'session_id': session_id, 'turn_id': turn_id, 'status': 'needs_input', 'reply': accumulated_reply, 'missing_fields': missing_fields, 'plans': [], 'events': get_events(session_id)}, ensure_ascii=False)}\n\n"
+        done_payload = {
+            "session_id": session_id,
+            "turn_id": turn_id,
+            "status": "needs_input",
+            "reply": accumulated_reply,
+            "missing_fields": missing_fields,
+            "clarification": clarification,
+            "routing": routing,
+            "memory_version": memory_version,
+            "plans": [],
+            "events": get_events(session_id),
+        }
+        yield f"event: done\ndata: {json.dumps(done_payload, ensure_ascii=False)}\n\n"
         return
 
     # 3. Đầy đủ thông tin: Tiến hành điều phối A0 -> A2 -> A1

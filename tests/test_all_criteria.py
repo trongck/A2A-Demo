@@ -63,7 +63,7 @@ def test_acceptance_missing_input():
     )
     assert res["status"] == "needs_input", "A0 phải hỏi lại khi thiếu thông tin"
     assert len(res["missing_fields"]) > 0
-    assert "chiều_cao_trẻ_em" in res["missing_fields"] or "khung_giờ_tham_quan" in res["missing_fields"]
+    assert "thông_tin_thành_viên" in res["missing_fields"] or "khung_giờ_tham_quan" in res["missing_fields"]
 
 
 # Ca 3: Multi-turn trong cùng phiên

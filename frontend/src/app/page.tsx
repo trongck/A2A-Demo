@@ -50,11 +50,163 @@ interface EventRecord {
   created_at: string;
 }
 
+interface ClarificationQuestion {
+  criteria_key: string;
+  question: string;
+  options: string[];
+}
+
+interface Clarification {
+  message: string;
+  questions: ClarificationQuestion[];
+}
+
 interface Message {
   role: "user" | "assistant";
   content: string;
   plans?: PlanOption[];
   isStreaming?: boolean;
+}
+
+function ClarificationWizard({
+  clarification,
+  disabled,
+  onSubmit,
+}: {
+  clarification: Clarification;
+  disabled: boolean;
+  onSubmit: (message: string) => Promise<void>;
+}) {
+  const [step, setStep] = useState(0);
+  const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [detailOption, setDetailOption] = useState<string | null>(null);
+  const [detail, setDetail] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+  const questions = clarification.questions;
+  const current = questions[step];
+
+  function saveAnswer(answer: string) {
+    const nextAnswers = { ...answers, [current.criteria_key]: answer };
+    setAnswers(nextAnswers);
+    setDetailOption(null);
+    setDetail("");
+    if (step === questions.length - 1) {
+      const summary = [
+        "Thông tin bổ sung đã xác nhận:",
+        ...questions.map((question) => `- ${question.question}: ${nextAnswers[question.criteria_key]}`),
+      ].join("\n");
+      setSubmitted(true);
+      void onSubmit(summary);
+      return;
+    }
+    setStep((value) => value + 1);
+  }
+
+  function selectOption(option: string) {
+    if (option === "Khác/tự nhập" || option.includes("nhập")) {
+      setDetailOption(option);
+      setDetail("");
+      return;
+    }
+    saveAnswer(option);
+  }
+
+  function saveDetail() {
+    const value = detail.trim();
+    if (!value || !detailOption) return;
+    const prefix = detailOption === "Khác/tự nhập" || detailOption.includes("nhập số lượng")
+      ? ""
+      : `${detailOption.split("–")[0].trim()}: `;
+    saveAnswer(`${prefix}${value}`);
+  }
+
+  function previousStep() {
+    setDetailOption(null);
+    setDetail("");
+    setStep((value) => value - 1);
+  }
+
+  function nextStep() {
+    if (!answers[current.criteria_key]) return;
+    setStep((value) => value + 1);
+  }
+
+  if (submitted) {
+    return (
+      <div className="rounded-xl border border-[#d4d0c5] bg-[#faf9f6] p-4 text-xs text-[#71717a]">
+        Đang gửi thông tin đã chọn…
+      </div>
+    );
+  }
+
+  return (
+    <div className="rounded-xl border border-[#d4d0c5] bg-[#faf9f6] p-4 shadow-sm">
+      <div className="mb-3 flex items-center justify-between gap-3">
+        <p className="text-xs font-semibold text-[#18181b]">{current.question}</p>
+        <div className="flex shrink-0 items-center gap-2 text-[11px] text-[#71717a]">
+          <button
+            type="button"
+            disabled={step === 0 || disabled}
+            onClick={previousStep}
+            className="px-1 disabled:opacity-30"
+            aria-label="Câu hỏi trước"
+          >
+            ‹
+          </button>
+          <span>{step + 1} trong {questions.length}</span>
+          <button
+            type="button"
+            disabled={!answers[current.criteria_key] || disabled}
+            onClick={nextStep}
+            className="px-1 disabled:opacity-30"
+            aria-label="Câu hỏi tiếp theo"
+          >
+            ›
+          </button>
+        </div>
+      </div>
+
+      {detailOption ? (
+        <div className="flex gap-2">
+          <input
+            autoFocus
+            value={detail}
+            onChange={(event) => setDetail(event.target.value)}
+            onKeyDown={(event) => event.key === "Enter" && saveDetail()}
+            placeholder={current.criteria_key === "group_composition"
+              ? "Ví dụ: 2 người lớn, 2 trẻ em"
+              : "Nhập câu trả lời của bạn"}
+            className="min-w-0 flex-1 rounded-lg border border-[#d4d0c5] px-3 py-2 text-xs outline-none focus:border-[#2563eb]"
+          />
+          <button
+            type="button"
+            disabled={!detail.trim() || disabled}
+            onClick={saveDetail}
+            className="rounded-lg bg-[#18181b] px-3 py-2 text-xs text-white disabled:opacity-30"
+          >
+            Tiếp
+          </button>
+        </div>
+      ) : (
+        <div className="max-h-64 divide-y divide-[#e6e3da] overflow-y-auto border-y border-[#e6e3da]">
+          {current.options.map((option, index) => (
+            <button
+              key={option}
+              type="button"
+              disabled={disabled}
+              onClick={() => selectOption(option)}
+              className="flex w-full items-center gap-3 px-1 py-2.5 text-left text-xs text-[#27272a] transition hover:bg-[#faf9f6] disabled:cursor-not-allowed"
+            >
+              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-[#f4f2eb] text-[11px] text-[#71717a]">
+                {option === "Khác/tự nhập" ? "✎" : index + 1}
+              </span>
+              {option}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
 }
 
 
@@ -64,6 +216,7 @@ export default function Home() {
   const [events, setEvents] = useState<EventRecord[]>([]);
   const [inputMessage, setInputMessage] = useState<string>("");
   const [isStreaming, setIsStreaming] = useState<boolean>(false);
+  const [activeClarification, setActiveClarification] = useState<Clarification | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
   const [selectedEvent, setSelectedEvent] = useState<EventRecord | null>(null);
   const [copied, setCopied] = useState<boolean>(false);
@@ -84,6 +237,7 @@ export default function Home() {
       abortControllerRef.current.abort();
     }
     setIsStreaming(false);
+    setActiveClarification(null);
 
     try {
       const res = await fetch(`${API_BASE}/api/session/new`, {
@@ -123,11 +277,12 @@ export default function Home() {
     }
   }
 
-  async function handleSend() {
-    if (!inputMessage.trim() || isStreaming) return;
+  async function sendMessage(message: string) {
+    if (!message.trim() || isStreaming) return;
 
-    const userText = inputMessage.trim();
+    const userText = message.trim();
     setInputMessage("");
+    setActiveClarification(null);
 
     // Thêm tin nhắn của User vào giao diện
     setMessages((prev) => [...prev, { role: "user", content: userText }]);
@@ -209,6 +364,9 @@ export default function Home() {
                 }
                 return copy;
               });
+              setActiveClarification(
+                data.clarification?.questions?.length ? data.clarification : null,
+              );
               if (data.events) {
                 setEvents(data.events);
               }
@@ -257,6 +415,10 @@ export default function Home() {
         prev.map((m) => (m.isStreaming ? { ...m, isStreaming: false } : m))
       );
     }
+  }
+
+  async function handleSend() {
+    await sendMessage(inputMessage);
   }
 
   function handleStopGenerating() {
@@ -539,7 +701,6 @@ export default function Home() {
                           </div>
                         )}
 
-
                   {/* Plan Cards Rendered Directly in Feed */}
                   {m.plans && m.plans.length > 0 && (
                     <div className="self-start w-full grid grid-cols-1 md:grid-cols-2 gap-4 my-2">
@@ -659,8 +820,16 @@ export default function Home() {
           </div>
 
           {/* Chat Input Bar */}
-          <div className="bg-white border-t border-[#e6e3da] p-4">
-            <div className="max-w-3xl mx-auto relative flex items-center">
+          <div className="bg-[#faf9f6] px-4 pb-4 pt-2">
+            <div className="max-w-3xl mx-auto space-y-2">
+              {activeClarification && (
+                <ClarificationWizard
+                  clarification={activeClarification}
+                  disabled={isStreaming}
+                  onSubmit={sendMessage}
+                />
+              )}
+              <div className="relative flex items-center">
               <textarea
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
@@ -709,6 +878,7 @@ export default function Home() {
                   </svg>
                 </button>
               )}
+              </div>
             </div>
           </div>
 
