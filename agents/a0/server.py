@@ -6,15 +6,26 @@ Bám sát mục 2, 4, 6 và 7 của V-AI-Implementation-Plan.md.
 """
 
 import json
+import secrets
 from pathlib import Path
 from typing import Any
-import uuid
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, field_validator
 import uvicorn
+
+from shared.security import (
+    ALLOWED_ORIGINS,
+    SecurityHeadersMiddleware,
+    RateLimitMiddleware,
+    require_api_key,
+    get_logger,
+    validate_message,
+    validate_session_id,
+    MAX_MESSAGE_LENGTH,
+)
 
 from agents.a0.orchestrator import run_orchestration, run_orchestration_stream
 
@@ -27,6 +38,8 @@ from shared.memory.database import (
 )
 
 DATA_PATH = Path(__file__).resolve().parent.parent.parent / "data" / "V-AI-Mock-Data.json"
+
+logger = get_logger("a0.server")
 
 from contextlib import asynccontextmanager
 
@@ -42,24 +55,42 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+# Security Middlewares (L2, H2)
+app.add_middleware(SecurityHeadersMiddleware)
+app.add_middleware(RateLimitMiddleware)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=ALLOWED_ORIGINS,  # C2: Whitelist thay vì "*"
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_headers=["Content-Type", "X-Api-Key"],
 )
 
 
 class ChatRequest(BaseModel):
-    session_id: str
-    message: str
-    scenario_id: str | None = None
+    session_id: str = Field(..., max_length=128)
+    message: str = Field(..., max_length=MAX_MESSAGE_LENGTH)
+    scenario_id: str | None = Field(None, max_length=50)
     preset_data: dict[str, Any] | None = None
+
+    @field_validator("session_id")
+    @classmethod
+    def session_id_valid(cls, v: str) -> str:
+        if not validate_session_id(v):
+            raise ValueError("Session ID không hợp lệ.")
+        return v
+
+    @field_validator("message")
+    @classmethod
+    def message_not_empty(cls, v: str) -> str:
+        is_valid, err = validate_message(v)
+        if not is_valid:
+            raise ValueError(err)
+        return v.strip()
 
 
 class NewSessionRequest(BaseModel):
-    scenario_id: str = "base"
+    scenario_id: str = Field("base", max_length=50)
 
 
 
@@ -90,9 +121,11 @@ def get_presets() -> dict[str, Any]:
     }
 
 
-@app.post("/api/session/new")
+@app.post("/api/session/new", dependencies=[Depends(require_api_key)])
 def create_new_session(req: NewSessionRequest) -> dict[str, Any]:
-    new_id = f"session_{uuid.uuid4().hex[:8]}"
+    # M2: Dùng secrets.token_urlsafe(24) thay vì uuid hex[:8] để tăng entropy
+    new_id = f"session_{secrets.token_urlsafe(24)}"
+    logger.info("New session created: %s", new_id)
     sess = get_or_create_session(new_id, req.scenario_id)
     return sess
 
@@ -114,21 +147,26 @@ def get_session_events(session_id: str) -> list[dict[str, Any]]:
     return get_events(session_id)
 
 
-@app.post("/api/chat")
+@app.post("/api/chat", dependencies=[Depends(require_api_key)])
 def handle_chat(req: ChatRequest) -> dict[str, Any]:
-    res = run_orchestration(
-        session_id=req.session_id,
-        user_message=req.message,
-        scenario_override=req.scenario_id,
-        preset_data=req.preset_data,
-    )
-    # Lấy danh sách sự kiện mới nhất
-    events = get_events(req.session_id)
-    res["events"] = events
-    return res
+    try:
+        res = run_orchestration(
+            session_id=req.session_id,
+            user_message=req.message,
+            scenario_override=req.scenario_id,
+            preset_data=req.preset_data,
+        )
+        # Lấy danh sách sự kiện mới nhất
+        events = get_events(req.session_id)
+        res["events"] = events
+        return res
+    except Exception as e:
+        # M6: Không lộ thông tin kỹ thuật nội bộ cho client
+        logger.exception("Chat handler error for session %s", req.session_id)
+        raise HTTPException(status_code=500, detail="Hệ thống đang gặp sự cố. Vui lòng thử lại.")
 
 
-@app.post("/api/chat/stream")
+@app.post("/api/chat/stream", dependencies=[Depends(require_api_key)])
 def handle_chat_stream(req: ChatRequest):
     return StreamingResponse(
         run_orchestration_stream(

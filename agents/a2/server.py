@@ -16,6 +16,9 @@ import httpx
 from pydantic import BaseModel
 import uvicorn
 
+from shared.security import get_logger, require_internal_secret
+from shared.security.config import V_AI_INTERNAL_SECRET, INTERNAL_AUTH_ENABLED
+
 from a2a.server.agent_execution import AgentExecutor, RequestContext
 from a2a.server.apps import A2AFastAPIApplication
 from a2a.server.events import EventQueue
@@ -33,14 +36,21 @@ from shared.llm import generate_crowd_insight_with_llm, is_llm_available
 
 MCP_URL = "http://127.0.0.1:8003"
 
+logger = get_logger("a2.crowd")
+
 
 
 def call_mcp_tool(tool_name: str, arguments: dict[str, Any]) -> dict[str, Any]:
     """Gọi công cụ qua MCP Server HTTP endpoint với caller_agent=a2_crowd_specialist."""
     try:
+        # H5: Gửi internal secret header
+        headers: dict[str, str] = {}
+        if INTERNAL_AUTH_ENABLED:
+            headers["X-Internal-Secret"] = V_AI_INTERNAL_SECRET
         with httpx.Client(timeout=3.0) as client:
             resp = client.post(
                 f"{MCP_URL}/api/tools/call",
+                headers=headers,
                 json={
                     "tool_name": tool_name,
                     "arguments": arguments,
@@ -190,7 +200,7 @@ def analyze_crowd_logic(
         try:
             crowd_insight_text = generate_crowd_insight_with_llm(items, simulation_now_str, scenario_id)
         except Exception as e:
-            print(f"[Agent A2] Lỗi gọi LLM phân tích mật độ: {e}")
+            logger.warning("LLM crowd insight error: %s", e)
 
     if not crowd_insight_text:
         # Fallback phân tích dựa trên quy tắc thống kê
@@ -301,7 +311,9 @@ class DirectAnalyzeRequest(BaseModel):
     service_ids: list[str] | None = None
 
 
-@app.post("/api/analyze")
+from fastapi import Depends
+
+@app.post("/api/analyze", dependencies=[Depends(require_internal_secret)])
 def direct_analyze(req: DirectAnalyzeRequest) -> dict[str, Any]:
     return analyze_crowd_logic(scenario_id=req.scenario_id, service_ids=req.service_ids)
 

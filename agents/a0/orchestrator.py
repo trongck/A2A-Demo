@@ -13,6 +13,9 @@ from typing import Any
 
 import httpx
 
+from shared.security import get_logger, sanitize_user_input
+from shared.security.config import V_AI_INTERNAL_SECRET, INTERNAL_AUTH_ENABLED
+
 from shared.llm import (
     answer_general_chat_with_llm,
     classify_and_extract_intent_with_llm,
@@ -36,6 +39,7 @@ from shared.memory.database import (
 )
 
 
+logger = get_logger("a0.orchestrator")
 
 A2_URL = "http://127.0.0.1:8002"
 A1_URL = "http://127.0.0.1:8001"
@@ -48,11 +52,17 @@ def call_a2a_agent(agent_url: str, request_payload: dict[str, Any]) -> dict[str,
     target_action = request_payload.get("action")
     endpoint = f"{agent_url}/api/analyze" if target_action == "analyze_crowd" else f"{agent_url}/api/plan"
 
+    # H5: Thêm internal secret header cho inter-agent auth
+    headers: dict[str, str] = {}
+    if INTERNAL_AUTH_ENABLED:
+        headers["X-Internal-Secret"] = V_AI_INTERNAL_SECRET
+
     try:
         with httpx.Client(timeout=15.0) as client:
             if target_action == "analyze_crowd":
                 resp = client.post(
                     endpoint,
+                    headers=headers,
                     json={
                         "scenario_id": request_payload.get("scenario_id", "base"),
                         "service_ids": request_payload.get("input", {}).get("service_ids"),
@@ -61,6 +71,7 @@ def call_a2a_agent(agent_url: str, request_payload: dict[str, Any]) -> dict[str,
             else:
                 resp = client.post(
                     endpoint,
+                    headers=headers,
                     json={
                         "normalized_request": request_payload.get("input", {}).get("normalized_request", {}),
                         "crowd_analysis": request_payload.get("input", {}).get("crowd_analysis", {}),
@@ -74,6 +85,8 @@ def call_a2a_agent(agent_url: str, request_payload: dict[str, Any]) -> dict[str,
                     "result": resp.json(),
                 }
     except Exception as e:
+        # M6: Log chi tiết nội bộ, không lộ cho client
+        logger.warning("A2A call failed to %s: %s", agent_url, e)
         # Fallback local import khi chạy in-process hoặc test
         if target_action == "analyze_crowd":
             from agents.a2.server import analyze_crowd_logic
@@ -91,7 +104,8 @@ def call_a2a_agent(agent_url: str, request_payload: dict[str, Any]) -> dict[str,
             )
             return {"status": res.get("status", "completed"), "result": res}
 
-    return {"status": "failed", "error": f"Không thể kết nối đến {agent_url}"}
+    # M6: Error message generic, không lộ URL nội bộ
+    return {"status": "failed", "error": "Không thể kết nối đến dịch vụ agent nội bộ."}
 
 
 def extract_or_update_request(
@@ -153,7 +167,7 @@ def extract_or_update_request(
                     profile["end_by"] = f"2026-09-18T{et}:00+07:00"
 
         except Exception as e:
-            print(f"[Agent A0] LLM intent error: {e}")
+            logger.warning("LLM intent extraction error: %s", e)
 
     # 2. Xử lý logic quy tắc bổ trợ
     msg_lower = user_message.lower()
@@ -253,6 +267,8 @@ def run_orchestration(
         payload={"message": user_message, "scenario_id": scenario_id},
         status="info",
     )
+    # H3: Sanitize user input trước khi xử lý
+    user_message = sanitize_user_input(user_message)
 
     # 2. Phân loại yêu cầu & Chuẩn hóa dữ liệu
     t_start = time.time()
@@ -302,7 +318,7 @@ def run_orchestration(
             try:
                 clarification_msg = generate_clarification_with_llm(user_message, missing_fields)
             except Exception as e:
-                print(f"[Agent A0] LLM clarification error: {e}")
+                logger.warning("LLM clarification error: %s", e)
 
         if not clarification_msg:
             clarification_msg = (
@@ -375,7 +391,7 @@ def run_orchestration(
     a2_duration = int((time.time() - t_a2) * 1000)
 
     if a2_resp.get("status") != "completed":
-        err_msg = f"Agent A2 gặp lỗi khi phân tích: {a2_resp.get('error', 'Lỗi không xác định')}"
+        err_msg = f"Agent A2 gặp lỗi khi phân tích."
         record_event(
             session_id=session_id,
             turn_id=turn_id,
@@ -462,7 +478,7 @@ def run_orchestration(
                     current_constraints=updated_profile.get("hard_constraints", {}),
                 )
             except Exception as e:
-                print(f"[Agent A0] LLM unfeasible error: {e}")
+                logger.warning("LLM unfeasible explanation error: %s", e)
 
         if not explanation:
             explanation = (
@@ -524,7 +540,7 @@ def run_orchestration(
         try:
             llm_reply = synthesize_chat_response_with_llm(user_message, plans, crowd_analysis)
         except Exception as e:
-            print(f"[Agent A0] LLM synthesis error: {e}")
+            logger.warning("LLM synthesis error: %s", e)
 
     if llm_reply:
         full_reply = llm_reply
@@ -596,6 +612,9 @@ def run_orchestration_stream(
         status="info",
     )
 
+    # H3: Sanitize user input trước khi xử lý
+    user_message = sanitize_user_input(user_message)
+
     yield f"event: thinking\ndata: {json.dumps({'stage': 'intent', 'message': 'Agent A0 đang phân tích nội dung và ràng buộc...'}, ensure_ascii=False)}\n\n"
 
     t_start = time.time()
@@ -615,7 +634,7 @@ def run_orchestration_stream(
                 accumulated_reply += token
                 yield f"event: token\ndata: {json.dumps({'token': token}, ensure_ascii=False)}\n\n"
         except Exception as e:
-            print(f"[Agent A0 Stream Error]: {e}")
+            logger.warning("Stream general chat error: %s", e)
 
         if not accumulated_reply:
             fallback = (
@@ -651,7 +670,7 @@ def run_orchestration_stream(
                 accumulated_reply += token
                 yield f"event: token\ndata: {json.dumps({'token': token}, ensure_ascii=False)}\n\n"
         except Exception as e:
-            print(f"[Agent A0 Stream Error]: {e}")
+            logger.warning("Stream clarification error: %s", e)
 
         if not accumulated_reply:
             fallback = (
@@ -806,7 +825,7 @@ def run_orchestration_stream(
                 accumulated_reply += token
                 yield f"event: token\ndata: {json.dumps({'token': token}, ensure_ascii=False)}\n\n"
         except Exception as e:
-            print(f"[Agent A0 Stream Error]: {e}")
+            logger.warning("Stream unfeasible explanation error: %s", e)
 
         if not accumulated_reply:
             accumulated_reply = (
@@ -863,7 +882,7 @@ def run_orchestration_stream(
             accumulated_reply += token
             yield f"event: token\ndata: {json.dumps({'token': token}, ensure_ascii=False)}\n\n"
     except Exception as e:
-        print(f"[Agent A0 Stream Error]: {e}")
+        logger.warning("Stream synthesis error: %s", e)
 
     if not accumulated_reply:
         reply_lines = [

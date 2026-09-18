@@ -16,6 +16,9 @@ import httpx
 from pydantic import BaseModel
 import uvicorn
 
+from shared.security import get_logger, require_internal_secret
+from shared.security.config import V_AI_INTERNAL_SECRET, INTERNAL_AUTH_ENABLED
+
 from a2a.server.agent_execution import AgentExecutor, RequestContext
 from a2a.server.apps import A2AFastAPIApplication
 from a2a.server.events import EventQueue
@@ -29,6 +32,7 @@ from a2a.types import (
     Role,
     TextPart,
 )
+from fastapi import Depends
 from shared.llm import (
     generate_plan_rationale_with_llm,
     generate_unfeasible_explanation_with_llm,
@@ -37,14 +41,24 @@ from shared.llm import (
 
 MCP_URL = "http://127.0.0.1:8003"
 
+logger = get_logger("a1.planner")
+
+# L3: Giới hạn cứng cho tìm kiếm permutation, chống DoS
+MAX_SEARCH_ITERATIONS = 5000
+
 
 
 def call_mcp_tool(tool_name: str, arguments: dict[str, Any]) -> dict[str, Any]:
     """Gọi công cụ qua MCP Server HTTP endpoint với caller_agent=a1_planner_specialist."""
     try:
+        # H5: Gửi internal secret header
+        headers: dict[str, str] = {}
+        if INTERNAL_AUTH_ENABLED:
+            headers["X-Internal-Secret"] = V_AI_INTERNAL_SECRET
         with httpx.Client(timeout=3.0) as client:
             resp = client.post(
                 f"{MCP_URL}/api/tools/call",
+                headers=headers,
                 json={
                     "tool_name": tool_name,
                     "arguments": arguments,
@@ -282,12 +296,24 @@ def plan_itinerary_logic(
             "warnings": [],
         }
 
-    # 3. Tìm kiếm các tổ hợp khả thi
+    # 3. Tìm kiếm các tổ hợp khả thi (L3: giới hạn iterations chống DoS)
     candidate_plans = []
     # Thử độ dài từ min_act đến min(min_act + 2, len(eligible_sids))
     max_len = min(min_act + 1, len(eligible_sids))
+    search_count = 0
+    search_exhausted = False
     for r in range(min_act, max_len + 1):
+        if search_exhausted:
+            break
         for seq in itertools.permutations(eligible_sids, r):
+            search_count += 1
+            if search_count > MAX_SEARCH_ITERATIONS:
+                logger.warning(
+                    "L3: Search iteration limit reached (%d). Stopping permutation search.",
+                    MAX_SEARCH_ITERATIONS,
+                )
+                search_exhausted = True
+                break
             curr_time = start_time
             curr_node = start_node
             legs = []
@@ -457,7 +483,7 @@ def plan_itinerary_logic(
                 if llm_rationale:
                     plan_rationale = llm_rationale
             except Exception as e:
-                print(f"[Agent A1] LLM rationale error: {e}")
+                logger.warning("LLM rationale generation error: %s", e)
 
         plan_obj = {
             "plan_id": f"plan_opt_{idx}_{style}",
@@ -598,7 +624,7 @@ class DirectPlanRequest(BaseModel):
     scenario_id: str = "base"
 
 
-@app.post("/api/plan")
+@app.post("/api/plan", dependencies=[Depends(require_internal_secret)])
 def direct_plan(req: DirectPlanRequest) -> dict[str, Any]:
     return plan_itinerary_logic(req.normalized_request, req.crowd_analysis, req.scenario_id)
 

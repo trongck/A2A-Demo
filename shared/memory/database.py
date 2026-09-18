@@ -13,6 +13,12 @@ from typing import Any
 DB_DIR = Path(__file__).resolve().parent.parent.parent / "data"
 DB_PATH = DB_DIR / "memory.sqlite"
 
+# ⚠️ M3: PRODUCTION WARNING — SQLite database chứa PII (profile nhóm, chiều cao trẻ em,
+# lịch sử hội thoại). Khi deploy production, cần:
+# 1. Dùng sqlcipher để mã hóa database at-rest
+# 2. Hoặc chuyển sang PostgreSQL/MySQL với TDE (Transparent Data Encryption)
+# 3. Backup phải được mã hóa, xóa theo retention policy
+
 
 def get_current_iso_time() -> str:
     return datetime.now(timezone.utc).isoformat()

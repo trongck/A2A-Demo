@@ -15,11 +15,20 @@ import json
 from pathlib import Path
 from typing import Any
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import uvicorn
 from mcp.server.mcpserver import MCPServer
+
+from shared.security import (
+    ALLOWED_ORIGINS,
+    SecurityHeadersMiddleware,
+    get_logger,
+    require_internal_secret,
+)
+
+logger = get_logger("mcp.server")
 
 DATA_PATH = Path(__file__).resolve().parent.parent / "data" / "V-AI-Mock-Data.json"
 
@@ -192,12 +201,13 @@ def get_weather(start_at: str, end_by: str) -> str:
 
 app = FastAPI(title="V-AI MCP Service", version="1.0.0")
 
+app.add_middleware(SecurityHeadersMiddleware)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=ALLOWED_ORIGINS,  # C2: Whitelist thay vì "*"
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_headers=["Content-Type", "X-Internal-Secret"],
 )
 
 
@@ -230,7 +240,7 @@ def list_tools() -> list[dict[str, Any]]:
     ]
 
 
-@app.post("/api/tools/call")
+@app.post("/api/tools/call", dependencies=[Depends(require_internal_secret)])
 def call_tool_endpoint(req: ToolCallRequest) -> dict[str, Any]:
     name = req.tool_name
     args = req.arguments

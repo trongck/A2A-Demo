@@ -51,6 +51,12 @@ export default function RootLayout({
       className={`${outfit.variable} ${plusJakarta.variable} ${jetbrainsMono.variable} h-full`}
       suppressHydrationWarning
     >
+      <head>
+        <meta
+          httpEquiv="Content-Security-Policy"
+          content="default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' http://127.0.0.1:* http://localhost:* ws://127.0.0.1:* ws://localhost:*;"
+        />
+      </head>
       <body
         className="min-h-full flex flex-col bg-[#faf9f6] text-[#18181b] font-sans antialiased"
         suppressHydrationWarning

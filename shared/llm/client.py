@@ -15,6 +15,10 @@ from typing import Any, Generator
 
 from dotenv import load_dotenv
 
+from shared.security.logging import get_logger
+
+logger = get_logger("llm.client")
+
 ENV_PATH = Path(__file__).resolve().parent.parent.parent / ".env"
 load_dotenv(dotenv_path=ENV_PATH, override=True)
 
@@ -105,7 +109,7 @@ def call_llm(prompt: str, system_instruction: str = "") -> str | None:
             )
             return response.text
         except Exception as e:
-            print(f"[LLM Gemini Native Error]: {e}")
+            logger.warning("Gemini Native Error: %s", e)
             # Thử fallback qua OpenAI compatibility endpoint của Gemini
             base_url = "https://generativelanguage.googleapis.com/v1beta/openai/"
 
@@ -128,7 +132,7 @@ def call_llm(prompt: str, system_instruction: str = "") -> str | None:
         )
         return resp.choices[0].message.content
     except Exception as e:
-        print(f"[LLM Universal Error ({model} via {base_url or 'default'})]: {e}")
+        logger.warning("LLM Universal Error (%s via %s): %s", model, base_url or 'default', e)
         return None
 
 
@@ -157,7 +161,7 @@ def stream_call_llm(prompt: str, system_instruction: str = "") -> Generator[str,
                     yield chunk.text
             return
         except Exception as e:
-            print(f"[LLM Gemini Native Stream Error]: {e}")
+            logger.warning("Gemini Native Stream Error: %s", e)
             base_url = "https://generativelanguage.googleapis.com/v1beta/openai/"
 
     try:
@@ -181,7 +185,7 @@ def stream_call_llm(prompt: str, system_instruction: str = "") -> Generator[str,
             if chunk.choices and chunk.choices[0].delta and chunk.choices[0].delta.content:
                 yield chunk.choices[0].delta.content
     except Exception as e:
-        print(f"[LLM Universal Stream Error ({model})]: {e}")
+        logger.warning("LLM Universal Stream Error (%s): %s", model, e)
 
 
 
