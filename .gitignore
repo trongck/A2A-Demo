@@ -1,0 +1,13 @@
+# Environment
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+
+# SQLite runtime
+data/*.sqlite
+data/*.sqlite-shm
+data/*.sqlite-wal

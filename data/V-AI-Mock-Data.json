@@ -1,0 +1,1259 @@
+{
+  "schema_version": "2.0",
+  "data_mode": "mock",
+  "timezone": "Asia/Ho_Chi_Minh",
+  "simulation_now": "2026-09-18T14:00:00+07:00",
+  "config": {
+    "freshness_seconds": 180,
+    "crowd_thresholds": {
+      "low_lt": 0.4,
+      "medium_lt": 0.7,
+      "high_lt": 1.0
+    }
+  },
+  "attractions": [
+    {
+      "service_id": "poi_01",
+      "name": "Thủy cung Sea World",
+      "zone_id": "zone_sea",
+      "category": "exhibit",
+      "description": "Bản ghi VinWonders Nha Trang dùng cho demo; toàn bộ tham số vận hành được giả lập.",
+      "indoor": true,
+      "location": {
+        "map_id": "vinwonders_nha_trang_mock_map",
+        "node_id": "poi_01",
+        "x_m": 240,
+        "y_m": 0
+      },
+      "schedule": {
+        "mode": "walk_in",
+        "open_at": "2026-09-18T09:00:00+07:00",
+        "close_at": "2026-09-18T18:00:00+07:00",
+        "visit_duration_minutes": 30,
+        "session_start_times": [],
+        "check_in_buffer_minutes": 0
+      },
+      "eligibility": {
+        "min_age_years": 0,
+        "min_height_cm": 0,
+        "max_height_cm": null,
+        "adult_required_under_age_years": null,
+        "max_weight_exclusive_kg": null
+      },
+      "crowd_reference": {
+        "area_id": "count_poi_01",
+        "counting_scope": "whole_service_including_queue",
+        "area_m2": 500,
+        "comfort_capacity_people": 200
+      },
+      "thrill_level": "low",
+      "tags": [
+        "family"
+      ],
+      "pricing": {
+        "currency": "VND",
+        "price_per_person_vnd": 0,
+        "included_in_demo_ticket": true
+      }
+    },
+    {
+      "service_id": "poi_02",
+      "name": "Rạp Phim Bay",
+      "zone_id": "zone_sea",
+      "category": "ride",
+      "description": "Bản ghi VinWonders Nha Trang dùng cho demo; toàn bộ tham số vận hành được giả lập.",
+      "indoor": true,
+      "location": {
+        "map_id": "vinwonders_nha_trang_mock_map",
+        "node_id": "poi_02",
+        "x_m": 560,
+        "y_m": 0
+      },
+      "schedule": {
+        "mode": "walk_in",
+        "open_at": "2026-09-18T09:00:00+07:00",
+        "close_at": "2026-09-18T18:00:00+07:00",
+        "visit_duration_minutes": 15,
+        "session_start_times": [],
+        "check_in_buffer_minutes": 0
+      },
+      "eligibility": {
+        "min_age_years": 0,
+        "min_height_cm": 100,
+        "max_height_cm": null,
+        "adult_required_under_age_years": 12,
+        "max_weight_exclusive_kg": null
+      },
+      "crowd_reference": {
+        "area_id": "count_poi_02",
+        "counting_scope": "whole_service_including_queue",
+        "area_m2": 300,
+        "comfort_capacity_people": 150
+      },
+      "thrill_level": "moderate",
+      "tags": [
+        "family"
+      ],
+      "pricing": {
+        "currency": "VND",
+        "price_per_person_vnd": 0,
+        "included_in_demo_ticket": true
+      }
+    },
+    {
+      "service_id": "poi_03",
+      "name": "Alpine Coaster",
+      "zone_id": "zone_fairy_land",
+      "category": "ride",
+      "description": "Bản ghi VinWonders Nha Trang dùng cho demo; toàn bộ tham số vận hành được giả lập.",
+      "indoor": false,
+      "location": {
+        "map_id": "vinwonders_nha_trang_mock_map",
+        "node_id": "poi_03",
+        "x_m": 800,
+        "y_m": 240
+      },
+      "schedule": {
+        "mode": "walk_in",
+        "open_at": "2026-09-18T09:00:00+07:00",
+        "close_at": "2026-09-18T18:00:00+07:00",
+        "visit_duration_minutes": 10,
+        "session_start_times": [],
+        "check_in_buffer_minutes": 0
+      },
+      "eligibility": {
+        "min_age_years": 0,
+        "min_height_cm": 100,
+        "max_height_cm": null,
+        "adult_required_under_age_years": 12,
+        "max_weight_exclusive_kg": null
+      },
+      "crowd_reference": {
+        "area_id": "count_poi_03",
+        "counting_scope": "whole_service_including_queue",
+        "area_m2": 300,
+        "comfort_capacity_people": 120
+      },
+      "thrill_level": "moderate",
+      "tags": [
+        "family"
+      ],
+      "pricing": {
+        "currency": "VND",
+        "price_per_person_vnd": 0,
+        "included_in_demo_ticket": true
+      }
+    },
+    {
+      "service_id": "poi_04",
+      "name": "Tata Show",
+      "zone_id": "zone_fairy_land",
+      "category": "show",
+      "description": "Bản ghi VinWonders Nha Trang dùng cho demo; toàn bộ tham số vận hành được giả lập.",
+      "indoor": false,
+      "location": {
+        "map_id": "vinwonders_nha_trang_mock_map",
+        "node_id": "poi_04",
+        "x_m": 640,
+        "y_m": 400
+      },
+      "schedule": {
+        "mode": "scheduled",
+        "open_at": "2026-09-18T19:00:00+07:00",
+        "close_at": "2026-09-18T20:30:00+07:00",
+        "visit_duration_minutes": 40,
+        "session_start_times": [
+          "2026-09-18T19:30:00+07:00"
+        ],
+        "check_in_buffer_minutes": 5
+      },
+      "eligibility": {
+        "min_age_years": 0,
+        "min_height_cm": 0,
+        "max_height_cm": null,
+        "adult_required_under_age_years": null,
+        "max_weight_exclusive_kg": null
+      },
+      "crowd_reference": {
+        "area_id": "count_poi_04",
+        "counting_scope": "whole_service_including_queue",
+        "area_m2": 1800,
+        "comfort_capacity_people": 1000
+      },
+      "thrill_level": "low",
+      "tags": [
+        "family"
+      ],
+      "pricing": {
+        "currency": "VND",
+        "price_per_person_vnd": 0,
+        "included_in_demo_ticket": true
+      }
+    },
+    {
+      "service_id": "poi_05",
+      "name": "The World Garden",
+      "zone_id": "zone_world_garden",
+      "category": "exhibit",
+      "description": "Bản ghi VinWonders Nha Trang dùng cho demo; toàn bộ tham số vận hành được giả lập.",
+      "indoor": false,
+      "location": {
+        "map_id": "vinwonders_nha_trang_mock_map",
+        "node_id": "poi_05",
+        "x_m": 240,
+        "y_m": 640
+      },
+      "schedule": {
+        "mode": "walk_in",
+        "open_at": "2026-09-18T09:00:00+07:00",
+        "close_at": "2026-09-18T18:00:00+07:00",
+        "visit_duration_minutes": 20,
+        "session_start_times": [],
+        "check_in_buffer_minutes": 0
+      },
+      "eligibility": {
+        "min_age_years": 0,
+        "min_height_cm": 0,
+        "max_height_cm": null,
+        "adult_required_under_age_years": null,
+        "max_weight_exclusive_kg": null
+      },
+      "crowd_reference": {
+        "area_id": "count_poi_05",
+        "counting_scope": "whole_service_including_queue",
+        "area_m2": 1200,
+        "comfort_capacity_people": 300
+      },
+      "thrill_level": "low",
+      "tags": [
+        "family"
+      ],
+      "pricing": {
+        "currency": "VND",
+        "price_per_person_vnd": 0,
+        "included_in_demo_ticket": true
+      }
+    },
+    {
+      "service_id": "poi_06",
+      "name": "Zipline",
+      "zone_id": "zone_fairy_land",
+      "category": "ride",
+      "description": "Bản ghi VinWonders Nha Trang dùng cho demo; toàn bộ tham số vận hành được giả lập.",
+      "indoor": false,
+      "location": {
+        "map_id": "vinwonders_nha_trang_mock_map",
+        "node_id": "poi_06",
+        "x_m": 640,
+        "y_m": 560
+      },
+      "schedule": {
+        "mode": "walk_in",
+        "open_at": "2026-09-18T09:00:00+07:00",
+        "close_at": "2026-09-18T18:00:00+07:00",
+        "visit_duration_minutes": 20,
+        "session_start_times": [],
+        "check_in_buffer_minutes": 0
+      },
+      "eligibility": {
+        "min_age_years": 0,
+        "min_height_cm": 130,
+        "max_height_cm": null,
+        "adult_required_under_age_years": null,
+        "max_weight_exclusive_kg": 110
+      },
+      "crowd_reference": {
+        "area_id": "count_poi_06",
+        "counting_scope": "whole_service_including_queue",
+        "area_m2": 350,
+        "comfort_capacity_people": 100
+      },
+      "thrill_level": "high",
+      "tags": [
+        "adventure"
+      ],
+      "pricing": {
+        "currency": "VND",
+        "price_per_person_vnd": 0,
+        "included_in_demo_ticket": true
+      }
+    },
+    {
+      "service_id": "poi_07",
+      "name": "Tata River Adventure",
+      "zone_id": "zone_fairy_land",
+      "category": "ride",
+      "description": "Bản ghi VinWonders Nha Trang dùng cho demo; toàn bộ tham số vận hành được giả lập.",
+      "indoor": false,
+      "location": {
+        "map_id": "vinwonders_nha_trang_mock_map",
+        "node_id": "poi_07",
+        "x_m": 640,
+        "y_m": 480
+      },
+      "schedule": {
+        "mode": "walk_in",
+        "open_at": "2026-09-18T09:00:00+07:00",
+        "close_at": "2026-09-18T18:00:00+07:00",
+        "visit_duration_minutes": 12,
+        "session_start_times": [],
+        "check_in_buffer_minutes": 0
+      },
+      "eligibility": {
+        "min_age_years": 0,
+        "min_height_cm": 105,
+        "max_height_cm": null,
+        "adult_required_under_age_years": 12,
+        "max_weight_exclusive_kg": null
+      },
+      "crowd_reference": {
+        "area_id": "count_poi_07",
+        "counting_scope": "whole_service_including_queue",
+        "area_m2": 450,
+        "comfort_capacity_people": 180
+      },
+      "thrill_level": "moderate",
+      "tags": [
+        "family"
+      ],
+      "pricing": {
+        "currency": "VND",
+        "price_per_person_vnd": 0,
+        "included_in_demo_ticket": true
+      }
+    },
+    {
+      "service_id": "poi_08",
+      "name": "Chuyến phiêu lưu hầm mỏ",
+      "zone_id": "zone_festive_hill",
+      "category": "ride",
+      "description": "Bản ghi VinWonders Nha Trang dùng cho demo; toàn bộ tham số vận hành được giả lập.",
+      "indoor": false,
+      "location": {
+        "map_id": "vinwonders_nha_trang_mock_map",
+        "node_id": "poi_08",
+        "x_m": 1120,
+        "y_m": 240
+      },
+      "schedule": {
+        "mode": "walk_in",
+        "open_at": "2026-09-18T09:00:00+07:00",
+        "close_at": "2026-09-18T18:00:00+07:00",
+        "visit_duration_minutes": 8,
+        "session_start_times": [],
+        "check_in_buffer_minutes": 0
+      },
+      "eligibility": {
+        "min_age_years": 0,
+        "min_height_cm": 110,
+        "max_height_cm": null,
+        "adult_required_under_age_years": 12,
+        "max_weight_exclusive_kg": null
+      },
+      "crowd_reference": {
+        "area_id": "count_poi_08",
+        "counting_scope": "whole_service_including_queue",
+        "area_m2": 400,
+        "comfort_capacity_people": 160
+      },
+      "thrill_level": "moderate",
+      "tags": [
+        "family"
+      ],
+      "pricing": {
+        "currency": "VND",
+        "price_per_person_vnd": 0,
+        "included_in_demo_ticket": true
+      }
+    },
+    {
+      "service_id": "poi_09",
+      "name": "Cú Lật Sấm Sét",
+      "zone_id": "zone_festive_hill",
+      "category": "ride",
+      "description": "Bản ghi VinWonders Nha Trang dùng cho demo; toàn bộ tham số vận hành được giả lập.",
+      "indoor": false,
+      "location": {
+        "map_id": "vinwonders_nha_trang_mock_map",
+        "node_id": "poi_09",
+        "x_m": 960,
+        "y_m": 400
+      },
+      "schedule": {
+        "mode": "walk_in",
+        "open_at": "2026-09-18T09:00:00+07:00",
+        "close_at": "2026-09-18T18:00:00+07:00",
+        "visit_duration_minutes": 6,
+        "session_start_times": [],
+        "check_in_buffer_minutes": 0
+      },
+      "eligibility": {
+        "min_age_years": 0,
+        "min_height_cm": 120,
+        "max_height_cm": null,
+        "adult_required_under_age_years": null,
+        "max_weight_exclusive_kg": null
+      },
+      "crowd_reference": {
+        "area_id": "count_poi_09",
+        "counting_scope": "whole_service_including_queue",
+        "area_m2": 250,
+        "comfort_capacity_people": 100
+      },
+      "thrill_level": "high",
+      "tags": [
+        "adventure"
+      ],
+      "pricing": {
+        "currency": "VND",
+        "price_per_person_vnd": 0,
+        "included_in_demo_ticket": true
+      }
+    },
+    {
+      "service_id": "poi_10",
+      "name": "Cụm đường trượt cảm giác mạnh CVN",
+      "zone_id": "zone_water",
+      "category": "ride",
+      "description": "Bản ghi VinWonders Nha Trang dùng cho demo; toàn bộ tham số vận hành được giả lập.",
+      "indoor": false,
+      "location": {
+        "map_id": "vinwonders_nha_trang_mock_map",
+        "node_id": "poi_10",
+        "x_m": 240,
+        "y_m": 800
+      },
+      "schedule": {
+        "mode": "walk_in",
+        "open_at": "2026-09-18T09:00:00+07:00",
+        "close_at": "2026-09-18T18:00:00+07:00",
+        "visit_duration_minutes": 25,
+        "session_start_times": [],
+        "check_in_buffer_minutes": 0
+      },
+      "eligibility": {
+        "min_age_years": 0,
+        "min_height_cm": 130,
+        "max_height_cm": null,
+        "adult_required_under_age_years": null,
+        "max_weight_exclusive_kg": 100
+      },
+      "crowd_reference": {
+        "area_id": "count_poi_10",
+        "counting_scope": "whole_service_including_queue",
+        "area_m2": 1000,
+        "comfort_capacity_people": 240
+      },
+      "thrill_level": "high",
+      "tags": [
+        "adventure"
+      ],
+      "pricing": {
+        "currency": "VND",
+        "price_per_person_vnd": 0,
+        "included_in_demo_ticket": true
+      }
+    },
+    {
+      "service_id": "poi_11",
+      "name": "Nhà hàng Wind & Sea",
+      "zone_id": "zone_fairy_land",
+      "category": "restaurant",
+      "description": "Bản ghi VinWonders Nha Trang dùng cho demo; toàn bộ tham số vận hành được giả lập.",
+      "indoor": true,
+      "location": {
+        "map_id": "vinwonders_nha_trang_mock_map",
+        "node_id": "poi_11",
+        "x_m": 720,
+        "y_m": 240
+      },
+      "schedule": {
+        "mode": "walk_in",
+        "open_at": "2026-09-18T09:00:00+07:00",
+        "close_at": "2026-09-18T18:00:00+07:00",
+        "visit_duration_minutes": 30,
+        "session_start_times": [],
+        "check_in_buffer_minutes": 0
+      },
+      "eligibility": {
+        "min_age_years": 0,
+        "min_height_cm": 0,
+        "max_height_cm": null,
+        "adult_required_under_age_years": null,
+        "max_weight_exclusive_kg": null
+      },
+      "crowd_reference": {
+        "area_id": "count_poi_11",
+        "counting_scope": "whole_service_including_queue",
+        "area_m2": 300,
+        "comfort_capacity_people": 120
+      },
+      "thrill_level": "none",
+      "tags": [
+        "family"
+      ],
+      "pricing": {
+        "currency": "VND",
+        "price_per_person_vnd": 70000,
+        "included_in_demo_ticket": false
+      }
+    },
+    {
+      "service_id": "poi_12",
+      "name": "Yummy World Garden",
+      "zone_id": "zone_world_garden",
+      "category": "restaurant",
+      "description": "Bản ghi VinWonders Nha Trang dùng cho demo; toàn bộ tham số vận hành được giả lập.",
+      "indoor": true,
+      "location": {
+        "map_id": "vinwonders_nha_trang_mock_map",
+        "node_id": "poi_12",
+        "x_m": 320,
+        "y_m": 480
+      },
+      "schedule": {
+        "mode": "walk_in",
+        "open_at": "2026-09-18T09:00:00+07:00",
+        "close_at": "2026-09-18T18:00:00+07:00",
+        "visit_duration_minutes": 20,
+        "session_start_times": [],
+        "check_in_buffer_minutes": 0
+      },
+      "eligibility": {
+        "min_age_years": 0,
+        "min_height_cm": 0,
+        "max_height_cm": null,
+        "adult_required_under_age_years": null,
+        "max_weight_exclusive_kg": null
+      },
+      "crowd_reference": {
+        "area_id": "count_poi_12",
+        "counting_scope": "whole_service_including_queue",
+        "area_m2": 250,
+        "comfort_capacity_people": 100
+      },
+      "thrill_level": "none",
+      "tags": [
+        "family"
+      ],
+      "pricing": {
+        "currency": "VND",
+        "price_per_person_vnd": 40000,
+        "included_in_demo_ticket": false
+      }
+    }
+  ],
+  "crowd_snapshots": [
+    {
+      "snapshot_id": "base_poi_01",
+      "service_id": "poi_01",
+      "area_id": "count_poi_01",
+      "operating_status": "open",
+      "status_reason": null,
+      "observed_at": "2026-09-18T13:59:00+07:00",
+      "source": "mock",
+      "data_quality": "valid",
+      "current_people": 60,
+      "queue_people": 12,
+      "wait_minutes": 5,
+      "wait_basis": "estimated"
+    },
+    {
+      "snapshot_id": "base_poi_02",
+      "service_id": "poi_02",
+      "area_id": "count_poi_02",
+      "operating_status": "open",
+      "status_reason": null,
+      "observed_at": "2026-09-18T13:59:00+07:00",
+      "source": "mock",
+      "data_quality": "valid",
+      "current_people": 60,
+      "queue_people": 15,
+      "wait_minutes": 8,
+      "wait_basis": "estimated"
+    },
+    {
+      "snapshot_id": "base_poi_03",
+      "service_id": "poi_03",
+      "area_id": "count_poi_03",
+      "operating_status": "open",
+      "status_reason": null,
+      "observed_at": "2026-09-18T13:59:00+07:00",
+      "source": "mock",
+      "data_quality": "valid",
+      "current_people": 72,
+      "queue_people": 30,
+      "wait_minutes": 15,
+      "wait_basis": "estimated"
+    },
+    {
+      "snapshot_id": "base_poi_04",
+      "service_id": "poi_04",
+      "area_id": "count_poi_04",
+      "operating_status": "closed",
+      "status_reason": "outside_mock_operating_window",
+      "observed_at": "2026-09-18T13:59:00+07:00",
+      "source": "mock",
+      "data_quality": "valid",
+      "current_people": 0,
+      "queue_people": 0,
+      "wait_minutes": null,
+      "wait_basis": "not_applicable"
+    },
+    {
+      "snapshot_id": "base_poi_05",
+      "service_id": "poi_05",
+      "area_id": "count_poi_05",
+      "operating_status": "open",
+      "status_reason": null,
+      "observed_at": "2026-09-18T13:59:00+07:00",
+      "source": "mock",
+      "data_quality": "valid",
+      "current_people": 60,
+      "queue_people": 0,
+      "wait_minutes": 0,
+      "wait_basis": "estimated"
+    },
+    {
+      "snapshot_id": "base_poi_06",
+      "service_id": "poi_06",
+      "area_id": "count_poi_06",
+      "operating_status": "open",
+      "status_reason": null,
+      "observed_at": "2026-09-18T13:59:00+07:00",
+      "source": "mock",
+      "data_quality": "valid",
+      "current_people": 25,
+      "queue_people": 8,
+      "wait_minutes": 10,
+      "wait_basis": "estimated"
+    },
+    {
+      "snapshot_id": "base_poi_07",
+      "service_id": "poi_07",
+      "area_id": "count_poi_07",
+      "operating_status": "open",
+      "status_reason": null,
+      "observed_at": "2026-09-18T13:59:00+07:00",
+      "source": "mock",
+      "data_quality": "valid",
+      "current_people": 81,
+      "queue_people": 25,
+      "wait_minutes": 10,
+      "wait_basis": "estimated"
+    },
+    {
+      "snapshot_id": "base_poi_08",
+      "service_id": "poi_08",
+      "area_id": "count_poi_08",
+      "operating_status": "open",
+      "status_reason": null,
+      "observed_at": "2026-09-18T13:59:00+07:00",
+      "source": "mock",
+      "data_quality": "valid",
+      "current_people": 104,
+      "queue_people": 35,
+      "wait_minutes": 18,
+      "wait_basis": "estimated"
+    },
+    {
+      "snapshot_id": "base_poi_09",
+      "service_id": "poi_09",
+      "area_id": "count_poi_09",
+      "operating_status": "maintenance",
+      "status_reason": "demo_maintenance",
+      "observed_at": "2026-09-18T13:59:00+07:00",
+      "source": "mock",
+      "data_quality": "unavailable",
+      "current_people": null,
+      "queue_people": null,
+      "wait_minutes": null,
+      "wait_basis": "unknown"
+    },
+    {
+      "snapshot_id": "base_poi_10",
+      "service_id": "poi_10",
+      "area_id": "count_poi_10",
+      "operating_status": "open",
+      "status_reason": null,
+      "observed_at": "2026-09-18T13:40:00+07:00",
+      "source": "mock",
+      "data_quality": "valid",
+      "current_people": 180,
+      "queue_people": 45,
+      "wait_minutes": 25,
+      "wait_basis": "estimated"
+    },
+    {
+      "snapshot_id": "base_poi_11",
+      "service_id": "poi_11",
+      "area_id": "count_poi_11",
+      "operating_status": "open",
+      "status_reason": null,
+      "observed_at": "2026-09-18T13:59:00+07:00",
+      "source": "mock",
+      "data_quality": "valid",
+      "current_people": 36,
+      "queue_people": 4,
+      "wait_minutes": 5,
+      "wait_basis": "estimated"
+    },
+    {
+      "snapshot_id": "base_poi_12",
+      "service_id": "poi_12",
+      "area_id": "count_poi_12",
+      "operating_status": "open",
+      "status_reason": null,
+      "observed_at": "2026-09-18T13:59:00+07:00",
+      "source": "mock",
+      "data_quality": "valid",
+      "current_people": 20,
+      "queue_people": 0,
+      "wait_minutes": 0,
+      "wait_basis": "estimated"
+    }
+  ],
+  "park": {
+    "park_id": "vinwonders_nha_trang",
+    "name": "VinWonders Nha Trang",
+    "opening_window": {
+      "open_at": "2026-09-18T08:30:00+07:00",
+      "close_at": "2026-09-18T21:00:00+07:00"
+    }
+  },
+  "data_notice": {
+    "verified_fields": [
+      "park.name",
+      "attractions.name",
+      "attractions.zone_id"
+    ],
+    "simulated_fields": [
+      "park.opening_window",
+      "config",
+      "simulation",
+      "attractions.category",
+      "attractions.indoor",
+      "attractions.location",
+      "attractions.schedule",
+      "attractions.eligibility",
+      "attractions.pricing",
+      "attractions.thrill_level",
+      "attractions.tags",
+      "attractions.crowd_reference",
+      "crowd_snapshots",
+      "routing",
+      "environment",
+      "demo_requests",
+      "test_scenarios"
+    ],
+    "message": "Tên điểm và phân khu tham khảo nguồn chính thức. Toàn bộ thông số dùng để vận hành demo là giả lập, bao gồm tọa độ, lịch giờ, điều kiện tham gia, sức chứa, số khách và thời gian chờ. Không dùng để hướng dẫn tham quan thực tế."
+  },
+  "reference_sources": [
+    {
+      "source_id": "vinwonders_overview",
+      "url": "https://vinwonders.com/vi/vinwonders-nha-trang/",
+      "used_for": "Tên công viên, Thủy cung Sea World, Tata Show, The World Garden, nhà hàng Wind & Sea, Yummy World Garden và phân khu."
+    },
+    {
+      "source_id": "vinwonders_games",
+      "url": "https://vinwonders.com/vi/wonderpedia/news/quy-dinh-tro-choi-vinwonders-nha-trang/",
+      "used_for": "Tên và phân khu trò chơi, gồm Rạp Phim Bay, Alpine Coaster, Zipline, Tata River Adventure, Chuyến phiêu lưu hầm mỏ, Cú Lật Sấm Sét và cụm đường trượt CVN. Không coi quy định mock là quy định thật."
+    }
+  ],
+  "zones": [
+    {
+      "zone_id": "zone_sea",
+      "name": "Sea World"
+    },
+    {
+      "zone_id": "zone_fairy_land",
+      "name": "Fairy Land"
+    },
+    {
+      "zone_id": "zone_world_garden",
+      "name": "The World Garden"
+    },
+    {
+      "zone_id": "zone_festive_hill",
+      "name": "Đồi Lễ Hội"
+    },
+    {
+      "zone_id": "zone_water",
+      "name": "Tropical Paradise"
+    }
+  ],
+  "simulation": {
+    "clock_mode": "frozen",
+    "planning_horizon_minutes": 120,
+    "future_wait_policy": "carry_current_estimate_for_demo_only",
+    "refresh_before_execution": true,
+    "note": "Dùng simulation_now khi kiểm tra độ mới. Thời gian chờ trong lịch tương lai là giả định giữ nguyên snapshot cho demo, không phải dự báo. Nếu tiến đồng hồ, cần cập nhật snapshot hoặc báo stale."
+  },
+  "routing": {
+    "source": "mock_walkway_graph",
+    "map_id": "vinwonders_nha_trang_mock_map",
+    "weight_field": "walking_minutes",
+    "note": "Dùng đường đi ngắn nhất trên edges. Tọa độ chỉ để vẽ; không thay graph bằng khoảng cách đường thẳng. Cạnh 0 phút nối hai node cùng một vị trí.",
+    "nodes": [
+      {
+        "node_id": "start_sea_hub",
+        "name": "Điểm xuất phát Sea World (mock)",
+        "x_m": 0,
+        "y_m": 0
+      },
+      {
+        "node_id": "junction_sea",
+        "name": "junction_sea",
+        "x_m": 240,
+        "y_m": 0
+      },
+      {
+        "node_id": "junction_east",
+        "name": "junction_east",
+        "x_m": 560,
+        "y_m": 0
+      },
+      {
+        "node_id": "junction_central",
+        "name": "junction_central",
+        "x_m": 240,
+        "y_m": 240
+      },
+      {
+        "node_id": "junction_fairy",
+        "name": "junction_fairy",
+        "x_m": 640,
+        "y_m": 240
+      },
+      {
+        "node_id": "junction_garden",
+        "name": "junction_garden",
+        "x_m": 240,
+        "y_m": 480
+      },
+      {
+        "node_id": "junction_festive",
+        "name": "junction_festive",
+        "x_m": 960,
+        "y_m": 240
+      },
+      {
+        "node_id": "junction_water",
+        "name": "junction_water",
+        "x_m": 240,
+        "y_m": 640
+      },
+      {
+        "node_id": "poi_01",
+        "name": "Thủy cung Sea World",
+        "x_m": 240,
+        "y_m": 0
+      },
+      {
+        "node_id": "poi_02",
+        "name": "Rạp Phim Bay",
+        "x_m": 560,
+        "y_m": 0
+      },
+      {
+        "node_id": "poi_03",
+        "name": "Alpine Coaster",
+        "x_m": 800,
+        "y_m": 240
+      },
+      {
+        "node_id": "poi_04",
+        "name": "Tata Show",
+        "x_m": 640,
+        "y_m": 400
+      },
+      {
+        "node_id": "poi_05",
+        "name": "The World Garden",
+        "x_m": 240,
+        "y_m": 640
+      },
+      {
+        "node_id": "poi_06",
+        "name": "Zipline",
+        "x_m": 640,
+        "y_m": 560
+      },
+      {
+        "node_id": "poi_07",
+        "name": "Tata River Adventure",
+        "x_m": 640,
+        "y_m": 480
+      },
+      {
+        "node_id": "poi_08",
+        "name": "Chuyến phiêu lưu hầm mỏ",
+        "x_m": 1120,
+        "y_m": 240
+      },
+      {
+        "node_id": "poi_09",
+        "name": "Cú Lật Sấm Sét",
+        "x_m": 960,
+        "y_m": 400
+      },
+      {
+        "node_id": "poi_10",
+        "name": "Cụm đường trượt cảm giác mạnh CVN",
+        "x_m": 240,
+        "y_m": 800
+      },
+      {
+        "node_id": "poi_11",
+        "name": "Nhà hàng Wind & Sea",
+        "x_m": 720,
+        "y_m": 240
+      },
+      {
+        "node_id": "poi_12",
+        "name": "Yummy World Garden",
+        "x_m": 320,
+        "y_m": 480
+      }
+    ],
+    "edges": [
+      {
+        "edge_id": "walk_1",
+        "from_node_id": "start_sea_hub",
+        "to_node_id": "junction_sea",
+        "distance_m": 240,
+        "walking_minutes": 3,
+        "bidirectional": true,
+        "is_open": true
+      },
+      {
+        "edge_id": "walk_2",
+        "from_node_id": "junction_sea",
+        "to_node_id": "poi_01",
+        "distance_m": 0,
+        "walking_minutes": 0,
+        "bidirectional": true,
+        "is_open": true
+      },
+      {
+        "edge_id": "walk_3",
+        "from_node_id": "junction_sea",
+        "to_node_id": "junction_east",
+        "distance_m": 320,
+        "walking_minutes": 4,
+        "bidirectional": true,
+        "is_open": true
+      },
+      {
+        "edge_id": "walk_4",
+        "from_node_id": "junction_east",
+        "to_node_id": "poi_02",
+        "distance_m": 0,
+        "walking_minutes": 0,
+        "bidirectional": true,
+        "is_open": true
+      },
+      {
+        "edge_id": "walk_5",
+        "from_node_id": "junction_sea",
+        "to_node_id": "junction_central",
+        "distance_m": 240,
+        "walking_minutes": 3,
+        "bidirectional": true,
+        "is_open": true
+      },
+      {
+        "edge_id": "walk_6",
+        "from_node_id": "junction_central",
+        "to_node_id": "junction_fairy",
+        "distance_m": 400,
+        "walking_minutes": 5,
+        "bidirectional": true,
+        "is_open": true
+      },
+      {
+        "edge_id": "walk_7",
+        "from_node_id": "junction_central",
+        "to_node_id": "junction_garden",
+        "distance_m": 240,
+        "walking_minutes": 3,
+        "bidirectional": true,
+        "is_open": true
+      },
+      {
+        "edge_id": "walk_8",
+        "from_node_id": "junction_fairy",
+        "to_node_id": "junction_festive",
+        "distance_m": 320,
+        "walking_minutes": 4,
+        "bidirectional": true,
+        "is_open": true
+      },
+      {
+        "edge_id": "walk_9",
+        "from_node_id": "junction_central",
+        "to_node_id": "junction_water",
+        "distance_m": 400,
+        "walking_minutes": 5,
+        "bidirectional": true,
+        "is_open": true
+      },
+      {
+        "edge_id": "walk_10",
+        "from_node_id": "junction_fairy",
+        "to_node_id": "poi_03",
+        "distance_m": 160,
+        "walking_minutes": 2,
+        "bidirectional": true,
+        "is_open": true
+      },
+      {
+        "edge_id": "walk_11",
+        "from_node_id": "junction_fairy",
+        "to_node_id": "poi_04",
+        "distance_m": 160,
+        "walking_minutes": 2,
+        "bidirectional": true,
+        "is_open": true
+      },
+      {
+        "edge_id": "walk_12",
+        "from_node_id": "junction_garden",
+        "to_node_id": "poi_05",
+        "distance_m": 160,
+        "walking_minutes": 2,
+        "bidirectional": true,
+        "is_open": true
+      },
+      {
+        "edge_id": "walk_13",
+        "from_node_id": "junction_fairy",
+        "to_node_id": "poi_06",
+        "distance_m": 320,
+        "walking_minutes": 4,
+        "bidirectional": true,
+        "is_open": true
+      },
+      {
+        "edge_id": "walk_14",
+        "from_node_id": "junction_fairy",
+        "to_node_id": "poi_07",
+        "distance_m": 240,
+        "walking_minutes": 3,
+        "bidirectional": true,
+        "is_open": true
+      },
+      {
+        "edge_id": "walk_15",
+        "from_node_id": "junction_festive",
+        "to_node_id": "poi_08",
+        "distance_m": 160,
+        "walking_minutes": 2,
+        "bidirectional": true,
+        "is_open": true
+      },
+      {
+        "edge_id": "walk_16",
+        "from_node_id": "junction_festive",
+        "to_node_id": "poi_09",
+        "distance_m": 160,
+        "walking_minutes": 2,
+        "bidirectional": true,
+        "is_open": true
+      },
+      {
+        "edge_id": "walk_17",
+        "from_node_id": "junction_water",
+        "to_node_id": "poi_10",
+        "distance_m": 160,
+        "walking_minutes": 2,
+        "bidirectional": true,
+        "is_open": true
+      },
+      {
+        "edge_id": "walk_18",
+        "from_node_id": "junction_fairy",
+        "to_node_id": "poi_11",
+        "distance_m": 80,
+        "walking_minutes": 1,
+        "bidirectional": true,
+        "is_open": true
+      },
+      {
+        "edge_id": "walk_19",
+        "from_node_id": "junction_garden",
+        "to_node_id": "poi_12",
+        "distance_m": 80,
+        "walking_minutes": 1,
+        "bidirectional": true,
+        "is_open": true
+      }
+    ]
+  },
+  "environment": {
+    "source": "mock",
+    "forecast_issued_at": "2026-09-18T13:59:00+07:00",
+    "weather_windows": [
+      {
+        "start_at": "2026-09-18T14:00:00+07:00",
+        "end_at": "2026-09-18T16:00:00+07:00",
+        "condition": "clear",
+        "outdoor_allowed": true
+      }
+    ]
+  },
+  "demo_requests": [
+    {
+      "request_id": "family_two_plans",
+      "session_id": "demo_family_001",
+      "message": "Gia đình tôi có 2 người lớn và bé 10 tuổi cao 125 cm. Từ Sea World, hãy đề xuất 2 lịch khác nhau trong 2 tiếng: một lịch nhẹ nhàng và một lịch nhiều trò chơi hơn. Quay lại điểm xuất phát trước 16 giờ và chừa 10 phút dự phòng.",
+      "start_at": "2026-09-18T14:00:00+07:00",
+      "end_by": "2026-09-18T16:00:00+07:00",
+      "start_node_id": "start_sea_hub",
+      "end_node_id": "start_sea_hub",
+      "group_members": [
+        {
+          "member_id": "adult_1",
+          "age_years": 32,
+          "height_cm": 170,
+          "weight_kg": 65
+        },
+        {
+          "member_id": "adult_2",
+          "age_years": 30,
+          "height_cm": 160,
+          "weight_kg": 55
+        },
+        {
+          "member_id": "child_1",
+          "age_years": 10,
+          "height_cm": 125,
+          "weight_kg": 28
+        }
+      ],
+      "hard_constraints": {
+        "indoor_only": false,
+        "max_thrill_level": "moderate",
+        "max_wait_minutes_per_stop": 20,
+        "budget_vnd_total": 150000,
+        "min_end_buffer_minutes": 10,
+        "allow_unknown_crowd": false,
+        "excluded_service_ids": [],
+        "min_activity_count": 3
+      },
+      "preferences": {
+        "prioritize_low_crowd": true,
+        "meal_required": false,
+        "plan_styles": [
+          "gentle",
+          "more_rides"
+        ]
+      },
+      "number_of_plans": 2,
+      "alternative_rule": {
+        "minimum_different_service_ids": 1,
+        "comparison": "at least one selected service in each alternative differs; reordering alone does not count"
+      }
+    },
+    {
+      "request_id": "indoor_followup",
+      "session_id": "demo_indoor_001",
+      "message": "Chỉ chọn điểm trong nhà, vẫn còn 2 tiếng và cần quay lại Sea World.",
+      "start_at": "2026-09-18T14:00:00+07:00",
+      "end_by": "2026-09-18T16:00:00+07:00",
+      "start_node_id": "start_sea_hub",
+      "end_node_id": "start_sea_hub",
+      "group_members": [
+        {
+          "member_id": "adult_1",
+          "age_years": 32,
+          "height_cm": 170,
+          "weight_kg": 65
+        },
+        {
+          "member_id": "adult_2",
+          "age_years": 30,
+          "height_cm": 160,
+          "weight_kg": 55
+        },
+        {
+          "member_id": "child_1",
+          "age_years": 10,
+          "height_cm": 125,
+          "weight_kg": 28
+        }
+      ],
+      "hard_constraints": {
+        "indoor_only": true,
+        "max_thrill_level": "moderate",
+        "max_wait_minutes_per_stop": 20,
+        "budget_vnd_total": 150000,
+        "min_end_buffer_minutes": 10,
+        "allow_unknown_crowd": false,
+        "excluded_service_ids": [],
+        "min_activity_count": 2
+      },
+      "preferences": {
+        "prioritize_low_crowd": true,
+        "meal_required": false,
+        "plan_styles": [
+          "indoor"
+        ]
+      },
+      "number_of_plans": 1,
+      "alternative_rule": {
+        "minimum_different_service_ids": 1,
+        "comparison": "at least one selected service in each alternative differs; reordering alone does not count"
+      }
+    }
+  ],
+  "test_scenarios": [
+    {
+      "scenario_id": "base",
+      "description": "Dùng nguyên bộ dữ liệu. A2 → A1 tạo 2 phương án cho gia đình.",
+      "snapshot_overrides": []
+    },
+    {
+      "scenario_id": "aquarium_crowded",
+      "description": "Tăng thời gian chờ Thủy cung; A1 phải lập lại phương án, không dùng lịch mẫu cũ.",
+      "snapshot_overrides": [
+        {
+          "service_id": "poi_01",
+          "current_people": 190,
+          "queue_people": 70,
+          "wait_minutes": 35
+        }
+      ]
+    },
+    {
+      "scenario_id": "alpine_closed",
+      "description": "Giả lập Alpine Coaster ngừng đột xuất; không chọn điểm này.",
+      "snapshot_overrides": [
+        {
+          "service_id": "poi_03",
+          "operating_status": "temporarily_closed",
+          "status_reason": "demo_incident",
+          "current_people": null,
+          "queue_people": null,
+          "wait_minutes": null,
+          "wait_basis": "unknown",
+          "data_quality": "unavailable"
+        }
+      ]
+    },
+    {
+      "scenario_id": "missing_flying_cinema",
+      "description": "Rạp Phim Bay mất dữ liệu mật độ; không mặc định là vắng.",
+      "snapshot_overrides": [
+        {
+          "service_id": "poi_02",
+          "current_people": null,
+          "queue_people": null,
+          "wait_minutes": null,
+          "wait_basis": "unknown",
+          "data_quality": "unavailable"
+        }
+      ]
+    }
+  ]
+}
