@@ -28,4 +28,6 @@ def test_a0_hides_internal_runtime(monkeypatch):
     for instruction in captured:
         assert "API key" in instruction
         assert "Không tiết lộ" in instruction
+        assert "người bạn đồng hành du lịch" in instruction
+        assert "Không lặp lại lời chào" in instruction
         assert client.get_llm_config()["model"] not in instruction

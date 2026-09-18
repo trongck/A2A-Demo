@@ -28,6 +28,14 @@ PUBLIC_RESPONSE_POLICY = (
     "đó là thông tin cấu hình nội bộ và tiếp tục hỗ trợ nghiệp vụ VinWonders."
 )
 
+VAI_TRAVEL_PERSONA = (
+    "\nPhong cách thương hiệu bắt buộc: V-AI là người bạn đồng hành du lịch am hiểu, thân thiện, tinh tế và tràn đầy năng lượng tích cực. "
+    "Trả lời tự nhiên như một hướng dẫn viên địa phương đang trò chuyện trực tiếp; ưu tiên lợi ích và cảm xúc trải nghiệm của khách. "
+    "Đi thẳng vào nhu cầu, dùng câu ngắn, từ ngữ sinh động nhưng không phô trương; có thể dùng tối đa 1-2 emoji phù hợp, không lạm dụng. "
+    "Thể hiện sự thấu hiểu với gia đình có trẻ nhỏ, người lớn tuổi hoặc khách có giới hạn thời gian; đưa ra lựa chọn rõ ràng thay vì thúc ép. "
+    "Không lặp lại lời chào ở mọi lượt, không dùng giọng quảng cáo sáo rỗng, không bịa thông tin. Kết thúc bằng đúng một gợi ý hành động cụ thể để khách dễ tiếp tục."
+)
+
 
 def get_llm_config() -> dict[str, str]:
     """Đọc cấu hình LLM từ .env với khả năng thích ứng với mọi provider."""
@@ -278,7 +286,7 @@ def answer_general_chat_with_llm(
         "1. Trả lời câu hỏi của khách một cách tự nhiên, lịch thiệp và hữu ích bằng tiếng Việt.\n"
         "2. Khéo léo gợi ý: Nếu quý khách muốn tối ưu hóa chuyến tham quan không phải chờ đợi lâu, "
         "hãy chia sẻ thêm chiều cao của các bé và khung giờ dự kiến tham quan để V-AI thiết kế lộ trình riêng cho đoàn!"
-        + PUBLIC_RESPONSE_POLICY
+        + VAI_TRAVEL_PERSONA + PUBLIC_RESPONSE_POLICY
     )
 
     ctx_str = json.dumps(park_context, ensure_ascii=False) if park_context else "Công viên VinWonders Nha Trang, mở cửa 09:00 - 20:00 hằng ngày."
@@ -301,7 +309,7 @@ def generate_unfeasible_explanation_with_llm(
         "Dựa trên các ràng buộc an toàn, thời gian và mật độ thực tế, hiện hệ thống chưa tìm được lịch trình thỏa mãn 100% yêu cầu của khách.\n"
         "Hãy giải thích ngắn gọn, chân thành lý do vì sao chưa khả thi và đề xuất cụ thể 2-3 giải pháp thay thế "
         "(ví dụ: tăng thời gian chơi, nới lỏng thời gian chờ tối đa, hoặc cho phép trải nghiệm thêm các điểm ngoài trời)."
-        + PUBLIC_RESPONSE_POLICY
+        + VAI_TRAVEL_PERSONA + PUBLIC_RESPONSE_POLICY
     )
 
     prompt = (
@@ -328,7 +336,7 @@ def synthesize_chat_response_with_llm(
         "Hãy diễn đạt câu trả lời lịch thiệp, dễ hiểu, trình bày 2 phương án lịch trình "
         "(Phương án 1: Nhẹ nhàng, ít chờ; Phương án 2: Nhiều trò chơi trải nghiệm), "
         "nêu rõ lý do đề xuất, thời gian dự phòng trước 16:00 và gợi ý khách có thể tiếp tục chat để điều chỉnh."
-        + PUBLIC_RESPONSE_POLICY
+        + VAI_TRAVEL_PERSONA + PUBLIC_RESPONSE_POLICY
     )
 
     prompt = (
@@ -355,7 +363,7 @@ def generate_crowd_insight_with_llm(
         "1. Tình trạng chung về tải lưu lượng trong công viên. "
         "2. Cảnh báo cụ thể các điểm nóng có thời gian chờ cao hoặc quá tải (nếu có). "
         "3. Đề xuất nhóm điểm thông thoáng nên ưu tiên điều hướng khách tới."
-        + PUBLIC_RESPONSE_POLICY
+        + VAI_TRAVEL_PERSONA + PUBLIC_RESPONSE_POLICY
     )
 
     summary_items = [
@@ -395,7 +403,7 @@ def generate_plan_rationale_with_llm(
         "Hãy viết đoạn giải thích chiến lược ngắn gọn (2-3 câu) về lý do thiết kế lộ trình này: "
         "tại sao thứ tự này là tối ưu, sự an toàn và phù hợp cho các thành viên trong đoàn, "
         "và lợi thế về thời gian dự phòng để khách luôn thong thả quay về điểm đón."
-        + PUBLIC_RESPONSE_POLICY
+        + VAI_TRAVEL_PERSONA + PUBLIC_RESPONSE_POLICY
     )
 
     legs_summary = [
@@ -427,7 +435,7 @@ def generate_clarification_with_llm(
         "Bạn là V-AI - Hướng dẫn viên thông minh tại VinWonders. "
         "Khách gửi yêu cầu nhưng còn thiếu thông tin an toàn/lập lịch. "
         "Hãy phản hồi bằng tiếng Việt thật tự nhiên, thân thiện và hỏi khéo các thông tin cần thiết."
-        + PUBLIC_RESPONSE_POLICY
+        + VAI_TRAVEL_PERSONA + PUBLIC_RESPONSE_POLICY
     )
 
     prompt = (
@@ -455,7 +463,7 @@ def stream_answer_general_chat_with_llm(
         "1. Trả lời câu hỏi của khách một cách tự nhiên, lịch thiệp và hữu ích bằng tiếng Việt.\n"
         "2. Khéo léo gợi ý: Nếu quý khách muốn tối ưu hóa chuyến tham quan không phải chờ đợi lâu, "
         "hãy chia sẻ thêm chiều cao của các bé và khung giờ dự kiến tham quan để V-AI thiết kế lộ trình riêng cho đoàn!"
-        + PUBLIC_RESPONSE_POLICY
+        + VAI_TRAVEL_PERSONA + PUBLIC_RESPONSE_POLICY
     )
 
     ctx_str = json.dumps(park_context, ensure_ascii=False) if park_context else "Công viên VinWonders Nha Trang, mở cửa 09:00 - 20:00 hằng ngày."
@@ -476,7 +484,7 @@ def stream_generate_clarification_with_llm(
         "Khách gửi yêu cầu nhưng còn thiếu thông tin an toàn/lập lịch.\n"
         "Hãy phản hồi bằng tiếng Việt thật tự nhiên, thân thiện và hỏi khéo các thông tin cần thiết. "
         "Định dạng câu hỏi rõ ràng bằng Markdown (dùng danh sách gạch đầu dòng và in đậm thông tin quan trọng)."
-        + PUBLIC_RESPONSE_POLICY
+        + VAI_TRAVEL_PERSONA + PUBLIC_RESPONSE_POLICY
     )
     prompt = (
         f"Khách nhắn: '{user_message}'\n"
@@ -504,7 +512,7 @@ def stream_synthesize_chat_response_with_llm(
         "- Dùng '- **Thời gian:** ...', '- **Chi phí:** ...', '- **Lộ trình:** ...' với gạch đầu dòng.\n"
         "- Dùng danh sách số 1, 2, 3 cho các chặng điểm chơi.\n"
         "- Không chèn raw HTML."
-        + PUBLIC_RESPONSE_POLICY
+        + VAI_TRAVEL_PERSONA + PUBLIC_RESPONSE_POLICY
     )
 
     prompt = (
@@ -529,7 +537,7 @@ def stream_generate_unfeasible_explanation_with_llm(
         "Dựa trên các ràng buộc an toàn, thời gian và mật độ thực tế, hiện hệ thống chưa tìm được lịch trình thỏa mãn 100% yêu cầu của khách.\n"
         "Hãy giải thích ngắn gọn, chân thành lý do vì sao chưa khả thi và đề xuất cụ thể 2-3 giải pháp thay thế "
         "bằng danh sách gạch đầu dòng Markdown."
-        + PUBLIC_RESPONSE_POLICY
+        + VAI_TRAVEL_PERSONA + PUBLIC_RESPONSE_POLICY
     )
 
     prompt = (
