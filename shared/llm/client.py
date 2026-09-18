@@ -11,7 +11,7 @@ Cấu hình hoàn toàn qua file .env với:
 import json
 import os
 from pathlib import Path
-from typing import Any
+from typing import Any, Generator
 
 from dotenv import load_dotenv
 
@@ -66,6 +66,16 @@ def get_llm_provider() -> str:
     return cfg["provider"] if cfg["api_key"] else "none"
 
 
+def get_llm_status() -> dict[str, str | bool]:
+    """Public runtime metadata; never expose the API key."""
+    cfg = get_llm_config()
+    return {
+        "enabled": bool(cfg["api_key"]),
+        "provider": cfg["provider"] if cfg["api_key"] else "none",
+        "model": cfg["model"] if cfg["api_key"] else "none",
+    }
+
+
 def call_llm(prompt: str, system_instruction: str = "") -> str | None:
     """Gọi LLM linh hoạt: Hỗ trợ OpenAI-compatible API cho mọi provider và Google GenAI native."""
     cfg = get_llm_config()
@@ -114,6 +124,59 @@ def call_llm(prompt: str, system_instruction: str = "") -> str | None:
     except Exception as e:
         print(f"[LLM Universal Error ({model} via {base_url or 'default'})]: {e}")
         return None
+
+
+def stream_call_llm(prompt: str, system_instruction: str = "") -> Generator[str, None, None]:
+    """Stream token từ LLM (hỗ trợ OpenAI compatible streaming và Google GenAI streaming)."""
+    cfg = get_llm_config()
+    if not cfg["api_key"]:
+        return
+
+    provider = cfg["provider"]
+    api_key = cfg["api_key"]
+    base_url = cfg["base_url"] or None
+    model = cfg["model"]
+
+    if provider == "gemini" and not base_url:
+        try:
+            from google import genai
+            client = genai.Client(api_key=api_key)
+            response = client.models.generate_content_stream(
+                model=model,
+                contents=prompt,
+                config={"system_instruction": system_instruction} if system_instruction else None,
+            )
+            for chunk in response:
+                if chunk.text:
+                    yield chunk.text
+            return
+        except Exception as e:
+            print(f"[LLM Gemini Native Stream Error]: {e}")
+            base_url = "https://generativelanguage.googleapis.com/v1beta/openai/"
+
+    try:
+        from openai import OpenAI
+        client = OpenAI(
+            api_key=api_key,
+            base_url=base_url,
+        )
+        messages = []
+        if system_instruction:
+            messages.append({"role": "system", "content": system_instruction})
+        messages.append({"role": "user", "content": prompt})
+
+        stream = client.chat.completions.create(
+            model=model,
+            messages=messages,
+            temperature=0.3,
+            stream=True,
+        )
+        for chunk in stream:
+            if chunk.choices and chunk.choices[0].delta and chunk.choices[0].delta.content:
+                yield chunk.choices[0].delta.content
+    except Exception as e:
+        print(f"[LLM Universal Stream Error ({model})]: {e}")
+
 
 
 def classify_and_extract_intent_with_llm(
@@ -197,8 +260,13 @@ def answer_general_chat_with_llm(
     if not is_llm_available():
         return None
 
+    runtime = get_llm_status()
     system_instruction = (
         "Bạn là Agent A0 - Hướng dẫn viên ảo kiêm Điều phối viên hệ thống V-AI tại VinWonders Nha Trang.\n"
+        f"Runtime hiện tại dùng LLM provider '{runtime['provider']}', model '{runtime['model']}'. "
+        "Khi khách hỏi hệ thống dùng AI/model/công nghệ gì, phải trả lời đúng thông tin runtime này và nói rõ: "
+        "A0 dùng LLM để hiểu và trả lời; A1/A2 dùng LLM để giải thích chuyên môn, còn các ràng buộc an toàn, "
+        "tính toán lịch trình và số liệu mật độ vẫn được kiểm chứng bằng logic xác định.\n"
         "Bạn có phong cách giao tiếp thông minh, ấm áp, hiếu khách và am hiểu tường tận về các phân khu VinWonders "
         "(Sea World, Fairy Land, Adventure Land, King's Garden, World Garden, Water World).\n"
         "Nhiệm vụ của bạn:\n"
@@ -358,3 +426,108 @@ def generate_clarification_with_llm(
     )
 
     return call_llm(prompt, system_instruction)
+
+
+def stream_answer_general_chat_with_llm(
+    user_message: str,
+    park_context: dict[str, Any] | None = None,
+) -> Generator[str, None, None]:
+    """Stream câu trả lời của Agent A0 cho các câu hỏi chào hỏi, tư vấn thông tin."""
+    if not is_llm_available():
+        return
+
+    runtime = get_llm_status()
+    system_instruction = (
+        "Bạn là Agent A0 - Hướng dẫn viên ảo kiêm Điều phối viên hệ thống V-AI tại VinWonders Nha Trang.\n"
+        f"Runtime hiện tại dùng LLM provider '{runtime['provider']}', model '{runtime['model']}'. "
+        "Khi khách hỏi hệ thống dùng AI/model/công nghệ gì, phải trả lời đúng thông tin runtime này và nói rõ: "
+        "A0 dùng LLM để hiểu và trả lời; A1/A2 dùng LLM để giải thích chuyên môn, còn các ràng buộc an toàn, "
+        "tính toán lịch trình và số liệu mật độ vẫn được kiểm chứng bằng logic xác định.\n"
+        "Bạn có phong cách giao tiếp thông minh, ấm áp, hiếu khách và am hiểu tường tận về các phân khu VinWonders "
+        "(Sea World, Fairy Land, Adventure Land, King's Garden, World Garden, Water World).\n"
+        "Định dạng câu trả lời bằng cú pháp Markdown chuẩn (in đậm, danh sách gạch đầu dòng, tiêu đề ###).\n"
+        "Nhiệm vụ của bạn:\n"
+        "1. Trả lời câu hỏi của khách một cách tự nhiên, lịch thiệp và hữu ích bằng tiếng Việt.\n"
+        "2. Khéo léo gợi ý: Nếu quý khách muốn tối ưu hóa chuyến tham quan không phải chờ đợi lâu, "
+        "hãy chia sẻ thêm chiều cao của các bé và khung giờ dự kiến tham quan để A0 kết hợp cùng Chuyên gia Mật độ (A2) "
+        "và Chuyên gia Lập lịch (A1) thiết kế lộ trình riêng cho đoàn!"
+    )
+
+    ctx_str = json.dumps(park_context, ensure_ascii=False) if park_context else "Công viên VinWonders Nha Trang, mở cửa 09:00 - 20:00 hằng ngày."
+    prompt = f"Thông tin bối cảnh công viên: {ctx_str}\nTin nhắn của khách: '{user_message}'"
+    yield from stream_call_llm(prompt, system_instruction)
+
+
+def stream_generate_clarification_with_llm(
+    user_message: str,
+    missing_fields: list[str],
+) -> Generator[str, None, None]:
+    """Stream câu hỏi làm rõ của Agent A0 khi thiếu thông tin an toàn/lập lịch."""
+    if not is_llm_available():
+        return
+
+    system_instruction = (
+        "Bạn là Agent A0 - Hướng dẫn viên thông minh tại VinWonders.\n"
+        "Khách gửi yêu cầu nhưng còn thiếu thông tin an toàn/lập lịch.\n"
+        "Hãy phản hồi bằng tiếng Việt thật tự nhiên, thân thiện và hỏi khéo các thông tin cần thiết. "
+        "Định dạng câu hỏi rõ ràng bằng Markdown (dùng danh sách gạch đầu dòng và in đậm thông tin quan trọng)."
+    )
+    prompt = (
+        f"Khách nhắn: '{user_message}'\n"
+        f"Thông tin cần bổ sung: {', '.join(missing_fields)}"
+    )
+    yield from stream_call_llm(prompt, system_instruction)
+
+
+def stream_synthesize_chat_response_with_llm(
+    user_message: str,
+    plans: list[dict[str, Any]],
+    crowd_analysis: dict[str, Any],
+) -> Generator[str, None, None]:
+    """Stream lời thoại tổng hợp của Agent A0 trình bày các phương án lịch trình tối ưu."""
+    if not is_llm_available():
+        return
+
+    system_instruction = (
+        "Bạn là Agent A0 - Hướng dẫn viên ảo kiêm Điều phối viên hệ thống V-AI tại VinWonders Nha Trang.\n"
+        "Hãy diễn đạt câu trả lời lịch thiệp, dễ hiểu, trình bày 2 phương án lịch trình "
+        "(Phương án 1: Nhẹ nhàng, ít chờ; Phương án 2: Nhiều trò chơi trải nghiệm), "
+        "nêu rõ lý do đề xuất từ chuyên gia A1, thời gian dự phòng trước 16:00 và gợi ý khách có thể tiếp tục chat để điều chỉnh.\n"
+        "QUY TẮC ĐỊNH DẠNG MARKDOWN BẮT BUỘC:\n"
+        "- Dùng '### Phương án 1: ...' và '### Phương án 2: ...' cho tiêu đề từng phương án.\n"
+        "- Dùng '- **Thời gian:** ...', '- **Chi phí:** ...', '- **Lộ trình:** ...' với gạch đầu dòng.\n"
+        "- Dùng danh sách số 1, 2, 3 cho các chặng điểm chơi.\n"
+        "- Không chèn raw HTML."
+    )
+
+    prompt = (
+        f"Yêu cầu của khách: '{user_message}'\n"
+        f"Dữ liệu phương án đã được Validator xác thực:\n{json.dumps(plans, ensure_ascii=False, indent=2)}\n"
+        f"Nhận định mật độ từ Chuyên gia A2:\n{json.dumps(crowd_analysis.get('crowd_insights', ''), ensure_ascii=False)}"
+    )
+    yield from stream_call_llm(prompt, system_instruction)
+
+
+def stream_generate_unfeasible_explanation_with_llm(
+    user_message: str,
+    unfeasible_reasons: list[str],
+    current_constraints: dict[str, Any],
+) -> Generator[str, None, None]:
+    """Stream lời giải thích khi không tìm thấy lịch trình khả thi."""
+    if not is_llm_available():
+        return
+
+    system_instruction = (
+        "Bạn là Agent A0 & A1 - Chuyên gia tư vấn trải nghiệm tại VinWonders.\n"
+        "Dựa trên các ràng buộc an toàn, thời gian và mật độ thực tế, hiện hệ thống chưa tìm được lịch trình thỏa mãn 100% yêu cầu của khách.\n"
+        "Hãy giải thích ngắn gọn, chân thành lý do vì sao chưa khả thi và đề xuất cụ thể 2-3 giải pháp thay thế "
+        "bằng danh sách gạch đầu dòng Markdown."
+    )
+
+    prompt = (
+        f"Yêu cầu của khách: '{user_message}'\n"
+        f"Các lý do không khả thi từ Validator:\n" + "\n".join(f"- {r}" for r in unfeasible_reasons) + "\n"
+        f"Ràng buộc hiện tại: {json.dumps(current_constraints, ensure_ascii=False)}"
+    )
+    yield from stream_call_llm(prompt, system_instruction)
+

@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 const API_BASE = "http://127.0.0.1:8000";
 
@@ -52,14 +54,18 @@ interface Message {
   role: "user" | "assistant";
   content: string;
   plans?: PlanOption[];
+  isStreaming?: boolean;
 }
+
 
 export default function Home() {
   const [sessionId, setSessionId] = useState<string>("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [events, setEvents] = useState<EventRecord[]>([]);
   const [inputMessage, setInputMessage] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(false);
+  const [isStreaming, setIsStreaming] = useState<boolean>(false);
+  const [thinkingStage, setThinkingStage] = useState<string | null>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
   const [selectedEvent, setSelectedEvent] = useState<EventRecord | null>(null);
   const [copied, setCopied] = useState<boolean>(false);
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
@@ -72,9 +78,15 @@ export default function Home() {
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, loading]);
+  }, [messages, isStreaming, thinkingStage]);
 
   async function createNewSession() {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    setIsStreaming(false);
+    setThinkingStage(null);
+
     try {
       const res = await fetch(`${API_BASE}/api/session/new`, {
         method: "POST",
@@ -90,7 +102,7 @@ export default function Home() {
           {
             role: "assistant",
             content:
-              "Xin chào! Tôi là Điều phối viên V-AI. Tôi có thể giúp gì cho bạn !",
+              "Xin chào! Tôi là **Điều phối viên V-AI** tại VinWonders Nha Trang. Tôi có thể giúp gì cho chuyến tham quan của bạn hôm nay?",
           },
         ]);
         refreshEvents(data.session_id);
@@ -114,59 +126,155 @@ export default function Home() {
   }
 
   async function handleSend() {
-    if (!inputMessage.trim() || loading) return;
+    if (!inputMessage.trim() || isStreaming) return;
 
     const userText = inputMessage.trim();
     setInputMessage("");
+
+    // Thêm tin nhắn của User vào giao diện
     setMessages((prev) => [...prev, { role: "user", content: userText }]);
-    setLoading(true);
+    setIsStreaming(true);
+    setThinkingStage("Đang phân tích yêu cầu...");
+
+    // Thêm tin nhắn Assistant rỗng để nhận streaming tokens
+    setMessages((prev) => [
+      ...prev,
+      { role: "assistant", content: "", isStreaming: true },
+    ]);
+
+    const abortController = new AbortController();
+    abortControllerRef.current = abortController;
 
     try {
-      const res = await fetch(`${API_BASE}/api/chat`, {
+      const res = await fetch(`${API_BASE}/api/chat/stream`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           session_id: sessionId,
           message: userText,
         }),
+        signal: abortController.signal,
       });
 
-      if (res.ok) {
-        const data = await res.json();
-        setLoading(false);
-        setMessages((prev) => [
-          ...prev,
-          {
-            role: "assistant",
-            content: data.reply || "Đã xử lý xong yêu cầu của bạn.",
-            plans: data.plans && data.plans.length > 0 ? data.plans : undefined,
-          },
-        ]);
-        if (data.events) {
-          setEvents(data.events);
-        }
-      } else {
-        setLoading(false);
-        setMessages((prev) => [
-          ...prev,
-          {
-            role: "assistant",
-            content: "❌ Đã có lỗi xảy ra khi kết nối máy chủ điều phối A0.",
-          },
-        ]);
+      if (!res.ok || !res.body) {
+        throw new Error(`Lỗi kết nối máy chủ (${res.status})`);
       }
-    } catch (err) {
-      setLoading(false);
-      setMessages((prev) => [
-        ...prev,
-        {
-          role: "assistant",
-          content:
-            "Không thể kết nối tới Backend. Vui lòng kiểm tra tiến trình server.",
-        },
-      ]);
+
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder("utf-8");
+      let buffer = "";
+      let accumulatedText = "";
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        const blocks = buffer.split("\n\n");
+        buffer = blocks.pop() || "";
+
+        for (const block of blocks) {
+          if (!block.trim()) continue;
+          const eventMatch = block.match(/event:\s*(\w+)/);
+          const dataMatch = block.match(/data:\s*([\s\S]+)/);
+          if (!eventMatch || !dataMatch) continue;
+
+          const eventType = eventMatch[1];
+          try {
+            const data = JSON.parse(dataMatch[1]);
+
+            if (eventType === "thinking") {
+              setThinkingStage(data.message || "Đang xử lý...");
+            } else if (eventType === "token") {
+              setThinkingStage(null);
+              accumulatedText += data.token;
+              setMessages((prev) => {
+                const copy = [...prev];
+                const last = copy[copy.length - 1];
+                if (last && last.role === "assistant") {
+                  copy[copy.length - 1] = {
+                    ...last,
+                    content: accumulatedText,
+                    isStreaming: true,
+                  };
+                }
+                return copy;
+              });
+            } else if (eventType === "done") {
+              setThinkingStage(null);
+              setIsStreaming(false);
+              setMessages((prev) => {
+                const copy = [...prev];
+                const last = copy[copy.length - 1];
+                if (last && last.role === "assistant") {
+                  copy[copy.length - 1] = {
+                    ...last,
+                    content: data.reply || accumulatedText,
+                    plans: data.plans && data.plans.length > 0 ? data.plans : undefined,
+                    isStreaming: false,
+                  };
+                }
+                return copy;
+              });
+              if (data.events) {
+                setEvents(data.events);
+              }
+            }
+          } catch (e) {
+            console.warn("Lỗi parse SSE block:", e);
+          }
+        }
+      }
+    } catch (err: any) {
+      if (err.name === "AbortError") {
+        console.log("Stream dừng bởi người dùng.");
+        setMessages((prev) => {
+          const copy = [...prev];
+          const last = copy[copy.length - 1];
+          if (last && last.role === "assistant") {
+            copy[copy.length - 1] = {
+              ...last,
+              content: last.content ? last.content + "\n\n*(Đã dừng tạo)*" : "*(Đã dừng tạo)*",
+              isStreaming: false,
+            };
+          }
+          return copy;
+        });
+      } else {
+        console.error("Lỗi stream:", err);
+        setMessages((prev) => {
+          const copy = [...prev];
+          const last = copy[copy.length - 1];
+          if (last && last.role === "assistant") {
+            copy[copy.length - 1] = {
+              ...last,
+              content: last.content
+                ? last.content + "\n\n⚠️ *(Mất kết nối giữa chừng tới máy chủ)*"
+                : "❌ Không thể kết nối tới Backend. Vui lòng kiểm tra tiến trình server.",
+              isStreaming: false,
+            };
+          }
+          return copy;
+        });
+      }
+    } finally {
+      setIsStreaming(false);
+      setThinkingStage(null);
+      abortControllerRef.current = null;
+      setMessages((prev) =>
+        prev.map((m) => (m.isStreaming ? { ...m, isStreaming: false } : m))
+      );
     }
   }
+
+  function handleStopGenerating() {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      setIsStreaming(false);
+      setThinkingStage(null);
+    }
+  }
+
 
   function copyEventPayload() {
     if (selectedEvent) {
@@ -313,27 +421,147 @@ export default function Home() {
           <div className="flex-1 overflow-y-auto p-4 md:p-8 space-y-6">
             <div className="max-w-3xl mx-auto space-y-6">
               {messages.map((m, idx) => (
-                <div key={idx} className="flex flex-col gap-3">
-                  {/* Message Bubble */}
-                  <div
-                    className={`p-4 rounded-xl text-sm leading-relaxed max-w-[90%] ${
-                      m.role === "user"
-                        ? "self-end bg-[#18181b] text-white shadow-xs"
-                        : "self-start bg-white border border-[#e6e3da] text-[#18181b] shadow-xs"
-                    }`}
-                  >
-                    <div className="text-[11px] font-bold mb-1 opacity-70">
-                      {m.role === "user" ? "Bạn" : "V-AI"}
+                <div key={idx} className="flex flex-col gap-2">
+                  {m.role === "user" ? (
+                    /* User Message Bubble */
+                    <div className="self-end bg-[#18181b] text-white rounded-2xl px-4 py-3 text-sm leading-relaxed max-w-[85%] shadow-xs whitespace-pre-line">
+                      {m.content}
                     </div>
-                    <div
-                      className="whitespace-pre-line"
-                      dangerouslySetInnerHTML={{
-                        __html: m.content
-                          .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
-                          .replace(/^[•\-]\s+(.*)$/gm, "<li>$1</li>"),
-                      }}
-                    />
-                  </div>
+                  ) : (
+                    /* Assistant Message: Clean Modern Layout with Avatar & Status (No clunky box) */
+                    <div className="self-start w-full flex items-start gap-3 py-1">
+                      <div className="w-8 h-8 rounded-full bg-white border border-[#e6e3da] p-1 flex items-center justify-center shrink-0 shadow-2xs mt-0.5">
+                        <img
+                          src="/logo.png"
+                          alt="V-AI"
+                          className={`w-5 h-5 object-contain ${
+                            m.isStreaming && !m.content ? "animate-pulse" : ""
+                          }`}
+                        />
+                      </div>
+                      <div className="flex-1 min-w-0 flex flex-col gap-1">
+                        {/* Author Header & Dynamic Status */}
+                        <div className="flex items-center gap-2">
+                          <span className="font-bold text-sm text-[#2563eb]">V-AI</span>
+                          {m.isStreaming && !m.content && (
+                            <span className="text-xs text-[#71717a] font-normal">
+                              Đang xử lý
+                            </span>
+                          )}
+                          {m.isStreaming && m.content && (
+                            <span className="text-[11px] text-[#71717a] font-normal flex items-center gap-1">
+                              <span className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse" />
+                              Đang trả lời...
+                            </span>
+                          )}
+                        </div>
+
+                        {/* TTFT Thinking State (matches reference: logo on left, status + dots) */}
+                        {m.isStreaming && !m.content ? (
+                          <div className="flex items-center gap-2 text-xs text-[#71717a] mt-0.5 animate-in fade-in duration-200">
+                            <span className="inline-flex gap-1 items-center">
+                              <span className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-bounce [animation-delay:-0.3s]" />
+                              <span className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-bounce [animation-delay:-0.15s]" />
+                              <span className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-bounce" />
+                            </span>
+                            <span className="text-[#52525b] font-medium">Đang suy nghĩ...</span>
+                            {thinkingStage && (
+                              <span className="text-[11px] text-[#a1a1aa] border-l border-[#e6e3da] pl-2 hidden sm:inline font-mono">
+                                {thinkingStage}
+                              </span>
+                            )}
+                          </div>
+                        ) : (
+                          /* Rendered Streaming Markdown */
+                          <div className="text-sm leading-relaxed text-[#18181b] break-words">
+                            <ReactMarkdown
+                              remarkPlugins={[remarkGfm]}
+                              components={{
+                                h1: ({ node, ...props }) => (
+                                  <h1
+                                    className="text-base font-bold text-[#18181b] mt-3 mb-1.5"
+                                    {...props}
+                                  />
+                                ),
+                                h2: ({ node, ...props }) => (
+                                  <h2
+                                    className="text-sm md:text-base font-bold text-[#18181b] mt-3 mb-1.5"
+                                    {...props}
+                                  />
+                                ),
+                                h3: ({ node, ...props }) => (
+                                  <h3
+                                    className="text-sm md:text-base font-bold text-[#18181b] mt-3 mb-1.5 pb-1 border-b border-[#e6e3da]"
+                                    {...props}
+                                  />
+                                ),
+                                h4: ({ node, ...props }) => (
+                                  <h4
+                                    className="text-xs md:text-sm font-bold text-[#18181b] mt-2 mb-1"
+                                    {...props}
+                                  />
+                                ),
+                                p: ({ node, ...props }) => (
+                                  <p className="mb-2 last:mb-0 leading-relaxed text-sm text-[#27272a]" {...props} />
+                                ),
+                                ul: ({ node, ...props }) => (
+                                  <ul
+                                    className="list-disc pl-5 space-y-1 my-2 text-sm text-[#27272a]"
+                                    {...props}
+                                  />
+                                ),
+                                ol: ({ node, ...props }) => (
+                                  <ol
+                                    className="list-decimal pl-5 space-y-1 my-2 text-sm text-[#27272a]"
+                                    {...props}
+                                  />
+                                ),
+                                li: ({ node, ...props }) => (
+                                  <li className="text-xs md:text-sm text-[#27272a] leading-relaxed" {...props} />
+                                ),
+                                strong: ({ node, ...props }) => (
+                                  <strong className="font-semibold text-[#18181b]" {...props} />
+                                ),
+                                em: ({ node, ...props }) => (
+                                  <em className="italic text-[#3f3f46]" {...props} />
+                                ),
+                                blockquote: ({ node, ...props }) => (
+                                  <blockquote
+                                    className="border-l-3 border-[#2563eb] pl-3 py-1 text-xs text-[#52525b] my-2 bg-[#f4f2eb]/50 rounded-r"
+                                    {...props}
+                                  />
+                                ),
+                                code: ({ node, className, children, ...props }) => (
+                                  <code
+                                    className="bg-[#f4f2eb] px-1.5 py-0.5 rounded text-xs font-mono text-[#18181b]"
+                                    {...props}
+                                  >
+                                    {children}
+                                  </code>
+                                ),
+                                table: ({ node, ...props }) => (
+                                  <div className="overflow-x-auto my-3">
+                                    <table className="min-w-full text-xs border border-[#e6e3da] divide-y divide-[#e6e3da]" {...props} />
+                                  </div>
+                                ),
+                                th: ({ node, ...props }) => (
+                                  <th className="bg-[#f4f2eb] px-3 py-1.5 text-left font-semibold text-[#18181b]" {...props} />
+                                ),
+                                td: ({ node, ...props }) => (
+                                  <td className="px-3 py-1.5 border-t border-[#e6e3da] text-[#27272a]" {...props} />
+                                ),
+                              }}
+                            >
+                              {m.content
+                                .replace(/^[ \t]*[•●○][ \t]+/gm, "- ")
+                                .replace(/\n{3,}/g, "\n\n")}
+                            </ReactMarkdown>
+                            {m.isStreaming && (
+                              <span className="inline-block w-1.5 h-4 ml-1 bg-[#18181b] animate-pulse align-middle rounded-xs" />
+                            )}
+                          </div>
+                        )}
+
 
                   {/* Plan Cards Rendered Directly in Feed */}
                   {m.plans && m.plans.length > 0 && (
@@ -441,21 +669,14 @@ export default function Home() {
                           </div>
                         </div>
                       ))}
-                    </div>
-                  )}
-                </div>
-              ))}
-
-              {loading && (
-                <div className="self-start bg-white border border-[#e6e3da] rounded-xl p-3.5 flex items-center gap-3 text-xs text-[#52525b] shadow-xs">
-                  <div className="w-4 h-4 border-2 border-[#18181b] border-t-transparent rounded-full animate-spin"></div>
-                  <span className="font-mono">
-                    Đang điều phối: <strong>A0</strong> ➔ <strong>A2</strong>{" "}
-                    (Mật độ) ➔ <strong>A1</strong> (Lập lịch) ➔{" "}
-                    <strong>Validator</strong>
-                  </span>
+                      </div>
+                    )}
+                  </div>
                 </div>
               )}
+            </div>
+          ))}
+
               <div ref={chatEndRef} />
             </div>
           </div>
@@ -472,27 +693,48 @@ export default function Home() {
                     handleSend();
                   }
                 }}
-                placeholder="Cùng lập kế hoạch cho chuyến du lịch nào! "
+                placeholder={
+                  isStreaming
+                    ? "V-AI đang trả lời, bạn có thể nhấn Dừng tạo..."
+                    : "Cùng lập kế hoạch cho chuyến du lịch nào! (Enter để gửi, Shift+Enter xuống dòng)"
+                }
                 rows={2}
-                className="w-full bg-[#faf9f6] border border-[#e6e3da] focus:border-[#18181b] rounded-2xl pl-4 pr-14 py-3 text-sm text-[#18181b] placeholder-[#a1a1aa] focus:outline-none transition resize-none leading-relaxed"
+                disabled={isStreaming}
+                className="w-full bg-[#faf9f6] border border-[#e6e3da] focus:border-[#18181b] rounded-2xl pl-4 pr-24 py-3 text-sm text-[#18181b] placeholder-[#a1a1aa] focus:outline-none transition resize-none leading-relaxed disabled:opacity-75"
               />
-              <button
-                onClick={handleSend}
-                disabled={loading || !inputMessage.trim()}
-                className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-[#18181b] hover:bg-[#27272a] disabled:opacity-25 text-white flex items-center justify-center transition cursor-pointer disabled:cursor-not-allowed shadow-xs"
-                title="Gửi"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                  className="w-4 h-4 ml-0.5"
+
+              {/* Nút Dừng tạo hoặc Nút Gửi */}
+              {isStreaming ? (
+                <button
+                  type="button"
+                  onClick={handleStopGenerating}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 px-3 py-1.5 rounded-full bg-[#18181b] hover:bg-red-600 text-white flex items-center gap-1.5 text-xs font-medium transition cursor-pointer shadow-xs group"
+                  title="Dừng tạo phản hồi"
                 >
-                  <path d="M3.105 2.288a.75.75 0 0 0-.826.95l1.414 4.926A1.5 1.5 0 0 0 5.135 9.25h6.115a.75.75 0 0 1 0 1.5H5.135a1.5 1.5 0 0 0-1.442 1.086l-1.414 4.926a.75.75 0 0 0 .826.95 28.897 28.897 0 0 0 15.293-7.155.75.75 0 0 0 0-1.114A28.897 28.897 0 0 0 3.105 2.288Z" />
-                </svg>
-              </button>
+                  <div className="w-2.5 h-2.5 bg-red-400 group-hover:bg-white rounded-xs transition" />
+                  <span className="text-[11px]">Dừng tạo</span>
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={handleSend}
+                  disabled={!inputMessage.trim()}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-[#18181b] hover:bg-[#27272a] disabled:opacity-25 text-white flex items-center justify-center transition cursor-pointer disabled:cursor-not-allowed shadow-xs"
+                  title="Gửi"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    className="w-4 h-4 ml-0.5"
+                  >
+                    <path d="M3.105 2.288a.75.75 0 0 0-.826.95l1.414 4.926A1.5 1.5 0 0 0 5.135 9.25h6.115a.75.75 0 0 1 0 1.5H5.135a1.5 1.5 0 0 0-1.442 1.086l-1.414 4.926a.75.75 0 0 0 .826.95 28.897 28.897 0 0 0 15.293-7.155.75.75 0 0 0 0-1.114A28.897 28.897 0 0 0 3.105 2.288Z" />
+                  </svg>
+                </button>
+              )}
             </div>
           </div>
+
         </main>
       </div>
 

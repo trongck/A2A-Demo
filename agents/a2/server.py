@@ -29,7 +29,7 @@ from a2a.types import (
     Role,
     TextPart,
 )
-from shared.llm import generate_crowd_insight_with_llm, is_llm_available
+from shared.llm import generate_crowd_insight_with_llm, get_llm_status, is_llm_available
 
 MCP_URL = "http://127.0.0.1:8003"
 
@@ -292,8 +292,8 @@ app = app_builder.build()
 
 
 @app.get("/health")
-def health() -> dict[str, str]:
-    return {"status": "ok", "agent": "a2_crowd_specialist", "port": "8002"}
+def health() -> dict[str, Any]:
+    return {"status": "ok", "agent": "a2_crowd_specialist", "port": "8002", "llm": get_llm_status()}
 
 
 class DirectAnalyzeRequest(BaseModel):

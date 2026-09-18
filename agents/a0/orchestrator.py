@@ -19,16 +19,22 @@ from shared.llm import (
     generate_clarification_with_llm,
     generate_unfeasible_explanation_with_llm,
     is_llm_available,
+    stream_answer_general_chat_with_llm,
+    stream_generate_clarification_with_llm,
+    stream_generate_unfeasible_explanation_with_llm,
+    stream_synthesize_chat_response_with_llm,
     synthesize_chat_response_with_llm,
 )
 from shared.memory.database import (
     add_message,
+    get_events,
     get_or_create_session,
     record_event,
     save_agent_result,
     save_plans,
     update_session,
 )
+
 
 
 A2_URL = "http://127.0.0.1:8002"
@@ -564,3 +570,333 @@ def run_orchestration(
         "plans": plans,
         "crowd_analysis": crowd_analysis,
     }
+
+
+def run_orchestration_stream(
+    session_id: str,
+    user_message: str,
+    scenario_override: str | None = None,
+    preset_data: dict[str, Any] | None = None,
+) -> Any:
+    """Hàm điều phối tuần tự của Agent A0 dưới dạng SSE Stream."""
+    turn_id = f"turn_{uuid.uuid4().hex[:6]}"
+    start_turn_time = time.time()
+
+    session = get_or_create_session(session_id)
+    scenario_id = scenario_override or session.get("scenario_id", "base")
+
+    add_message(session_id, turn_id, "user", user_message)
+    record_event(
+        session_id=session_id,
+        turn_id=turn_id,
+        event_type="user_message",
+        sender="User",
+        receiver="A0",
+        summary=f"Người dùng gửi yêu cầu: '{user_message[:80]}...'",
+        payload={"message": user_message, "scenario_id": scenario_id},
+        status="info",
+    )
+
+    yield f"event: thinking\ndata: {json.dumps({'stage': 'intent', 'message': 'Agent A0 đang phân tích nội dung và ràng buộc...'}, ensure_ascii=False)}\n\n"
+
+    t_start = time.time()
+    updated_profile, is_complete, missing_fields, intent_type = extract_or_update_request(
+        user_message=user_message,
+        current_session=session,
+        preset_data=preset_data,
+    )
+    extract_duration = int((time.time() - t_start) * 1000)
+
+    # 1. Nhánh General Chat
+    if intent_type == "general_chat":
+        yield f"event: thinking\ndata: {json.dumps({'stage': 'generating', 'message': 'Agent A0 đang phản hồi câu hỏi của bạn...'}, ensure_ascii=False)}\n\n"
+        accumulated_reply = ""
+        try:
+            for token in stream_answer_general_chat_with_llm(user_message):
+                accumulated_reply += token
+                yield f"event: token\ndata: {json.dumps({'token': token}, ensure_ascii=False)}\n\n"
+        except Exception as e:
+            print(f"[Agent A0 Stream Error]: {e}")
+
+        if not accumulated_reply:
+            fallback = (
+                "Xin chào bạn! Tôi là Hướng dẫn viên ảo kiêm Điều phối viên hệ thống V-AI tại VinWonders Nha Trang. "
+                "Tôi có thể hỗ trợ bạn thông tin về các phân khu vui chơi và phối hợp cùng Chuyên gia Mật độ (A2) "
+                "và Chuyên gia Lập lịch (A1) để lên kế hoạch trải nghiệm tối ưu cho cả đoàn. "
+                "Bạn muốn bắt đầu lên lịch trình tham quan lúc mấy giờ?"
+            )
+            accumulated_reply = fallback
+            yield f"event: token\ndata: {json.dumps({'token': fallback}, ensure_ascii=False)}\n\n"
+
+        add_message(session_id, turn_id, "assistant", accumulated_reply)
+        chat_dur = int((time.time() - t_start) * 1000)
+        record_event(
+            session_id=session_id,
+            turn_id=turn_id,
+            event_type="a0_chat",
+            sender="A0",
+            receiver="User",
+            summary="A0 trả lời tư vấn / trò chuyện tự nhiên cùng khách bằng LLM Stream.",
+            payload={"message": user_message, "response": accumulated_reply},
+            duration_ms=chat_dur,
+            status="info",
+        )
+        yield f"event: done\ndata: {json.dumps({'session_id': session_id, 'turn_id': turn_id, 'status': 'completed', 'reply': accumulated_reply, 'plans': [], 'events': get_events(session_id)}, ensure_ascii=False)}\n\n"
+        return
+
+    # 2. Nhánh thiếu thông tin khi lập lịch
+    if not is_complete:
+        yield f"event: thinking\ndata: {json.dumps({'stage': 'clarifying', 'message': 'Agent A0 đang chuẩn bị câu hỏi làm rõ các tiêu chí an toàn...'}, ensure_ascii=False)}\n\n"
+        accumulated_reply = ""
+        try:
+            for token in stream_generate_clarification_with_llm(user_message, missing_fields):
+                accumulated_reply += token
+                yield f"event: token\ndata: {json.dumps({'token': token}, ensure_ascii=False)}\n\n"
+        except Exception as e:
+            print(f"[Agent A0 Stream Error]: {e}")
+
+        if not accumulated_reply:
+            fallback = (
+                "Chào bạn! Để tôi có thể gợi ý lịch trình vui chơi VinWonders an toàn và phù hợp nhất cho cả đoàn, "
+                f"bạn vui lòng cho biết thêm: {', '.join(missing_fields).replace('_', ' ')} nhé!"
+            )
+            accumulated_reply = fallback
+            yield f"event: token\ndata: {json.dumps({'token': fallback}, ensure_ascii=False)}\n\n"
+
+        add_message(session_id, turn_id, "assistant", accumulated_reply)
+        clarify_duration = int((time.time() - t_start) * 1000)
+        record_event(
+            session_id=session_id,
+            turn_id=turn_id,
+            event_type="a0_intent",
+            sender="A0",
+            receiver="User",
+            summary=f"Yêu cầu thiếu dữ liệu: {missing_fields}. A0 hỏi làm rõ bằng LLM Stream.",
+            payload={"missing_fields": missing_fields, "response": accumulated_reply},
+            duration_ms=clarify_duration,
+            status="warning",
+        )
+        yield f"event: done\ndata: {json.dumps({'session_id': session_id, 'turn_id': turn_id, 'status': 'needs_input', 'reply': accumulated_reply, 'missing_fields': missing_fields, 'plans': [], 'events': get_events(session_id)}, ensure_ascii=False)}\n\n"
+        return
+
+    # 3. Đầy đủ thông tin: Tiến hành điều phối A0 -> A2 -> A1
+    new_version = update_session(session_id, profile=updated_profile, scenario_id=scenario_id)
+    record_event(
+        session_id=session_id,
+        turn_id=turn_id,
+        event_type="a0_intent",
+        sender="A0",
+        receiver="SharedMemory",
+        summary=f"Yêu cầu đã được chuẩn hóa. Lưu context phiên bản v{new_version}.",
+        payload=updated_profile,
+        duration_ms=extract_duration,
+        status="success",
+    )
+
+    # 4. Gọi Agent A2
+    yield f"event: thinking\ndata: {json.dumps({'stage': 'a2_crowd', 'message': 'Chuyển giao cho Agent A2 phân tích mật độ & hàng chờ thời gian thực...'}, ensure_ascii=False)}\n\n"
+    t_a2 = time.time()
+    record_event(
+        session_id=session_id,
+        turn_id=turn_id,
+        event_type="a0_call_a2",
+        sender="A0",
+        receiver="A2",
+        summary="A0 chuyển giao nhiệm vụ phân tích mật độ cho Agent A2 qua A2A protocol.",
+        payload={"scenario_id": scenario_id, "memory_version": new_version},
+        status="info",
+    )
+
+    a2_req = {
+        "schema_version": "1.0",
+        "session_id": session_id,
+        "turn_id": turn_id,
+        "request_id": f"req_a2_{turn_id}",
+        "action": "analyze_crowd",
+        "memory_ref": {"session_id": session_id, "version": new_version},
+        "scenario_id": scenario_id,
+        "data_revision": "v1",
+        "input": {"service_ids": None},
+    }
+
+    a2_resp = call_a2a_agent(A2_URL, a2_req)
+    a2_duration = int((time.time() - t_a2) * 1000)
+
+    if a2_resp.get("status") != "completed":
+        err_msg = "Xin lỗi quý khách, hệ thống phân tích mật độ hiện đang bận. Vui lòng thử lại trong giây lát."
+        record_event(
+            session_id=session_id,
+            turn_id=turn_id,
+            event_type="error",
+            sender="A2",
+            receiver="A0",
+            summary=f"Agent A2 gặp lỗi: {a2_resp.get('error')}",
+            payload=a2_resp,
+            duration_ms=a2_duration,
+            status="error",
+        )
+        add_message(session_id, turn_id, "assistant", err_msg)
+        yield f"event: token\ndata: {json.dumps({'token': err_msg}, ensure_ascii=False)}\n\n"
+        yield f"event: done\ndata: {json.dumps({'session_id': session_id, 'turn_id': turn_id, 'status': 'failed', 'reply': err_msg, 'plans': [], 'events': get_events(session_id)}, ensure_ascii=False)}\n\n"
+        return
+
+    crowd_analysis = a2_resp["result"]
+    save_agent_result(session_id, turn_id, "a2_crowd_specialist", crowd_analysis)
+    a2_version = update_session(session_id, profile=None)
+    record_event(
+        session_id=session_id,
+        turn_id=turn_id,
+        event_type="a2_result",
+        sender="A2",
+        receiver="A0",
+        summary=f"A2 hoàn thành phân tích {len(crowd_analysis.get('items', []))} điểm vui chơi. Lưu memory v{a2_version}.",
+        payload={
+            "analysis_id": crowd_analysis.get("analysis_id"),
+            "items_count": len(crowd_analysis.get("items", [])),
+            "warnings": crowd_analysis.get("warnings", []),
+        },
+        duration_ms=a2_duration,
+        status="success",
+    )
+
+    # 5. Gọi Agent A1
+    yield f"event: thinking\ndata: {json.dumps({'stage': 'a1_plan', 'message': 'Chuyển giao cho Agent A1 lập lịch trình & kiểm tra ràng buộc qua Validator...'}, ensure_ascii=False)}\n\n"
+    t_a1 = time.time()
+    record_event(
+        session_id=session_id,
+        turn_id=turn_id,
+        event_type="a0_call_a1",
+        sender="A0",
+        receiver="A1",
+        summary="A0 chuyển giao phân tích A2 cho Agent A1 lập lịch trình qua A2A protocol.",
+        payload={"crowd_analysis_id": crowd_analysis.get("analysis_id"), "memory_version": a2_version},
+        status="info",
+    )
+
+    a1_req = {
+        "schema_version": "1.0",
+        "session_id": session_id,
+        "turn_id": turn_id,
+        "request_id": f"req_a1_{turn_id}",
+        "action": "create_plans",
+        "memory_ref": {"session_id": session_id, "version": a2_version},
+        "scenario_id": scenario_id,
+        "data_revision": "v1",
+        "input": {
+            "normalized_request": updated_profile,
+            "crowd_analysis": crowd_analysis,
+        },
+    }
+
+    a1_resp = call_a2a_agent(A1_URL, a1_req)
+    a1_duration = int((time.time() - t_a1) * 1000)
+
+    plan_result = a1_resp.get("result", {})
+    plans = plan_result.get("plans", [])
+    plan_status = plan_result.get("status", "failed")
+
+    if plan_status == "no_feasible_plan":
+        unfeasible_reasons = plan_result.get("unfeasible_reasons", [])
+        yield f"event: thinking\ndata: {json.dumps({'stage': 'generating', 'message': 'Agent A0 đang giải thích chi tiết các ràng buộc chưa thỏa mãn...'}, ensure_ascii=False)}\n\n"
+        accumulated_reply = ""
+        try:
+            for token in stream_generate_unfeasible_explanation_with_llm(
+                user_message=user_message,
+                unfeasible_reasons=unfeasible_reasons,
+                current_constraints=updated_profile.get("hard_constraints", {}),
+            ):
+                accumulated_reply += token
+                yield f"event: token\ndata: {json.dumps({'token': token}, ensure_ascii=False)}\n\n"
+        except Exception as e:
+            print(f"[Agent A0 Stream Error]: {e}")
+
+        if not accumulated_reply:
+            accumulated_reply = (
+                "Dựa trên dữ liệu thực tế tại công viên, hiện không có phương án nào đáp ứng trọn vẹn mọi yêu cầu của quý khách.\n"
+                + "\n".join(f"- {r}" for r in unfeasible_reasons)
+                + "\nQuý khách có thể nới lỏng thời gian chờ tối đa, tăng khung giờ chơi hoặc cho phép chơi ngoài trời để tôi lập lại lịch nhé!"
+            )
+            yield f"event: token\ndata: {json.dumps({'token': accumulated_reply}, ensure_ascii=False)}\n\n"
+
+        add_message(session_id, turn_id, "assistant", accumulated_reply)
+        record_event(
+            session_id=session_id,
+            turn_id=turn_id,
+            event_type="a1_result",
+            sender="A1",
+            receiver="A0",
+            summary=f"A1 báo cáo không có phương án khả thi ({len(unfeasible_reasons)} ràng buộc nghẽn).",
+            payload=plan_result,
+            duration_ms=a1_duration,
+            status="warning",
+        )
+        yield f"event: done\ndata: {json.dumps({'session_id': session_id, 'turn_id': turn_id, 'status': 'no_feasible_plan', 'reply': accumulated_reply, 'plans': [], 'unfeasible_reasons': unfeasible_reasons, 'events': get_events(session_id)}, ensure_ascii=False)}\n\n"
+        return
+
+    save_plans(session_id, turn_id, plans)
+    record_event(
+        session_id=session_id,
+        turn_id=turn_id,
+        event_type="a1_result",
+        sender="A1",
+        receiver="A0",
+        summary=f"A1 đã lập và kiểm tra thành công {len(plans)} phương án lịch trình qua Validator xác định.",
+        payload={
+            "plan_result_id": plan_result.get("plan_result_id"),
+            "plans_summary": [
+                {
+                    "style": p["style"],
+                    "duration": p["total_duration_minutes"],
+                    "buffer": p["end_buffer_minutes"],
+                    "services": p["service_ids"],
+                }
+                for p in plans
+            ],
+        },
+        duration_ms=a1_duration,
+        status="success",
+    )
+
+    # 6. A0 tổng hợp câu trả lời qua Stream
+    yield f"event: thinking\ndata: {json.dumps({'stage': 'a0_synthesize', 'message': 'Agent A0 đang tổng hợp phương án lịch trình chi tiết cho bạn...'}, ensure_ascii=False)}\n\n"
+    accumulated_reply = ""
+    try:
+        for token in stream_synthesize_chat_response_with_llm(user_message, plans, crowd_analysis):
+            accumulated_reply += token
+            yield f"event: token\ndata: {json.dumps({'token': token}, ensure_ascii=False)}\n\n"
+    except Exception as e:
+        print(f"[Agent A0 Stream Error]: {e}")
+
+    if not accumulated_reply:
+        reply_lines = [
+            f"Dạ, Agent A0 đã phối hợp cùng Agent A2 (Phân tích mật độ) và Agent A1 (Lập lịch trình) để thiết lập {len(plans)} phương án tối ưu cho đoàn của bạn:\n\n"
+        ]
+        for idx, p in enumerate(plans, 1):
+            reply_lines.append(
+                f"### {p['style_label']}\n"
+                f"- **Lộ trình:** {' ➔ '.join(leg['service_name'] for leg in p['legs'])}\n"
+                f"- **Tổng thời gian dự kiến:** **{p['total_duration_minutes']} phút** (kết thúc lúc {p['return_arrival_time']})\n"
+                f"- **Thời gian dự phòng trước 16:00:** **{p['end_buffer_minutes']} phút**\n"
+                f"- **Tổng chi phí đoàn:** **{p['total_cost_vnd']:,} VNĐ**\n"
+                f"- **Lý do:** {p['rationale']}\n"
+            )
+        reply_lines.append("\nQuý khách có thể xem chi tiết từng chặng ở thẻ bên dưới hoặc tiếp tục chat để điều chỉnh!")
+        accumulated_reply = "\n".join(reply_lines)
+        yield f"event: token\ndata: {json.dumps({'token': accumulated_reply}, ensure_ascii=False)}\n\n"
+
+    add_message(session_id, turn_id, "assistant", accumulated_reply)
+    total_turn_duration = int((time.time() - start_turn_time) * 1000)
+    record_event(
+        session_id=session_id,
+        turn_id=turn_id,
+        event_type="a0_reply",
+        sender="A0",
+        receiver="User",
+        summary=f"A0 hoàn thành lượt hội thoại, trình bày {len(plans)} phương án cho khách qua Stream.",
+        payload={"plans_count": len(plans), "total_turn_ms": total_turn_duration},
+        duration_ms=total_turn_duration,
+        status="success",
+    )
+
+    yield f"event: done\ndata: {json.dumps({'session_id': session_id, 'turn_id': turn_id, 'status': 'completed', 'reply': accumulated_reply, 'plans': plans, 'crowd_analysis': crowd_analysis, 'events': get_events(session_id)}, ensure_ascii=False)}\n\n"
+

@@ -12,10 +12,13 @@ import uuid
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 import uvicorn
 
-from agents.a0.orchestrator import run_orchestration
+from agents.a0.orchestrator import run_orchestration, run_orchestration_stream
+
+from shared.llm import get_llm_status
 from shared.memory.database import (
     get_events,
     get_messages,
@@ -73,7 +76,7 @@ def root() -> dict[str, Any]:
 
 @app.get("/health")
 def health_check() -> dict[str, Any]:
-    return {"status": "ok", "service": "v_ai_a0_orchestrator", "port": 8000}
+    return {"status": "ok", "service": "v_ai_a0_orchestrator", "port": 8000, "llm": get_llm_status()}
 
 
 @app.get("/api/presets")
@@ -124,6 +127,25 @@ def handle_chat(req: ChatRequest) -> dict[str, Any]:
     events = get_events(req.session_id)
     res["events"] = events
     return res
+
+
+@app.post("/api/chat/stream")
+def handle_chat_stream(req: ChatRequest):
+    return StreamingResponse(
+        run_orchestration_stream(
+            session_id=req.session_id,
+            user_message=req.message,
+            scenario_override=req.scenario_id,
+            preset_data=req.preset_data,
+        ),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+            "X-Accel-Buffering": "no",
+        },
+    )
+
 
 
 if __name__ == "__main__":

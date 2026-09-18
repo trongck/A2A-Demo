@@ -9,7 +9,13 @@ from shared.llm.client import (
     generate_unfeasible_explanation_with_llm,
     get_llm_config,
     get_llm_provider,
+    get_llm_status,
     is_llm_available,
+    stream_answer_general_chat_with_llm,
+    stream_call_llm,
+    stream_generate_clarification_with_llm,
+    stream_generate_unfeasible_explanation_with_llm,
+    stream_synthesize_chat_response_with_llm,
     synthesize_chat_response_with_llm,
 )
 
@@ -24,7 +30,13 @@ __all__ = [
     "generate_unfeasible_explanation_with_llm",
     "get_llm_config",
     "get_llm_provider",
+    "get_llm_status",
     "is_llm_available",
+    "stream_answer_general_chat_with_llm",
+    "stream_call_llm",
+    "stream_generate_clarification_with_llm",
+    "stream_generate_unfeasible_explanation_with_llm",
+    "stream_synthesize_chat_response_with_llm",
     "synthesize_chat_response_with_llm",
 ]
 

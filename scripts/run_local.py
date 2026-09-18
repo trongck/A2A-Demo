@@ -28,28 +28,72 @@ FRONTEND_DIR = os.path.join(PROJECT_ROOT, "frontend")
 SERVICES = [
     {
         "name": "MCP Server (Tools)",
-        "cmd": [sys.executable, "-m", "uvicorn", "mcp_server.server:app", "--host", "127.0.0.1", "--port", "8003", "--log-level", "warning"],
+        "cmd": [
+            sys.executable,
+            "-m",
+            "uvicorn",
+            "mcp_server.server:app",
+            "--host",
+            "127.0.0.1",
+            "--port",
+            "8003",
+            "--log-level",
+            "warning",
+        ],
         "cwd": PROJECT_ROOT,
         "url": "http://127.0.0.1:8003/health",
         "port": 8003,
     },
     {
         "name": "Agent A2 (Crowd Specialist)",
-        "cmd": [sys.executable, "-m", "uvicorn", "agents.a2.server:app", "--host", "127.0.0.1", "--port", "8002", "--log-level", "warning"],
+        "cmd": [
+            sys.executable,
+            "-m",
+            "uvicorn",
+            "agents.a2.server:app",
+            "--host",
+            "127.0.0.1",
+            "--port",
+            "8002",
+            "--log-level",
+            "warning",
+        ],
         "cwd": PROJECT_ROOT,
         "url": "http://127.0.0.1:8002/health",
         "port": 8002,
     },
     {
         "name": "Agent A1 (Planner Specialist)",
-        "cmd": [sys.executable, "-m", "uvicorn", "agents.a1.server:app", "--host", "127.0.0.1", "--port", "8001", "--log-level", "warning"],
+        "cmd": [
+            sys.executable,
+            "-m",
+            "uvicorn",
+            "agents.a1.server:app",
+            "--host",
+            "127.0.0.1",
+            "--port",
+            "8001",
+            "--log-level",
+            "warning",
+        ],
         "cwd": PROJECT_ROOT,
         "url": "http://127.0.0.1:8001/health",
         "port": 8001,
     },
     {
         "name": "Backend A0 (Orchestrator API)",
-        "cmd": [sys.executable, "-m", "uvicorn", "agents.a0.server:app", "--host", "127.0.0.1", "--port", "8000", "--log-level", "warning"],
+        "cmd": [
+            sys.executable,
+            "-m",
+            "uvicorn",
+            "agents.a0.server:app",
+            "--host",
+            "127.0.0.1",
+            "--port",
+            "8000",
+            "--log-level",
+            "warning",
+        ],
         "cwd": PROJECT_ROOT,
         "url": "http://127.0.0.1:8000/health",
         "port": 8000,
@@ -68,7 +112,9 @@ def wait_for_service(name: str, url: str, timeout: int = 30) -> bool:
     start = time.time()
     while time.time() - start < timeout:
         try:
-            req = urllib.request.Request(url, headers={"User-Agent": "V-AI-HealthCheck"})
+            req = urllib.request.Request(
+                url, headers={"User-Agent": "V-AI-HealthCheck"}
+            )
             with urllib.request.urlopen(req, timeout=1.5) as resp:
                 if resp.status in (200, 304):
                     return True
@@ -106,6 +152,11 @@ def main() -> None:
     signal.signal(signal.SIGTERM, cleanup)
 
     for svc in SERVICES:
+        if wait_for_service(svc["name"], svc["url"], timeout=1):
+            print(
+                f"[*] {svc['name']} [Port {svc['port']}] đã đang chạy sẵn, bỏ qua khởi động trùng lặp."
+            )
+            continue
         print(f"[*] Đang khởi động {svc['name']} trên cổng {svc['port']}...")
         p = subprocess.Popen(svc["cmd"], cwd=svc["cwd"], env=env)
         processes.append(p)
@@ -124,12 +175,12 @@ def main() -> None:
     api_url = "http://127.0.0.1:8000"
 
     print("\n" + "=" * 75)
-    print(f"  🎉 HỆ THỐNG ĐÃ SẴN SÀNG ĐỂ BẠN TỰ KIỂM CHỨNG TRỰC TIẾP!")
-    print(f"  👉 Giao diện Next.js + Tailwind CSS : {frontend_url}")
-    print(f"  👉 Backend API Tác tử A0             : {api_url}")
-    print(f"  👉 Agent A1 (Lập lịch)               : http://127.0.0.1:8001/health")
-    print(f"  👉 Agent A2 (Mật độ)                 : http://127.0.0.1:8002/health")
-    print(f"  👉 MCP Server (Tools)                : http://127.0.0.1:8003/health")
+    print(f"   HỆ THỐNG ĐÃ SẴN SÀNG ĐỂ BẠN TỰ KIỂM CHỨNG TRỰC TIẾP!")
+    print(f"   Giao diện Next.js + Tailwind CSS : {frontend_url}")
+    print(f"   Backend API Tác tử A0             : {api_url}")
+    print(f"   Agent A1 (Lập lịch)               : http://127.0.0.1:8001/health")
+    print(f"   Agent A2 (Mật độ)                 : http://127.0.0.1:8002/health")
+    print(f"   MCP Server (Tools)                : http://127.0.0.1:8003/health")
     print("=" * 75)
     print("Nhấn Ctrl + C để dừng toàn bộ 5 tiến trình bất kỳ lúc nào.\n")
 
