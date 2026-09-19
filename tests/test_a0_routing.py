@@ -22,9 +22,32 @@ def test_a0_does_not_invent_group_or_time(monkeypatch):
     assert missing == ["thông_tin_thành_viên", "khung_giờ_tham_quan"]
     assert routing["status"] == "need_clarification"
     assert routing["completeness"] == "0/2"
-    assert len(routing["clarification"]["questions"]) == 4
-    assert all("_" not in q["question"] for q in routing["clarification"]["questions"])
-    assert all(q["options"][-1] == "Khác/tự nhập" for q in routing["clarification"]["questions"])
+    assert routing["clarification"] == {}
+
+
+def test_hitl_questions_come_from_llm(monkeypatch):
+    monkeypatch.setattr(orchestrator, "is_llm_available", lambda: True)
+    monkeypatch.setattr(orchestrator, "classify_and_extract_intent_with_llm", lambda *_: {
+        "status": "need_clarification",
+        "intent": "plan_itinerary",
+        "entities": {},
+    })
+    generated = {
+        "message": "Cho mình hỏi thêm để xếp lịch vừa sức nhé.",
+        "questions": [{
+            "criteria_key": "travel_party_details",
+            "question": "Trong đoàn có ai cần lưu ý về tuổi hoặc chiều cao không?",
+            "options": ["Toàn người lớn", "Có trẻ em", "Khác/tự nhập"],
+        }],
+    }
+    monkeypatch.setattr(orchestrator, "generate_hitl_questions_with_llm", lambda *_: generated)
+
+    _, complete, _, _, routing = orchestrator.extract_or_update_request(
+        "Lên lịch tham quan giúp mình", {"profile": {}},
+    )
+
+    assert complete is False
+    assert routing["clarification"] == generated
 
 
 def test_a0_stops_out_of_scope_without_options(monkeypatch):

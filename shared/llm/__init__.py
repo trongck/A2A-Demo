@@ -4,6 +4,7 @@ from shared.llm.client import (
     classify_and_extract_intent_with_llm,
     extract_intent_with_llm,
     generate_clarification_with_llm,
+    generate_hitl_questions_with_llm,
     generate_crowd_insight_with_llm,
     generate_plan_rationale_with_llm,
     generate_unfeasible_explanation_with_llm,
@@ -25,6 +26,7 @@ __all__ = [
     "classify_and_extract_intent_with_llm",
     "extract_intent_with_llm",
     "generate_clarification_with_llm",
+    "generate_hitl_questions_with_llm",
     "generate_crowd_insight_with_llm",
     "generate_plan_rationale_with_llm",
     "generate_unfeasible_explanation_with_llm",
@@ -39,4 +41,3 @@ __all__ = [
     "stream_synthesize_chat_response_with_llm",
     "synthesize_chat_response_with_llm",
 ]
-

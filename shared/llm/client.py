@@ -236,7 +236,7 @@ def classify_and_extract_intent_with_llm(
         "   - start_time: giờ bắt đầu nếu có nhắc đến (ví dụ '14:00', hoặc null)\n"
         "   - end_time: giờ kết thúc nếu có nhắc đến (ví dụ '16:00', hoặc null)\n"
         "   - max_wait_minutes: thời gian chờ tối đa mỗi điểm nếu khách giới hạn (hoặc null)\n"
-        "Trả đúng JSON thuần túy, questions tối đa 2 mục và mỗi options tối đa 4 lựa chọn, luôn kết thúc bằng 'Khác/tự nhập':\n"
+        "Trả đúng JSON thuần túy; bước khác sẽ tạo câu hỏi làm rõ nên clarification luôn để trống:\n"
         "{\n"
         '  "status": "ready" | "need_clarification" | "out_of_scope" | "too_ambiguous",\n'
         '  "intent": "general_chat" | "plan_itinerary" | "adjust_plan" | null,\n'
@@ -254,11 +254,11 @@ def classify_and_extract_intent_with_llm(
         '    "end_time": null,\n'
         '    "max_wait_minutes": null\n'
         "  },\n"
-        '  "clarification": {"message": "", "questions": []},\n'
+        '  "clarification": {},\n'
         '  "fallback_text": "",\n'
         '  "forward_payload": {}\n'
         "}\n"
-        "general_chat có status ready. out_of_scope/too_ambiguous phải có intent=null, không có questions và chỉ điền fallback_text."
+        "general_chat có status ready. out_of_scope/too_ambiguous phải có intent=null và chỉ điền fallback_text."
     )
 
     prompt = (
@@ -484,6 +484,64 @@ def generate_clarification_with_llm(
     )
 
     return call_llm(prompt, system_instruction)
+
+
+def generate_hitl_questions_with_llm(
+    user_message: str,
+    current_profile: dict[str, Any],
+    missing_fields: list[str],
+) -> dict[str, Any] | None:
+    """Sinh payload HITL có cấu trúc để frontend hiển thị trực tiếp."""
+    if not is_llm_available():
+        return None
+
+    system_instruction = (
+        "Bạn là V-AI - hướng dẫn viên thông minh tại VinWonders Nha Trang. "
+        "Hãy tự tạo các câu hỏi làm rõ phù hợp riêng với ngữ cảnh của khách; không dùng bộ câu hỏi mẫu cố định. "
+        "Chỉ hỏi thông tin thực sự còn thiếu, không hỏi lại dữ liệu đã có. "
+        "Các câu hỏi phải cùng nhau bao phủ mọi nhóm thông tin còn thiếu được cung cấp. "
+        "Với thông_tin_thành_viên, câu hỏi phải thu thập đủ số người, tuổi và chiều cao của từng thành viên; "
+        "nếu một câu không thể thu thập đủ thì hãy tách thành nhiều câu phù hợp. "
+        "khung_giờ_tham_quan chỉ đủ khi có cả giờ bắt đầu và giờ kết thúc. "
+        "Nếu hồ sơ đã có một phần của nhóm thông tin (ví dụ giờ bắt đầu), chỉ hỏi phần còn lại. "
+        "Ưu tiên câu hỏi ngắn, tự nhiên, các lựa chọn thiết thực và an toàn cho việc lập lịch. "
+        "Mỗi câu hỏi phải có criteria_key duy nhất bằng snake_case để định danh câu trả lời. "
+        "Trả đúng JSON thuần túy theo cấu trúc: "
+        '{"message":"...","questions":[{"criteria_key":"...","question":"...",'
+        '"options":["...","Khác/tự nhập"]}]}. '
+        "Mỗi câu có 2-5 lựa chọn và lựa chọn cuối là 'Khác/tự nhập'."
+        + PUBLIC_RESPONSE_POLICY
+    )
+    prompt = (
+        f"Tin nhắn mới nhất: {user_message}\n"
+        f"Hồ sơ đã biết: {json.dumps(current_profile, ensure_ascii=False)}\n"
+        f"Các nhóm thông tin còn thiếu: {json.dumps(missing_fields, ensure_ascii=False)}"
+    )
+
+    raw = call_llm(prompt, system_instruction)
+    if not raw:
+        return None
+    try:
+        clean = raw.strip()
+        if clean.startswith("```"):
+            clean = clean.split("\n", 1)[1].rsplit("```", 1)[0].strip()
+        data = json.loads(clean)
+        questions = data.get("questions")
+        if not isinstance(data.get("message"), str) or not isinstance(questions, list) or not questions:
+            return None
+        if any(
+            not isinstance(question, dict)
+            or not isinstance(question.get("criteria_key"), str)
+            or not isinstance(question.get("question"), str)
+            or not isinstance(question.get("options"), list)
+            or not question["options"]
+            or not all(isinstance(option, str) for option in question["options"])
+            for question in questions
+        ):
+            return None
+        return {"message": data["message"], "questions": questions}
+    except (AttributeError, IndexError, TypeError, ValueError, json.JSONDecodeError):
+        return None
 
 
 def stream_answer_general_chat_with_llm(

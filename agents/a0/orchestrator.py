@@ -19,6 +19,7 @@ from shared.security.config import V_AI_INTERNAL_SECRET, INTERNAL_AUTH_ENABLED
 from shared.llm import (
     answer_general_chat_with_llm,
     classify_and_extract_intent_with_llm,
+    generate_hitl_questions_with_llm,
     generate_unfeasible_explanation_with_llm,
     is_llm_available,
     stream_answer_general_chat_with_llm,
@@ -375,52 +376,12 @@ def extract_or_update_request(
             "end_by": profile["end_by"],
         }
 
-    clarification_questions = []
-    if "thông_tin_thành_viên" in missing_fields:
-        clarification_questions.extend([
-            {
-                "criteria_key": "group_composition",
-                "question": "Đoàn mình gồm những ai?",
-                "options": [
-                    "1 người từ 18 tuổi",
-                    "2 người từ 18 tuổi",
-                    "1 người lớn và 1 trẻ em",
-                    "Nhóm khác – nhập số lượng người lớn và trẻ em",
-                    "Khác/tự nhập",
-                ],
-            },
-            {
-                "criteria_key": "child_age_band",
-                "question": "Trẻ nhỏ nhất thuộc nhóm tuổi nào?",
-                "options": [
-                    "Không có trẻ em",
-                    "Dưới 6 tuổi",
-                    "Từ 6–11 tuổi",
-                    "Từ 12–17 tuổi",
-                    "Khác/tự nhập",
-                ],
-            },
-            {
-                "criteria_key": "child_height_band",
-                "question": "Trẻ thấp nhất thuộc khoảng chiều cao nào?",
-                "options": [
-                    "Không có trẻ em",
-                    "Dưới 100 cm",
-                    "Từ 100–104 cm",
-                    "Từ 105–109 cm",
-                    "Từ 110–119 cm",
-                    "Từ 120–129 cm",
-                    "Từ 130 cm trở lên",
-                    "Khác/tự nhập",
-                ],
-            },
-        ])
-    if "khung_giờ_tham_quan" in missing_fields:
-        clarification_questions.append({
-            "criteria_key": "visit_time",
-            "question": "Đoàn mình muốn bắt đầu và kết thúc lúc mấy giờ?",
-            "options": ["09:00–12:00", "13:00–16:00", "Cả ngày", "Khác/tự nhập"],
-        })
+    clarification = None
+    if missing_fields and is_llm_available():
+        try:
+            clarification = generate_hitl_questions_with_llm(user_message, profile, missing_fields)
+        except Exception as e:
+            logger.warning("LLM HITL question generation error: %s", e)
 
     if intent_type == "out_of_scope":
         routing.update({
@@ -464,10 +425,7 @@ def extract_or_update_request(
             "intent": intent_type,
             "completeness": f"{completed_count}/2",
             "filled_criteria": filled_criteria,
-            "clarification": ({
-                "message": "Mình cần thêm một chút thông tin để lên lịch an toàn nhé.",
-                "questions": clarification_questions,
-            } if missing_fields else {}),
+            "clarification": clarification or {},
             "fallback_text": "",
             "forward_payload": profile if not missing_fields else {},
         })
