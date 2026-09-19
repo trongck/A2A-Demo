@@ -87,15 +87,16 @@ def test_official_ticket_policy_and_group_pricing():
     assert after_16["total_vnd"] == 1950000
 
 
-def test_a2_preserves_missing_crowd_as_unknown(monkeypatch):
+def test_a2_uses_mock_crowd_for_every_vinwonders_poi(monkeypatch):
     monkeypatch.setattr(a2, "call_mcp_tool", _local_mcp)
     monkeypatch.setattr(a2, "is_llm_available", lambda: False)
     result = a2.analyze_crowd_logic()
     assert result["data_revision"] == DATA_REVISION
     assert result["items"]
-    assert all(item["current_people"] is None for item in result["items"])
-    assert all(item["wait_minutes"] is None for item in result["items"])
-    assert all(item["load_category"] == "unknown" for item in result["items"])
+    assert all(item["data_quality"] == "mock" for item in result["items"])
+    assert all(item["current_people"] is not None for item in result["items"])
+    assert all(item["wait_minutes"] is not None for item in result["items"])
+    assert all(item["load_category"] in {"low", "medium", "high", "overloaded"} for item in result["items"])
 
 
 def test_a1_builds_plans_from_v2(monkeypatch):
@@ -115,6 +116,21 @@ def test_a1_builds_plans_from_v2(monkeypatch):
         assert plan["total_cost_vnd"] == 1050000
         assert plan["cost_breakdown"]["entry_ticket"]["ticket_type_id"] == "standard_1_day"
         assert all(leg["cost_vnd"] == 0 for leg in plan["legs"])
+
+
+def test_a1_maximizes_stops_within_a_long_window(monkeypatch):
+    monkeypatch.setattr(a1, "call_mcp_tool", _local_mcp)
+    monkeypatch.setattr(a2, "call_mcp_tool", _local_mcp)
+    monkeypatch.setattr(a1, "is_llm_available", lambda: False)
+    monkeypatch.setattr(a2, "is_llm_available", lambda: False)
+    request = _request(max_wait_minutes_per_stop=30)
+    request["start_at"] = "2026-09-19T09:00:00+07:00"
+    request["end_by"] = "2026-09-19T18:00:00+07:00"
+
+    result = a1.plan_itinerary_logic(request, a2.analyze_crowd_logic())
+
+    assert result["status"] == "completed"
+    assert max(len(plan["legs"]) for plan in result["plans"]) > 4
 
 
 def test_a1_migrates_legacy_session_defaults(monkeypatch):
@@ -144,6 +160,16 @@ def test_a1_reports_impossible_window(monkeypatch):
     result = a1.plan_itinerary_logic(request, analysis)
     assert result["status"] == "no_feasible_plan"
     assert result["unfeasible_reasons"]
+
+
+def test_a1_enforces_adult_accompaniment_for_guest_under_140cm():
+    request = _request()
+    request["group_members"] = [{"member_id": "child_1", "age_years": 8, "height_cm": 125}]
+
+    result = a1.plan_itinerary_logic(request, {"data_revision": DATA_REVISION, "items": []})
+
+    assert result["status"] == "no_feasible_plan"
+    assert "dưới 140 cm" in result["unfeasible_reasons"][0]
 
 
 def test_a1_rejects_non_v2_crowd_analysis():

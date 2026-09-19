@@ -9,32 +9,10 @@ from shared.security.logging import get_logger
 
 logger = get_logger("security.sanitizer")
 
-# Các pattern prompt injection phổ biến (case-insensitive)
-_INJECTION_PATTERNS: list[re.Pattern[str]] = [
-    re.compile(p, re.IGNORECASE) for p in [
-        r"ignore\s+(all\s+)?(previous|above|prior|earlier)\s+(instructions?|prompts?|rules?|guidelines?)",
-        r"disregard\s+(all\s+)?(previous|above|prior)\s+(instructions?|prompts?|context)",
-        r"forget\s+(all\s+)?(previous|above|your)\s+(instructions?|prompts?|rules?)",
-        r"you\s+are\s+now\s+(a|an|my)",
-        r"act\s+as\s+(a|an|if)\b",
-        r"new\s+instructions?:",
-        r"system\s*:\s*",
-        r"<\s*\|?(system|im_start|im_end)\|?\s*>",
-        r"reveal\s+(your|the)\s+(system\s+)?(instructions?|prompts?|keys?|secrets?|config)",
-        r"show\s+(me\s+)?(your\s+)?(system\s+)?(prompt|instructions?|config)",
-        r"what\s+(is|are)\s+your\s+(system\s+)?(prompt|instructions?|rules?)",
-        r"print\s+(your\s+)?(system\s+)?(prompt|instructions?)",
-        r"output\s+(your\s+)?(system\s+)?(prompt|instructions?)",
-        r"repeat\s+(your|the)\s+(system\s+)?(prompt|instructions?)\s+(back|verbatim|exactly)",
-    ]
-]
-
-
 def sanitize_user_input(text: str) -> str:
-    """Lọc nội dung user input trước khi đưa vào LLM.
+    """Chuẩn hóa an toàn nội dung trước khi đưa vào LLM.
 
     - Giới hạn độ dài theo MAX_MESSAGE_LENGTH
-    - Phát hiện và vô hiệu hóa prompt injection patterns
     - Loại bỏ ký tự điều khiển nguy hiểm
 
     Returns:
@@ -54,17 +32,6 @@ def sanitize_user_input(text: str) -> str:
 
     # 2. Loại bỏ ký tự điều khiển (null bytes, backspace, v.v.) nhưng giữ newline và tab
     text = re.sub(r"[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]", "", text)
-
-    # 3. Phát hiện prompt injection
-    for pattern in _INJECTION_PATTERNS:
-        match = pattern.search(text)
-        if match:
-            logger.warning(
-                "SECURITY: Prompt injection detected — pattern='%s', matched='%s'",
-                pattern.pattern[:60], match.group()[:80],
-            )
-            # Thay thế bằng chuỗi vô hại thay vì block hoàn toàn
-            text = pattern.sub("[nội dung không hợp lệ]", text)
 
     return text.strip()
 

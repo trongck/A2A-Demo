@@ -26,7 +26,7 @@ from shared.security import (
     get_logger,
     require_internal_secret,
 )
-from shared.data_adapter import DATA_PATH, DATA_REVISION, load_ticket_policy, load_v2_data
+from shared.data_adapter import DATA_REVISION, load_ticket_policy, load_v2_data
 
 logger = get_logger("mcp.server")
 
@@ -275,24 +275,22 @@ def call_tool_endpoint(req: ToolCallRequest) -> dict[str, Any]:
             detail=f"Truy cập bị từ chối: Agent '{caller}' không có quyền gọi công cụ '{name}'. Quyền hạn chỉ dành cho: {list(allowed)}"
         )
 
-    if name == "get_attractions":
-        return {"result": tool_get_attractions(
-            args.get("scenario_id", "base"), args.get("service_ids"), args.get("categories"),
-            args.get("limit"), args.get("scope", "vinwonders"),
-        )}
-    elif name == "get_crowd_snapshots":
-        return {"result": tool_get_crowd_snapshots(
+    _dispatch: dict[str, Any] = {
+        "get_attractions": lambda: tool_get_attractions(
+            args.get("scenario_id", "base"), args.get("service_ids"),
+            args.get("categories"), args.get("limit"), args.get("scope", "vinwonders"),
+        ),
+        "get_crowd_snapshots": lambda: tool_get_crowd_snapshots(
             args.get("scenario_id", "base"), args.get("service_ids"), args.get("scope", "vinwonders"),
-        )}
-    elif name == "get_route_matrix":
-        node_ids = args.get("node_ids", [])
-        return {"result": tool_get_route_matrix(node_ids)}
-    elif name == "get_weather":
-        return {"result": tool_get_weather(args.get("start_at", ""), args.get("end_by", ""))}
-    elif name == "get_ticket_policy":
-        return {"result": tool_get_ticket_policy()}
-    else:
+        ),
+        "get_route_matrix": lambda: tool_get_route_matrix(args.get("node_ids", [])),
+        "get_weather": lambda: tool_get_weather(args.get("start_at", ""), args.get("end_by", "")),
+        "get_ticket_policy": lambda: tool_get_ticket_policy(),
+    }
+    handler = _dispatch.get(name)
+    if handler is None:
         raise HTTPException(status_code=404, detail=f"Không tìm thấy công cụ '{name}'")
+    return {"result": handler()}
 
 
 

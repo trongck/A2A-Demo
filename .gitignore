@@ -11,3 +11,6 @@ __pycache__/
 data/*.sqlite
 data/*.sqlite-shm
 data/*.sqlite-wal
+
+# Runtime logs
+data/logs/*.log

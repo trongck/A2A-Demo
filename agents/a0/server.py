@@ -5,11 +5,9 @@ Cung cấp API điều phối tác tử A0, quản lý session và tích hợp v
 Bám sát mục 2, 4, 6 và 7 của V-AI-Implementation-Plan.md.
 """
 
-import os
 import secrets
-import time
+from contextlib import asynccontextmanager
 from typing import Any
-import httpx
 
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -27,7 +25,6 @@ from shared.security import (
     validate_session_id,
     MAX_MESSAGE_LENGTH,
 )
-from shared.security.config import V_AI_INTERNAL_SECRET, INTERNAL_AUTH_ENABLED
 
 from agents.a0.orchestrator import run_orchestration, run_orchestration_stream
 from agents.a0.admin_server import admin_router
@@ -37,14 +34,10 @@ from shared.memory.database import (
     get_messages,
     get_or_create_session,
     init_db,
-    record_event,
-    update_session,
 )
-from shared.data_adapter import DATA_REVISION, load_v2_data
+from shared.data_adapter import DATA_REVISION
 
 logger = get_logger("a0.server")
-
-from contextlib import asynccontextmanager
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -77,7 +70,6 @@ class ChatRequest(BaseModel):
     session_id: str = Field(..., max_length=128)
     message: str = Field(..., max_length=MAX_MESSAGE_LENGTH)
     scenario_id: str | None = Field(None, max_length=50)
-    preset_data: dict[str, Any] | None = None
 
     @field_validator("session_id")
     @classmethod
@@ -115,15 +107,6 @@ def health_check() -> dict[str, Any]:
     return {"status": "ok", "service": "v_ai", "port": 8000, "data_revision": DATA_REVISION}
 
 
-@app.get("/api/presets")
-def get_presets() -> dict[str, Any]:
-    data = load_v2_data()
-    return {
-        "demo_requests": data.get("demo_requests", []),
-        "test_scenarios": data.get("test_scenarios", []),
-    }
-
-
 @app.post("/api/session/new", dependencies=[Depends(require_api_key)])
 def create_new_session(req: NewSessionRequest) -> dict[str, Any]:
     # M2: Dùng secrets.token_urlsafe(24) thay vì uuid hex[:8] để tăng entropy
@@ -157,13 +140,12 @@ def handle_chat(req: ChatRequest) -> dict[str, Any]:
             session_id=req.session_id,
             user_message=req.message,
             scenario_override=req.scenario_id,
-            preset_data=req.preset_data,
         )
         # Lấy danh sách sự kiện mới nhất
         events = get_events(req.session_id)
         res["events"] = events
         return res
-    except Exception as e:
+    except Exception:
         # M6: Không lộ thông tin kỹ thuật nội bộ cho client
         logger.exception("Chat handler error for session %s", req.session_id)
         raise HTTPException(status_code=500, detail="Hệ thống đang gặp sự cố. Vui lòng thử lại.")
@@ -176,7 +158,6 @@ def handle_chat_stream(req: ChatRequest):
             session_id=req.session_id,
             user_message=req.message,
             scenario_override=req.scenario_id,
-            preset_data=req.preset_data,
         ),
         media_type="text/event-stream",
         headers={
@@ -191,4 +172,3 @@ def handle_chat_stream(req: ChatRequest):
 if __name__ == "__main__":
     print("Khởi động Agent A0 Orchestrator Server tại http://127.0.0.1:8000...")
     uvicorn.run(app, host="127.0.0.1", port=8000, log_level="info")
-

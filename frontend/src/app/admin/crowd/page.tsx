@@ -137,11 +137,6 @@ export default function CrowdPage() {
   const { token } = useAdminAuth();
   const [data, setData] = useState<OverviewData | null>(null);
   const [selected, setSelected] = useState<string | null>(null);
-  const [updateSid, setUpdateSid] = useState("");
-  const [updatePeople, setUpdatePeople] = useState("");
-  const [updateWait, setUpdateWait] = useState("");
-  const [updating, setUpdating] = useState(false);
-  const [toast, setToast] = useState<string | null>(null);
 
   const getEffectiveToken = useCallback(
     () => token || (typeof window !== "undefined" ? localStorage.getItem("admin_token") : null),
@@ -173,49 +168,8 @@ export default function CrowdPage() {
 
   const selectedAttr = data?.zones.flatMap((z) => z.attractions).find((a) => a.service_id === selected);
 
-  async function handleUpdate() {
-    const curToken = getEffectiveToken();
-    if (!curToken) return;
-    if (!updateSid || !updatePeople) {
-      setToast("Vui lòng nhập đầy đủ thông tin.");
-      return;
-    }
-    setUpdating(true);
-    try {
-      const apiBase = getApiBase();
-      const r = await fetch(`${apiBase}/admin/crowd/${updateSid}`, {
-        method: "PATCH",
-        headers: { Authorization: `Bearer ${curToken}`, "Content-Type": "application/json" },
-        body: JSON.stringify({
-          current_people: parseInt(updatePeople),
-          wait_minutes: updateWait ? parseInt(updateWait) : null,
-        }),
-      });
-      if (r.ok) {
-        setToast("Cập nhật mật độ thành công!");
-        await fetchData();
-      } else {
-        const d = await r.json();
-        setToast(d.detail ?? "Lỗi cập nhật dữ liệu.");
-      }
-    } catch {
-      setToast("Lỗi kết nối máy chủ.");
-    } finally {
-      setUpdating(false);
-      setTimeout(() => setToast(null), 3000);
-    }
-  }
-
-  const allAttractions = data?.zones.flatMap((z) => z.attractions) ?? [];
-
   return (
     <div className="space-y-6">
-      {toast && (
-        <div className="fixed top-6 right-6 z-50 px-5 py-3 rounded-xl bg-blue-600 text-white text-xs font-bold shadow-lg">
-          {toast}
-        </div>
-      )}
-
       {/* Tiêu đề & Làm mới */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
@@ -327,73 +281,12 @@ export default function CrowdPage() {
                   </div>
                 </div>
               )}
-              <button
-                onClick={() => {
-                  setUpdateSid(selectedAttr.service_id);
-                  setUpdatePeople(String(selectedAttr.current_people ?? 0));
-                  setUpdateWait(String(selectedAttr.wait_minutes ?? 0));
-                }}
-                className="mt-4 text-xs font-bold text-blue-600 hover:text-blue-800 transition-colors cursor-pointer"
-              >
-                Cập nhật thông số cho điểm này →
-              </button>
             </div>
           )}
         </div>
 
-        {/* Cột phải: Form cập nhật và danh sách khu vực */}
+        {/* Cột phải: Danh sách khu vực */}
         <div className="space-y-6">
-          {/* Form cập nhật dữ liệu thử nghiệm */}
-          <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-xs">
-            <h3 className="font-extrabold text-slate-900 text-base mb-4">Cập nhật mật độ (Thử nghiệm)</h3>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1.5">Điểm vui chơi</label>
-                <select
-                  value={updateSid}
-                  onChange={(e) => setUpdateSid(e.target.value)}
-                  className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 text-xs font-medium outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600"
-                >
-                  <option value="">-- Chọn điểm vui chơi --</option>
-                  {allAttractions.map((a) => (
-                    <option key={a.service_id} value={a.service_id}>
-                      {a.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1.5">Số khách hiện tại</label>
-                <input
-                  type="number"
-                  min={0}
-                  value={updatePeople}
-                  onChange={(e) => setUpdatePeople(e.target.value)}
-                  placeholder="Ví dụ: 80"
-                  className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 text-xs font-medium outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1.5">Thời gian chờ (phút)</label>
-                <input
-                  type="number"
-                  min={0}
-                  value={updateWait}
-                  onChange={(e) => setUpdateWait(e.target.value)}
-                  placeholder="Ví dụ: 15"
-                  className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 text-xs font-medium outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600"
-                />
-              </div>
-              <button
-                onClick={handleUpdate}
-                disabled={updating}
-                className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white text-xs font-bold rounded-xl transition-all shadow-xs cursor-pointer"
-              >
-                {updating ? "Đang cập nhật..." : "Cập nhật dữ liệu"}
-              </button>
-            </div>
-          </div>
-
           {/* Danh sách theo phân khu */}
           {data?.zones.map((z) => (
             <div key={z.zone_id} className="bg-white border border-slate-200/80 rounded-2xl overflow-hidden shadow-xs">

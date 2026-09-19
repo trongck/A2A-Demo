@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, Be_Vietnam_Pro, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+import "mapbox-gl/dist/mapbox-gl.css";
 
 const beVietnamPro = Be_Vietnam_Pro({
   weight: ["400", "500", "600", "700", "800", "900"],
@@ -52,12 +53,7 @@ export default function RootLayout({
       className={`${beVietnamPro.variable} ${plusJakarta.variable} ${jetbrainsMono.variable} h-full`}
       suppressHydrationWarning
     >
-      <head>
-        <meta
-          httpEquiv="Content-Security-Policy"
-          content="default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' http://127.0.0.1:* http://localhost:* ws://127.0.0.1:* ws://localhost:*;"
-        />
-      </head>
+      <head />
       <body
         className="min-h-full flex flex-col bg-[#faf9f6] text-[#18181b] font-sans antialiased"
         suppressHydrationWarning

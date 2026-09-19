@@ -40,13 +40,3 @@ SESSION_ID_PATTERN: str = r"^[a-zA-Z0-9_\-]+$"
 # --- Flags ---
 AUTH_ENABLED: bool = bool(V_AI_API_KEY)
 INTERNAL_AUTH_ENABLED: bool = bool(V_AI_INTERNAL_SECRET)
-
-
-def reload_config() -> None:
-    """Hot-reload config từ .env (dùng cho testing)."""
-    global V_AI_API_KEY, V_AI_INTERNAL_SECRET, AUTH_ENABLED, INTERNAL_AUTH_ENABLED
-    load_dotenv(dotenv_path=ENV_PATH, override=True)
-    V_AI_API_KEY = os.environ.get("V_AI_API_KEY", "").strip()
-    V_AI_INTERNAL_SECRET = os.environ.get("V_AI_INTERNAL_SECRET", "").strip()
-    AUTH_ENABLED = bool(V_AI_API_KEY)
-    INTERNAL_AUTH_ENABLED = bool(V_AI_INTERNAL_SECRET)

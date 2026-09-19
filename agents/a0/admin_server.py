@@ -1,15 +1,11 @@
-﻿"""
+"""
 agents/a0/admin_server.py
 Admin Portal Router — mount vao /admin tren A0 FastAPI app.
 
 Endpoints:
   POST /admin/auth/login
   GET  /admin/auth/me
-  POST /admin/auth/logout
-
   GET  /admin/crowd/overview
-  GET  /admin/crowd/zones
-  PATCH /admin/crowd/{service_id}
 
   GET  /admin/bookings
   GET  /admin/bookings/stats
@@ -23,7 +19,6 @@ Endpoints:
 """
 
 import heapq
-import os
 import time
 from collections import defaultdict
 from typing import Any
@@ -47,7 +42,6 @@ from shared.memory.database import (
     get_events,
     get_messages,
     get_or_create_session,
-    init_db,
     update_admin_last_login,
 )
 from shared.data_adapter import START_NODE_ID, load_v2_data
@@ -56,15 +50,13 @@ admin_router = APIRouter(prefix="/admin", tags=["Admin Portal"])
 
 # ----------------------------------------------------------------- helpers ---
 
-_mock_crowd_overrides: dict[str, dict[str, Any]] = {}  # in-memory cho demo PATCH
-
 def _load_mock_data() -> dict[str, Any]:
     """Đọc và chuẩn hóa V-AI-Mock-Data-V2.json."""
     return load_v2_data()
 
 
 def _compute_crowd_level(occupancy_rate: float | None, data_quality: str) -> str:
-    if data_quality != "valid" or occupancy_rate is None:
+    if data_quality not in {"valid", "mock"} or occupancy_rate is None:
         return "unknown"
     if occupancy_rate < 0.4:
         return "low"
@@ -189,12 +181,6 @@ def get_me(current: dict = Depends(get_current_admin)) -> dict[str, Any]:
     }
 
 
-@admin_router.post("/auth/logout")
-def logout(_: dict = Depends(require_admin_token)) -> dict[str, Any]:
-    """Dang xuat (client xoa token phia client)."""
-    return {"success": True, "message": "Da dang xuat."}
-
-
 # ===================================================== CROWD ENDPOINTS =======
 
 @admin_router.get("/crowd/overview")
@@ -204,11 +190,6 @@ def crowd_overview(_: dict = Depends(require_admin_token)) -> dict[str, Any]:
     attractions = {a["service_id"]: a for a in data["attractions"]}
     snapshots = {s["service_id"]: s for s in data["crowd_snapshots"]}
     zones_meta = {z["zone_id"]: z["name"] for z in data["zones"]}
-
-    # Ap dung override neu co
-    for sid, override in _mock_crowd_overrides.items():
-        if sid in snapshots:
-            snapshots[sid].update(override)
 
     zones_map: dict[str, list[dict]] = defaultdict(list)
     open_count = maintenance_count = closed_count = unknown_count = 0
@@ -270,31 +251,6 @@ def crowd_overview(_: dict = Depends(require_admin_token)) -> dict[str, Any]:
         "closed_count": closed_count,
         "unknown_count": unknown_count,
         "zones": zones,
-    }
-
-
-class CrowdUpdateRequest(BaseModel):
-    current_people: int = Field(..., ge=0)
-    wait_minutes: int | None = Field(None, ge=0)
-
-
-@admin_router.patch("/crowd/{service_id}")
-def update_crowd(
-    service_id: str,
-    req: CrowdUpdateRequest,
-    _: dict = Depends(require_admin_token),
-) -> dict[str, Any]:
-    """Cap nhat mat do diem choi (simulate cho demo)."""
-    _mock_crowd_overrides[service_id] = {
-        "current_people": req.current_people,
-        "wait_minutes": req.wait_minutes,
-        "data_quality": "valid",
-        "operating_status": "open",
-    }
-    return {
-        "success": True,
-        "service_id": service_id,
-        "updated": {"current_people": req.current_people, "wait_minutes": req.wait_minutes},
     }
 
 

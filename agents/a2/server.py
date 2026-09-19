@@ -7,10 +7,8 @@ Bám sát mục 4 và mục 7 của V-AI-Implementation-Plan.md.
 
 import json
 import os
-import time
 import uuid
 from datetime import datetime
-from pathlib import Path
 from typing import Any
 
 import httpx
@@ -65,7 +63,6 @@ def call_mcp_tool(tool_name: str, arguments: dict[str, Any]) -> dict[str, Any]:
     except Exception:
         pass
 
-
     # Fallback trực tiếp tới mcp_server module khi chưa bật process 8003
     from mcp_server.server import (
         tool_get_attractions,
@@ -73,20 +70,20 @@ def call_mcp_tool(tool_name: str, arguments: dict[str, Any]) -> dict[str, Any]:
         tool_get_route_matrix,
         tool_get_weather,
     )
-    if tool_name == "get_attractions":
-        return tool_get_attractions(
+    _fallback_dispatch = {
+        "get_attractions": lambda: tool_get_attractions(
             arguments.get("scenario_id", "base"), arguments.get("service_ids"),
             arguments.get("categories"), arguments.get("limit"), arguments.get("scope", "vinwonders"),
-        )
-    elif tool_name == "get_crowd_snapshots":
-        return tool_get_crowd_snapshots(
+        ),
+        "get_crowd_snapshots": lambda: tool_get_crowd_snapshots(
             arguments.get("scenario_id", "base"), arguments.get("service_ids"), arguments.get("scope", "vinwonders"),
-        )
-    elif tool_name == "get_route_matrix":
-        return tool_get_route_matrix(arguments.get("node_ids", []))
-    elif tool_name == "get_weather":
-        return tool_get_weather(arguments.get("start_at", ""), arguments.get("end_by", ""))
-    return {}
+        ),
+        "get_route_matrix": lambda: tool_get_route_matrix(arguments.get("node_ids", [])),
+        "get_weather": lambda: tool_get_weather(arguments.get("start_at", ""), arguments.get("end_by", "")),
+    }
+    handler = _fallback_dispatch.get(tool_name)
+    return handler() if handler else {}
+
 
 
 
@@ -335,7 +332,6 @@ class DirectAnalyzeRequest(BaseModel):
     service_ids: list[str] | None = None
 
 
-from fastapi import Depends
 
 @app.post("/api/analyze", dependencies=[Depends(require_internal_secret)])
 def direct_analyze(req: DirectAnalyzeRequest) -> dict[str, Any]:

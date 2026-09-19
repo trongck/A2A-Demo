@@ -8,7 +8,6 @@ Phu thuoc:
 """
 
 import os
-import time
 from datetime import datetime, timedelta, timezone
 from typing import Any
 
@@ -28,11 +27,9 @@ except ImportError:
     _JOSE_OK = False
 
 # ------------------------------------------------------------------ config ---
-_JWT_SECRET = os.getenv("ADMIN_JWT_SECRET", "CHANGE_ME_in_production_secret_key_v1")
+_JWT_SECRET = os.getenv("ADMIN_JWT_SECRET", "").strip()
 _JWT_ALGORITHM = "HS256"
 _JWT_EXPIRE_HOURS = int(os.getenv("ADMIN_TOKEN_EXPIRE_HOURS", "8"))
-
-_USING_DEFAULT_SECRET = (_JWT_SECRET == "CHANGE_ME_in_production_secret_key_v1")
 
 _bearer_scheme = HTTPBearer(auto_error=False)
 
@@ -67,6 +64,8 @@ def create_admin_token(username: str, role: str = "coordinator") -> dict[str, An
     """
     if not _JOSE_OK:
         raise RuntimeError("python-jose[cryptography] chua duoc cai dat.")
+    if not _JWT_SECRET:
+        raise RuntimeError("ADMIN_JWT_SECRET chua duoc cau hinh.")
     expire = datetime.now(timezone.utc) + timedelta(hours=_JWT_EXPIRE_HOURS)
     payload = {
         "sub": username,
@@ -92,6 +91,11 @@ def verify_admin_token(token: str) -> dict[str, Any]:
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             detail="Auth service chua san sang.",
+        )
+    if not _JWT_SECRET:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Auth service chua duoc cau hinh.",
         )
     try:
         payload = jose_jwt.decode(token, _JWT_SECRET, algorithms=[_JWT_ALGORITHM])

@@ -73,7 +73,15 @@
     "fourStar": 2,
     "fiveStar": 1
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Tini%20Food%20%26%20Drink&query_place_id=ChIJiRKoHuhncDERYdyjbSANbGk"
+  "url": "https://www.google.com/maps/search/?api=1&query=Tini%20Food%20%26%20Drink&query_place_id=ChIJiRKoHuhncDERYdyjbSANbGk",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 441,
+    "comfortCapacityPeople": 186,
+    "currentPeople": 88,
+    "queuePeople": 6,
+    "waitMinutes": 27
+  }
 },
 {
   "address": "5 Đ.Mạc Đĩnh Chi, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -143,7 +151,15 @@
   "title": "X Food",
   "totalScore": null,
   "wasOpenAtScrapeTime": true,
-  "url": "https://www.google.com/maps/search/?api=1&query=X%20Food&query_place_id=ChIJ9_Nd0jxncDERiIKe-6ygnoQ"
+  "url": "https://www.google.com/maps/search/?api=1&query=X%20Food&query_place_id=ChIJ9_Nd0jxncDERiIKe-6ygnoQ",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1522,
+    "comfortCapacityPeople": 191,
+    "currentPeople": 170,
+    "queuePeople": 21,
+    "waitMinutes": 22
+  }
 },
 {
   "address": "30 Lý Tự Trọng, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -223,7 +239,15 @@
     "fourStar": 251,
     "fiveStar": 757
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Sakura%20Sushi%20Nha%20Trang%20Japanese%20Cuisine&query_place_id=ChIJR1R8YHxncDERu1HPfHLPWhI"
+  "url": "https://www.google.com/maps/search/?api=1&query=Sakura%20Sushi%20Nha%20Trang%20Japanese%20Cuisine&query_place_id=ChIJR1R8YHxncDERu1HPfHLPWhI",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1171,
+    "comfortCapacityPeople": 244,
+    "currentPeople": 200,
+    "queuePeople": 25,
+    "waitMinutes": 18
+  }
 },
 {
   "address": "15 Đ. Hoàng Hoa Thám, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -301,7 +325,15 @@
     "fourStar": 1,
     "fiveStar": 10
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=C%E1%BB%ADa%20h%C3%A0ng%20Th%E1%BB%B1c%20Ph%E1%BA%A9m%20S%E1%BA%A1ch%20Nha%20Trang&query_place_id=ChIJpR9h7IFncDER1l9caUb9Nzo"
+  "url": "https://www.google.com/maps/search/?api=1&query=C%E1%BB%ADa%20h%C3%A0ng%20Th%E1%BB%B1c%20Ph%E1%BA%A9m%20S%E1%BA%A1ch%20Nha%20Trang&query_place_id=ChIJpR9h7IFncDER1l9caUb9Nzo",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2881,
+    "comfortCapacityPeople": 342,
+    "currentPeople": 278,
+    "queuePeople": 46,
+    "waitMinutes": 14
+  }
 },
 {
   "address": "40 Đ. Lê Thánh Tôn, Nha Trang, Khánh Hòa 57000, Việt Nam",
@@ -379,7 +411,15 @@
     "fourStar": 772,
     "fiveStar": 1631
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Ph%E1%BB%9F%20H%E1%BB%93ng&query_place_id=ChIJi3ZnH39ncDERemw2veaDW2A"
+  "url": "https://www.google.com/maps/search/?api=1&query=Ph%E1%BB%9F%20H%E1%BB%93ng&query_place_id=ChIJi3ZnH39ncDERemw2veaDW2A",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2380,
+    "comfortCapacityPeople": 386,
+    "currentPeople": 200,
+    "queuePeople": 24,
+    "waitMinutes": 7
+  }
 },
 {
   "address": "27 Đ. Võ Trứ, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -457,7 +497,15 @@
     "fourStar": 6,
     "fiveStar": 39
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Yaowarat%20by%20Kruathai&query_place_id=ChIJwcG0AwBncDER_xHPuBVgnDg"
+  "url": "https://www.google.com/maps/search/?api=1&query=Yaowarat%20by%20Kruathai&query_place_id=ChIJwcG0AwBncDER_xHPuBVgnDg",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2999,
+    "comfortCapacityPeople": 145,
+    "currentPeople": 52,
+    "queuePeople": 7,
+    "waitMinutes": 26
+  }
 },
 {
   "address": "76 Đống Đa, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -535,7 +583,15 @@
     "fourStar": 173,
     "fiveStar": 1172
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Sam%20Lor%20Thai%20Restaurant%20Nha%20Trang&query_place_id=ChIJpSDREU5ncDERl1cAhrWmNNs"
+  "url": "https://www.google.com/maps/search/?api=1&query=Sam%20Lor%20Thai%20Restaurant%20Nha%20Trang&query_place_id=ChIJpSDREU5ncDERl1cAhrWmNNs",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2212,
+    "comfortCapacityPeople": 344,
+    "currentPeople": 115,
+    "queuePeople": 11,
+    "waitMinutes": 19
+  }
 },
 {
   "address": "2 Đ. Nguyễn Gia Thiều, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -613,7 +669,15 @@
     "fourStar": 4,
     "fiveStar": 7
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=C%C3%A0%20Ph%C3%AA%20Con%20Ch%E1%BB%93n%20V%C3%A0ng%20C7%20-%20Huca%20Food%20(C7%20Coffee)&query_place_id=ChIJ-04RJIdncDEREmN16mimPP0"
+  "url": "https://www.google.com/maps/search/?api=1&query=C%C3%A0%20Ph%C3%AA%20Con%20Ch%E1%BB%93n%20V%C3%A0ng%20C7%20-%20Huca%20Food%20(C7%20Coffee)&query_place_id=ChIJ-04RJIdncDEREmN16mimPP0",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 863,
+    "comfortCapacityPeople": 267,
+    "currentPeople": 47,
+    "queuePeople": 3,
+    "waitMinutes": 17
+  }
 },
 {
   "address": "100 Bạch Đằng, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -691,7 +755,15 @@
     "fourStar": 51,
     "fiveStar": 1473
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Ph%E1%BB%9F%20B%C3%B2%20Nh%C3%A0%20GaRi&query_place_id=ChIJw2k0C95ncDERTl4bK2cMTsc"
+  "url": "https://www.google.com/maps/search/?api=1&query=Ph%E1%BB%9F%20B%C3%B2%20Nh%C3%A0%20GaRi&query_place_id=ChIJw2k0C95ncDERTl4bK2cMTsc",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 699,
+    "comfortCapacityPeople": 278,
+    "currentPeople": 159,
+    "queuePeople": 31,
+    "waitMinutes": 29
+  }
 },
 {
   "address": "Trần Quang Khải, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -768,7 +840,15 @@
     "fourStar": 2,
     "fiveStar": 33
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Food%20Bar%20Lat&query_place_id=ChIJAfX4DuZncDERyNsDwKaZkIg"
+  "url": "https://www.google.com/maps/search/?api=1&query=Food%20Bar%20Lat&query_place_id=ChIJAfX4DuZncDERyNsDwKaZkIg",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1729,
+    "comfortCapacityPeople": 388,
+    "currentPeople": 275,
+    "queuePeople": 18,
+    "waitMinutes": 25
+  }
 },
 {
   "address": "11 Đ. Huỳnh Thúc Kháng, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -845,7 +925,15 @@
     "fourStar": 212,
     "fiveStar": 666
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=%E1%BA%A8m%20Th%E1%BB%B1c%20Thu%E1%BA%A7n%20Chay%20B%E1%BB%92%20%C4%90%E1%BB%80%20SAO%20-%20Nha%20Trang&query_place_id=ChIJ8zRgTH5ncDERHyV5KqhAarQ"
+  "url": "https://www.google.com/maps/search/?api=1&query=%E1%BA%A8m%20Th%E1%BB%B1c%20Thu%E1%BA%A7n%20Chay%20B%E1%BB%92%20%C4%90%E1%BB%80%20SAO%20-%20Nha%20Trang&query_place_id=ChIJ8zRgTH5ncDERHyV5KqhAarQ",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 784,
+    "comfortCapacityPeople": 213,
+    "currentPeople": 35,
+    "queuePeople": 5,
+    "waitMinutes": 7
+  }
 },
 {
   "address": "Tầng 3 - Trung tâm thương mại, 20 Trần Phú, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -923,7 +1011,15 @@
     "fourStar": 101,
     "fiveStar": 441
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=%C4%90%C3%A0%20L%E1%BA%A1t%20Buffet%20BBQ%20-%20Nha%20Trang%20Center&query_place_id=ChIJA2-zJ6pncDERnhc3zc6REVg"
+  "url": "https://www.google.com/maps/search/?api=1&query=%C4%90%C3%A0%20L%E1%BA%A1t%20Buffet%20BBQ%20-%20Nha%20Trang%20Center&query_place_id=ChIJA2-zJ6pncDERnhc3zc6REVg",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2774,
+    "comfortCapacityPeople": 227,
+    "currentPeople": 165,
+    "queuePeople": 17,
+    "waitMinutes": 13
+  }
 },
 {
   "address": "752R+QWV, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -1000,7 +1096,15 @@
     "fourStar": 17,
     "fiveStar": 122
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=79%20Dung%20Linh%20-%20BBQ%20Duck&query_place_id=ChIJq_mnz1xncDERQvHUYj364TU"
+  "url": "https://www.google.com/maps/search/?api=1&query=79%20Dung%20Linh%20-%20BBQ%20Duck&query_place_id=ChIJq_mnz1xncDERQvHUYj364TU",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1895,
+    "comfortCapacityPeople": 176,
+    "currentPeople": 100,
+    "queuePeople": 11,
+    "waitMinutes": 7
+  }
 },
 {
   "address": "26 Tô Hiến Thành, Nha Trang, Khánh Hòa 57000, Việt Nam",
@@ -1077,7 +1181,15 @@
     "fourStar": 1,
     "fiveStar": 14
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Kh%C3%B3m%20Vietnamese%20Cuisine%20Nha%20Trang&query_place_id=ChIJBefQJV5ncDERe1fv-Znu0jc"
+  "url": "https://www.google.com/maps/search/?api=1&query=Kh%C3%B3m%20Vietnamese%20Cuisine%20Nha%20Trang&query_place_id=ChIJBefQJV5ncDERe1fv-Znu0jc",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1383,
+    "comfortCapacityPeople": 203,
+    "currentPeople": 85,
+    "queuePeople": 16,
+    "waitMinutes": 13
+  }
 },
 {
   "address": "Nha Trang, Khánh Hòa, Việt Nam",
@@ -1118,7 +1230,15 @@
   "title": "Đại Lý Sữa Mộc Châu",
   "totalScore": null,
   "wasOpenAtScrapeTime": false,
-  "url": "https://www.google.com/maps/search/?api=1&query=%C4%90%E1%BA%A1i%20L%C3%BD%20S%E1%BB%AFa%20M%E1%BB%99c%20Ch%C3%A2u&query_place_id=ChIJ0yVWakVncDERt5frFf7CYTk"
+  "url": "https://www.google.com/maps/search/?api=1&query=%C4%90%E1%BA%A1i%20L%C3%BD%20S%E1%BB%AFa%20M%E1%BB%99c%20Ch%C3%A2u&query_place_id=ChIJ0yVWakVncDERt5frFf7CYTk",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1601,
+    "comfortCapacityPeople": 375,
+    "currentPeople": 317,
+    "queuePeople": 43,
+    "waitMinutes": 15
+  }
 },
 {
   "address": null,
@@ -1197,7 +1317,15 @@
     "fourStar": 0,
     "fiveStar": 1
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Jenny's%20Pancakes%2C%20Crepes%20%26%20More&query_place_id=ChIJI8gD5em2Z2URLlLqEgoq6Ag"
+  "url": "https://www.google.com/maps/search/?api=1&query=Jenny's%20Pancakes%2C%20Crepes%20%26%20More&query_place_id=ChIJI8gD5em2Z2URLlLqEgoq6Ag",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1180,
+    "comfortCapacityPeople": 232,
+    "currentPeople": 63,
+    "queuePeople": 5,
+    "waitMinutes": 19
+  }
 },
 {
   "address": null,
@@ -1276,7 +1404,15 @@
     "fourStar": 0,
     "fiveStar": 2
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Jenny's%20Pancakes%2C%20Crepes%20%26%20More&query_place_id=ChIJ4Ultc7BoM2IRGRuciHfH3c4"
+  "url": "https://www.google.com/maps/search/?api=1&query=Jenny's%20Pancakes%2C%20Crepes%20%26%20More&query_place_id=ChIJ4Ultc7BoM2IRGRuciHfH3c4",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2223,
+    "comfortCapacityPeople": 281,
+    "currentPeople": 189,
+    "queuePeople": 38,
+    "waitMinutes": 4
+  }
 },
 {
   "address": "993 Lê Hồng Phong, Nam Nha Trang, Khánh Hòa, Việt Nam",
@@ -1347,7 +1483,15 @@
   "totalScore": null,
   "wasOpenAtScrapeTime": false,
   "website": "https://www.facebook.com/oanhdaomart?mibextid=LQQJ4d",
-  "url": "https://www.google.com/maps/search/?api=1&query=D%C3%AA%20X%C3%B4ng%20H%C6%A1i&query_place_id=ChIJzXLp-KVncDER5nKcGMSrF8M"
+  "url": "https://www.google.com/maps/search/?api=1&query=D%C3%AA%20X%C3%B4ng%20H%C6%A1i&query_place_id=ChIJzXLp-KVncDER5nKcGMSrF8M",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2234,
+    "comfortCapacityPeople": 209,
+    "currentPeople": 60,
+    "queuePeople": 7,
+    "waitMinutes": 15
+  }
 },
 {
   "address": "119 Dã Tượng, Nha Trang, Khánh Hòa 57000, Việt Nam",
@@ -1424,7 +1568,15 @@
     "fourStar": 0,
     "fiveStar": 0
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=B%C3%BAn%20%C4%90%E1%BA%ADu%20M%E1%BA%AFm%20T%C3%B4m&query_place_id=ChIJodCHNoNncDERRDQz__MeSAo"
+  "url": "https://www.google.com/maps/search/?api=1&query=B%C3%BAn%20%C4%90%E1%BA%ADu%20M%E1%BA%AFm%20T%C3%B4m&query_place_id=ChIJodCHNoNncDERRDQz__MeSAo",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2772,
+    "comfortCapacityPeople": 85,
+    "currentPeople": 33,
+    "queuePeople": 5,
+    "waitMinutes": 18
+  }
 },
 {
   "address": "78 Tuệ Tĩnh, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -1472,7 +1624,15 @@
     "fourStar": 0,
     "fiveStar": 0
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=H%E1%BA%A3i%20s%E1%BA%A3n%20gi%C3%A1%20r%E1%BA%BB&query_place_id=ChIJ2Zb2CQBncDERBTNxo8ibQdw"
+  "url": "https://www.google.com/maps/search/?api=1&query=H%E1%BA%A3i%20s%E1%BA%A3n%20gi%C3%A1%20r%E1%BA%BB&query_place_id=ChIJ2Zb2CQBncDERBTNxo8ibQdw",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1024,
+    "comfortCapacityPeople": 179,
+    "currentPeople": 141,
+    "queuePeople": 13,
+    "waitMinutes": 7
+  }
 },
 {
   "address": "98B Trần Phú, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -1521,7 +1681,15 @@
     "fourStar": 20,
     "fiveStar": 33
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=MC96%20M%C3%AA%20Trang%20Coffee&query_place_id=ChIJI9IYEGZncDER9umvFHqdZyk"
+  "url": "https://www.google.com/maps/search/?api=1&query=MC96%20M%C3%AA%20Trang%20Coffee&query_place_id=ChIJI9IYEGZncDER9umvFHqdZyk",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1146,
+    "comfortCapacityPeople": 101,
+    "currentPeople": 40,
+    "queuePeople": 3,
+    "waitMinutes": 7
+  }
 },
 {
   "address": "17/77 Hoàng Diệu, Nha Trang, Khánh Hòa, Việt Nam",
@@ -1598,7 +1766,15 @@
     "fourStar": 0,
     "fiveStar": 1
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=C%C6%A1%20s%E1%BB%9F%20gi%C3%B2%20ch%E1%BA%A3%20b%C3%A0%20H%E1%BA%A1nh&query_place_id=ChIJM5w3FgBncDER5L-WXza39d8"
+  "url": "https://www.google.com/maps/search/?api=1&query=C%C6%A1%20s%E1%BB%9F%20gi%C3%B2%20ch%E1%BA%A3%20b%C3%A0%20H%E1%BA%A1nh&query_place_id=ChIJM5w3FgBncDER5L-WXza39d8",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2221,
+    "comfortCapacityPeople": 394,
+    "currentPeople": 218,
+    "queuePeople": 42,
+    "waitMinutes": 18
+  }
 },
 {
   "address": "103 Đông Phước, Nam Nha Trang, Khánh Hòa, Việt Nam",
@@ -1647,7 +1823,15 @@
     "fourStar": 0,
     "fiveStar": 4
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Ch%E1%BA%A3%20C%C3%A1%20Nha%20Trang%20CMA&query_place_id=ChIJ93pxslFncDERkqeIyubZkGM"
+  "url": "https://www.google.com/maps/search/?api=1&query=Ch%E1%BA%A3%20C%C3%A1%20Nha%20Trang%20CMA&query_place_id=ChIJ93pxslFncDERkqeIyubZkGM",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2920,
+    "comfortCapacityPeople": 85,
+    "currentPeople": 57,
+    "queuePeople": 10,
+    "waitMinutes": 5
+  }
 },
 {
   "address": "122 Dã Tượng, Nha Trang, Khánh Hòa, Việt Nam",
@@ -1717,7 +1901,15 @@
   "title": "Quán ăn",
   "totalScore": null,
   "wasOpenAtScrapeTime": false,
-  "url": "https://www.google.com/maps/search/?api=1&query=Qu%C3%A1n%20%C4%83n&query_place_id=ChIJWWM7eABncDERgSJoYlYwWgQ"
+  "url": "https://www.google.com/maps/search/?api=1&query=Qu%C3%A1n%20%C4%83n&query_place_id=ChIJWWM7eABncDERgSJoYlYwWgQ",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2947,
+    "comfortCapacityPeople": 185,
+    "currentPeople": 58,
+    "queuePeople": 9,
+    "waitMinutes": 7
+  }
 },
 {
   "address": "70 Hoàng Diệu, Nha Trang, Khánh Hòa, Việt Nam",
@@ -1794,7 +1986,15 @@
     "fourStar": 0,
     "fiveStar": 0
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Gi%C3%B2%20Ch%E1%BA%A3%20C%C3%B4%20Hu%E1%BA%BF&query_place_id=ChIJty3wzFxncDERO8zn8V-HZvY"
+  "url": "https://www.google.com/maps/search/?api=1&query=Gi%C3%B2%20Ch%E1%BA%A3%20C%C3%B4%20Hu%E1%BA%BF&query_place_id=ChIJty3wzFxncDERO8zn8V-HZvY",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1782,
+    "comfortCapacityPeople": 216,
+    "currentPeople": 46,
+    "queuePeople": 7,
+    "waitMinutes": 22
+  }
 },
 {
   "address": "39/8 Hoàng Diệu, Nha Trang, Khánh Hòa, Việt Nam",
@@ -1871,7 +2071,15 @@
     "fourStar": 0,
     "fiveStar": 6
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Ti%E1%BB%87m%20Gi%C3%B2%20Ch%E1%BA%A3%20B%C3%A0%20L%E1%BB%A5a&query_place_id=ChIJ6aDItVxncDERLsUqorgEKpA"
+  "url": "https://www.google.com/maps/search/?api=1&query=Ti%E1%BB%87m%20Gi%C3%B2%20Ch%E1%BA%A3%20B%C3%A0%20L%E1%BB%A5a&query_place_id=ChIJ6aDItVxncDERLsUqorgEKpA",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1823,
+    "comfortCapacityPeople": 131,
+    "currentPeople": 64,
+    "queuePeople": 13,
+    "waitMinutes": 28
+  }
 },
 {
   "address": "17 Tô Hiệu, Nha Trang, Khánh Hòa, Việt Nam",
@@ -1948,7 +2156,15 @@
     "fourStar": 1,
     "fiveStar": 0
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Mascopex%20Market&query_place_id=ChIJbX3m1r5ncDERiiix3qJ_01g"
+  "url": "https://www.google.com/maps/search/?api=1&query=Mascopex%20Market&query_place_id=ChIJbX3m1r5ncDERiiix3qJ_01g",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 623,
+    "comfortCapacityPeople": 216,
+    "currentPeople": 74,
+    "queuePeople": 6,
+    "waitMinutes": 14
+  }
 },
 {
   "address": "98 Trần Phú, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -1996,7 +2212,15 @@
     "fourStar": 0,
     "fiveStar": 1
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=C%E1%BB%ADa%20H%C3%A0ng%20Th%E1%BB%B1c%20Ph%E1%BA%A9m&query_place_id=ChIJ86izGmZncDERfEZu5s2MIec"
+  "url": "https://www.google.com/maps/search/?api=1&query=C%E1%BB%ADa%20H%C3%A0ng%20Th%E1%BB%B1c%20Ph%E1%BA%A9m&query_place_id=ChIJ86izGmZncDERfEZu5s2MIec",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 738,
+    "comfortCapacityPeople": 238,
+    "currentPeople": 70,
+    "queuePeople": 6,
+    "waitMinutes": 22
+  }
 },
 {
   "address": "999 Lê Hồng Phong, Nam Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -2044,7 +2268,15 @@
     "fourStar": 0,
     "fiveStar": 1
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=999%20l%C3%AA%20h%E1%BB%93ng%20phong&query_place_id=ChIJ5csSGABncDERGTHDOPsCfhQ"
+  "url": "https://www.google.com/maps/search/?api=1&query=999%20l%C3%AA%20h%E1%BB%93ng%20phong&query_place_id=ChIJ5csSGABncDERGTHDOPsCfhQ",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2849,
+    "comfortCapacityPeople": 262,
+    "currentPeople": 151,
+    "queuePeople": 10,
+    "waitMinutes": 30
+  }
 },
 {
   "address": "42 Trần Phú, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -2122,7 +2354,15 @@
     "fourStar": 126,
     "fiveStar": 488
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=KATINAT%20L%C3%AA%20Th%C3%A1nh%20T%C3%B4n%20Nha%20Trang&query_place_id=ChIJs8Z8g_1ncDER00cS0MkjJY8"
+  "url": "https://www.google.com/maps/search/?api=1&query=KATINAT%20L%C3%AA%20Th%C3%A1nh%20T%C3%B4n%20Nha%20Trang&query_place_id=ChIJs8Z8g_1ncDER00cS0MkjJY8",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2352,
+    "comfortCapacityPeople": 359,
+    "currentPeople": 131,
+    "queuePeople": 20,
+    "waitMinutes": 28
+  }
 },
 {
   "address": "Khách sạn Havana Nha Trang, 38 Trần Phú, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -2200,7 +2440,15 @@
     "fourStar": 351,
     "fiveStar": 750
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=ICED%20COFFEE%20-%2038%20TR%E1%BA%A6N%20PH%C3%9A&query_place_id=ChIJ-1F0YntncDERQJFXhQmEaf8"
+  "url": "https://www.google.com/maps/search/?api=1&query=ICED%20COFFEE%20-%2038%20TR%E1%BA%A6N%20PH%C3%9A&query_place_id=ChIJ-1F0YntncDERQJFXhQmEaf8",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 319,
+    "comfortCapacityPeople": 94,
+    "currentPeople": 73,
+    "queuePeople": 11,
+    "waitMinutes": 26
+  }
 },
 {
   "address": "176/3 Hùng Vương, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -2280,7 +2528,15 @@
     "fourStar": 132,
     "fiveStar": 271
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=La%20Mancha&query_place_id=ChIJn0y6THtncDERqqehWzvJ8cw"
+  "url": "https://www.google.com/maps/search/?api=1&query=La%20Mancha&query_place_id=ChIJn0y6THtncDERqqehWzvJ8cw",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 457,
+    "comfortCapacityPeople": 124,
+    "currentPeople": 83,
+    "queuePeople": 12,
+    "waitMinutes": 17
+  }
 },
 {
   "address": "66A Trần Phú, Nha Trang, Khánh Hòa 57100, Việt Nam",
@@ -2357,7 +2613,15 @@
     "fourStar": 29,
     "fiveStar": 334
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=%E1%BB%9At%20Hi%E1%BB%83m%20Thai%20Cuisine&query_place_id=ChIJ1cGSD1JncDERoZYqrVoR6FQ"
+  "url": "https://www.google.com/maps/search/?api=1&query=%E1%BB%9At%20Hi%E1%BB%83m%20Thai%20Cuisine&query_place_id=ChIJ1cGSD1JncDERoZYqrVoR6FQ",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2969,
+    "comfortCapacityPeople": 345,
+    "currentPeople": 86,
+    "queuePeople": 4,
+    "waitMinutes": 19
+  }
 },
 {
   "address": "38 Trần Phú, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -2435,7 +2699,15 @@
     "fourStar": 353,
     "fiveStar": 1195
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Happy%20Beach&query_place_id=ChIJ29ymqXlncDERh53gkGh2SSY"
+  "url": "https://www.google.com/maps/search/?api=1&query=Happy%20Beach&query_place_id=ChIJ29ymqXlncDERh53gkGh2SSY",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1379,
+    "comfortCapacityPeople": 317,
+    "currentPeople": 257,
+    "queuePeople": 36,
+    "waitMinutes": 15
+  }
 },
 {
   "address": "32 Trần Phú, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -2492,7 +2764,15 @@
     "fourStar": 25,
     "fiveStar": 334
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=InterContinental%20Residences%20Nha%20Trang&query_place_id=ChIJtbL2VHVncDERg1FX9QD_s2k"
+  "url": "https://www.google.com/maps/search/?api=1&query=InterContinental%20Residences%20Nha%20Trang&query_place_id=ChIJtbL2VHVncDERg1FX9QD_s2k",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 683,
+    "comfortCapacityPeople": 321,
+    "currentPeople": 124,
+    "queuePeople": 13,
+    "waitMinutes": 27
+  }
 },
 {
   "address": "46/9 Đ. Lê Thánh Tôn, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -2569,7 +2849,15 @@
     "fourStar": 19,
     "fiveStar": 177
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Y%C3%AAn%20Nh%C3%A0%20H%C3%A0ng%20Chay%20%26%20Yoga%20Nha%20Trang&query_place_id=ChIJfzuRr_lncDERy_9HqtTi7EE"
+  "url": "https://www.google.com/maps/search/?api=1&query=Y%C3%AAn%20Nh%C3%A0%20H%C3%A0ng%20Chay%20%26%20Yoga%20Nha%20Trang&query_place_id=ChIJfzuRr_lncDERy_9HqtTi7EE",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1232,
+    "comfortCapacityPeople": 117,
+    "currentPeople": 23,
+    "queuePeople": 4,
+    "waitMinutes": 25
+  }
 },
 {
   "address": "72 Nguyễn Thị Minh Khai, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -2646,7 +2934,15 @@
     "fourStar": 192,
     "fiveStar": 1542
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=MITAMI%20Japanese%20Restaurant&query_place_id=ChIJn35ZE31ncDERsFBYVpZzvK4"
+  "url": "https://www.google.com/maps/search/?api=1&query=MITAMI%20Japanese%20Restaurant&query_place_id=ChIJn35ZE31ncDERsFBYVpZzvK4",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2428,
+    "comfortCapacityPeople": 97,
+    "currentPeople": 69,
+    "queuePeople": 3,
+    "waitMinutes": 9
+  }
 },
 {
   "address": "120/31b Nguyễn Thiện Thuật, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -2723,7 +3019,15 @@
     "fourStar": 1,
     "fiveStar": 41
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=LETO%20-%20Russian%20Food&query_place_id=ChIJ6VDsWQBncDERCjb_Yl1PmgU"
+  "url": "https://www.google.com/maps/search/?api=1&query=LETO%20-%20Russian%20Food&query_place_id=ChIJ6VDsWQBncDERCjb_Yl1PmgU",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2843,
+    "comfortCapacityPeople": 388,
+    "currentPeople": 102,
+    "queuePeople": 19,
+    "waitMinutes": 6
+  }
 },
 {
   "address": "Alley 53 Nguyễn Thiện Thuật, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -2800,7 +3104,15 @@
     "fourStar": 1,
     "fiveStar": 15
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Nha%20Trang%20International%20Food%20Alley&query_place_id=ChIJBdFtaQBncDERs661PQOgYxk"
+  "url": "https://www.google.com/maps/search/?api=1&query=Nha%20Trang%20International%20Food%20Alley&query_place_id=ChIJBdFtaQBncDERs661PQOgYxk",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 476,
+    "comfortCapacityPeople": 332,
+    "currentPeople": 278,
+    "queuePeople": 50,
+    "waitMinutes": 3
+  }
 },
 {
   "address": "32 Hoàng Diệu, Nha Trang, Khánh Hòa, Việt Nam",
@@ -2878,7 +3190,15 @@
     "fourStar": 33,
     "fiveStar": 82
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=B%C3%A1ch%20Ho%C3%A1%20Xanh%20Ho%C3%A0ng%20Di%E1%BB%87u&query_place_id=ChIJXVOp8AhncDERDJKo7ejdBkY"
+  "url": "https://www.google.com/maps/search/?api=1&query=B%C3%A1ch%20Ho%C3%A1%20Xanh%20Ho%C3%A0ng%20Di%E1%BB%87u&query_place_id=ChIJXVOp8AhncDERDJKo7ejdBkY",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1846,
+    "comfortCapacityPeople": 370,
+    "currentPeople": 329,
+    "queuePeople": 63,
+    "waitMinutes": 22
+  }
 },
 {
   "address": "Cửa bé, cuối Võ Thị Sáu, An Viên, Nam Nha Trang, Khánh Hòa, Việt Nam",
@@ -2926,7 +3246,15 @@
     "fourStar": 0,
     "fiveStar": 1
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Qu%C3%A1n%20nh%E1%BA%ADu%20h%E1%BA%A3i%20s%E1%BA%A3n%20b%C3%ACnh%20d%C3%A2n&query_place_id=ChIJ27tWTwBhcDERzb_k1FjM3bg"
+  "url": "https://www.google.com/maps/search/?api=1&query=Qu%C3%A1n%20nh%E1%BA%ADu%20h%E1%BA%A3i%20s%E1%BA%A3n%20b%C3%ACnh%20d%C3%A2n&query_place_id=ChIJ27tWTwBhcDERzb_k1FjM3bg",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2732,
+    "comfortCapacityPeople": 182,
+    "currentPeople": 32,
+    "queuePeople": 4,
+    "waitMinutes": 6
+  }
 },
 {
   "address": "22 Trường Sa, Nam Nha Trang, Khánh Hòa, Việt Nam",
@@ -2967,7 +3295,15 @@
   "title": "CP Fresh Shop",
   "totalScore": null,
   "wasOpenAtScrapeTime": null,
-  "url": "https://www.google.com/maps/search/?api=1&query=CP%20Fresh%20Shop&query_place_id=ChIJK6juE_dncDEReuWMnVvsEj0"
+  "url": "https://www.google.com/maps/search/?api=1&query=CP%20Fresh%20Shop&query_place_id=ChIJK6juE_dncDEReuWMnVvsEj0",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1141,
+    "comfortCapacityPeople": 128,
+    "currentPeople": 115,
+    "queuePeople": 10,
+    "waitMinutes": 29
+  }
 },
 {
   "address": "28 Đường Số 6C, Nam Nha Trang, Khánh Hòa, Việt Nam",
@@ -3015,7 +3351,15 @@
     "fourStar": 0,
     "fiveStar": 1
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=C%E1%BB%ADa%20H%C3%A0ng%20Th%E1%BB%B1c%20Ph%E1%BA%A9m&query_place_id=ChIJn78-71tncDERanyAxfi2tbk"
+  "url": "https://www.google.com/maps/search/?api=1&query=C%E1%BB%ADa%20H%C3%A0ng%20Th%E1%BB%B1c%20Ph%E1%BA%A9m&query_place_id=ChIJn78-71tncDERanyAxfi2tbk",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 685,
+    "comfortCapacityPeople": 364,
+    "currentPeople": 160,
+    "queuePeople": 7,
+    "waitMinutes": 3
+  }
 },
 {
   "address": "80 Đường Nguyễn Thị Định, Nam Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -3086,7 +3430,15 @@
   "totalScore": null,
   "wasOpenAtScrapeTime": true,
   "website": "https://www.facebook.com/share/17gJ592WaK/?mibextid=wwXIfr",
-  "url": "https://www.google.com/maps/search/?api=1&query=V%E1%BB%B1a%20T%C3%B4m%20H%C3%B9m%20Cam%20Ranh&query_place_id=ChIJ35DwYgBncDER6f3us6-QUuI"
+  "url": "https://www.google.com/maps/search/?api=1&query=V%E1%BB%B1a%20T%C3%B4m%20H%C3%B9m%20Cam%20Ranh&query_place_id=ChIJ35DwYgBncDER6f3us6-QUuI",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2634,
+    "comfortCapacityPeople": 174,
+    "currentPeople": 86,
+    "queuePeople": 15,
+    "waitMinutes": 4
+  }
 },
 {
   "address": "120 Đường Nguyễn Thị Định, Nam Nha Trang, Khánh Hòa, Việt Nam",
@@ -3164,7 +3516,15 @@
     "fourStar": 0,
     "fiveStar": 8
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Tr%C3%A0%20Th%C3%A1i%20Nguy%C3%AAn%20%E1%BB%9F%20Nha%20Trang&query_place_id=ChIJP8pzdgBncDERaHp6hqeW0wY"
+  "url": "https://www.google.com/maps/search/?api=1&query=Tr%C3%A0%20Th%C3%A1i%20Nguy%C3%AAn%20%E1%BB%9F%20Nha%20Trang&query_place_id=ChIJP8pzdgBncDERaHp6hqeW0wY",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 555,
+    "comfortCapacityPeople": 367,
+    "currentPeople": 107,
+    "queuePeople": 5,
+    "waitMinutes": 24
+  }
 },
 {
   "address": "Nha Trang, Khánh Hòa, Việt Nam",
@@ -3212,7 +3572,15 @@
     "fourStar": 0,
     "fiveStar": 7
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Qu%C3%A1n%20T%C3%A2m%20%E1%BB%90c&query_place_id=ChIJzd805ThncDERNzBuNYbZgMQ"
+  "url": "https://www.google.com/maps/search/?api=1&query=Qu%C3%A1n%20T%C3%A2m%20%E1%BB%90c&query_place_id=ChIJzd805ThncDERNzBuNYbZgMQ",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2875,
+    "comfortCapacityPeople": 286,
+    "currentPeople": 67,
+    "queuePeople": 12,
+    "waitMinutes": 22
+  }
 },
 {
   "address": "69 Hoàng Diệu, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -3289,7 +3657,15 @@
     "fourStar": 0,
     "fiveStar": 9
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Ch%C3%A1o%20Ti%E1%BB%81u%2069&query_place_id=ChIJb_LcMABncDERsbxlIBC3vJ4"
+  "url": "https://www.google.com/maps/search/?api=1&query=Ch%C3%A1o%20Ti%E1%BB%81u%2069&query_place_id=ChIJb_LcMABncDERsbxlIBC3vJ4",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 458,
+    "comfortCapacityPeople": 391,
+    "currentPeople": 98,
+    "queuePeople": 5,
+    "waitMinutes": 23
+  }
 },
 {
   "address": "228A Dã Tượng, Nha Trang, Khánh Hòa, Việt Nam",
@@ -3367,7 +3743,15 @@
     "fourStar": 0,
     "fiveStar": 1
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=C%C3%B4ng%20Ty%20TNHH%20Th%E1%BB%B1c%20Ph%E1%BA%A9m%20%C4%90%E1%BA%A1i%20D%C6%B0%C6%A1ng&query_place_id=ChIJk-Dnm0RncDERrpykfQBFtwc"
+  "url": "https://www.google.com/maps/search/?api=1&query=C%C3%B4ng%20Ty%20TNHH%20Th%E1%BB%B1c%20Ph%E1%BA%A9m%20%C4%90%E1%BA%A1i%20D%C6%B0%C6%A1ng&query_place_id=ChIJk-Dnm0RncDERrpykfQBFtwc",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 647,
+    "comfortCapacityPeople": 390,
+    "currentPeople": 80,
+    "queuePeople": 4,
+    "waitMinutes": 4
+  }
 },
 {
   "address": "78g Tuệ Tĩnh, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -3415,7 +3799,15 @@
     "fourStar": 0,
     "fiveStar": 3
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=C%C6%A1m%2078&query_place_id=ChIJ9_fjf9VncDERRJpnVYzBRs8"
+  "url": "https://www.google.com/maps/search/?api=1&query=C%C6%A1m%2078&query_place_id=ChIJ9_fjf9VncDERRJpnVYzBRs8",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1109,
+    "comfortCapacityPeople": 279,
+    "currentPeople": 75,
+    "queuePeople": 12,
+    "waitMinutes": 12
+  }
 },
 {
   "address": "nha, 6 Châu Văn Liêm, Nam Nha Trang, Khánh Hòa, Việt Nam",
@@ -3463,7 +3855,15 @@
     "fourStar": 0,
     "fiveStar": 1
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=V%E1%BB%8Bt%20Minh%20Hi%E1%BA%BFu&query_place_id=ChIJl-RWLgBncDERGOcyAFzklYk"
+  "url": "https://www.google.com/maps/search/?api=1&query=V%E1%BB%8Bt%20Minh%20Hi%E1%BA%BFu&query_place_id=ChIJl-RWLgBncDERGOcyAFzklYk",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 992,
+    "comfortCapacityPeople": 92,
+    "currentPeople": 44,
+    "queuePeople": 2,
+    "waitMinutes": 24
+  }
 },
 {
   "address": "121 Dã Tượng, Nha Trang, Khánh Hòa 65000, Việt Nam",
@@ -3540,7 +3940,15 @@
     "fourStar": 0,
     "fiveStar": 1
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Kyodo%20Foods%20Nha%20Trang%20cs2-%20%C4%90%E1%BA%B7c%20S%E1%BA%A3n%20G%C3%A0%20%E1%BB%A6%20Mu%E1%BB%91i%20X%E1%BB%A9%20Ngh%E1%BB%87&query_place_id=ChIJdaKQMlRncDERvB68_QekPAk"
+  "url": "https://www.google.com/maps/search/?api=1&query=Kyodo%20Foods%20Nha%20Trang%20cs2-%20%C4%90%E1%BA%B7c%20S%E1%BA%A3n%20G%C3%A0%20%E1%BB%A6%20Mu%E1%BB%91i%20X%E1%BB%A9%20Ngh%E1%BB%87&query_place_id=ChIJdaKQMlRncDERvB68_QekPAk",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 599,
+    "comfortCapacityPeople": 377,
+    "currentPeople": 313,
+    "queuePeople": 27,
+    "waitMinutes": 21
+  }
 },
 {
   "address": "142/17 Dã Tượng, Nha Trang, Khánh Hòa, Việt Nam",
@@ -3581,7 +3989,15 @@
   "title": "Tiệm Cơm Thịt Nướng Food Online",
   "totalScore": null,
   "wasOpenAtScrapeTime": null,
-  "url": "https://www.google.com/maps/search/?api=1&query=Ti%E1%BB%87m%20C%C6%A1m%20Th%E1%BB%8Bt%20N%C6%B0%E1%BB%9Bng%20Food%20Online&query_place_id=ChIJvw1dZQBncDERliogfjsiLNY"
+  "url": "https://www.google.com/maps/search/?api=1&query=Ti%E1%BB%87m%20C%C6%A1m%20Th%E1%BB%8Bt%20N%C6%B0%E1%BB%9Bng%20Food%20Online&query_place_id=ChIJvw1dZQBncDERliogfjsiLNY",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1000,
+    "comfortCapacityPeople": 385,
+    "currentPeople": 326,
+    "queuePeople": 46,
+    "waitMinutes": 3
+  }
 },
 {
   "address": "Hẽm 86 Trần Phú, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -3658,7 +4074,15 @@
     "fourStar": 2,
     "fiveStar": 5
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Thi%C3%AAn%20Minh%20L%E1%BB%AF%20qu%C3%A1n&query_place_id=ChIJu4tYNK1dcDER7-6PDRyI0hQ"
+  "url": "https://www.google.com/maps/search/?api=1&query=Thi%C3%AAn%20Minh%20L%E1%BB%AF%20qu%C3%A1n&query_place_id=ChIJu4tYNK1dcDER7-6PDRyI0hQ",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1069,
+    "comfortCapacityPeople": 90,
+    "currentPeople": 60,
+    "queuePeople": 9,
+    "waitMinutes": 19
+  }
 },
 {
   "address": "27 Nguyễn Đức Cảnh, Nam Nha Trang, Khánh Hòa, Việt Nam",
@@ -3736,7 +4160,15 @@
     "fourStar": 0,
     "fiveStar": 7
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=C%C6%A1m%20G%C3%A0%20Th%E1%BA%A3o&query_place_id=ChIJ01w8LgBncDERP723cTHU2UE"
+  "url": "https://www.google.com/maps/search/?api=1&query=C%C6%A1m%20G%C3%A0%20Th%E1%BA%A3o&query_place_id=ChIJ01w8LgBncDERP723cTHU2UE",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1217,
+    "comfortCapacityPeople": 201,
+    "currentPeople": 167,
+    "queuePeople": 8,
+    "waitMinutes": 14
+  }
 },
 {
   "address": "30 Đường 6C, Nam Nha Trang, Khánh Hòa, Việt Nam",
@@ -3814,7 +4246,15 @@
     "fourStar": 1,
     "fiveStar": 0
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=H%E1%BA%A3i%20S%E1%BA%A3n%20Dung%20Nguy%E1%BB%85n&query_place_id=ChIJ6dlT-YhncDERKvNcCmYZlXw"
+  "url": "https://www.google.com/maps/search/?api=1&query=H%E1%BA%A3i%20S%E1%BA%A3n%20Dung%20Nguy%E1%BB%85n&query_place_id=ChIJ6dlT-YhncDERKvNcCmYZlXw",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 937,
+    "comfortCapacityPeople": 355,
+    "currentPeople": 103,
+    "queuePeople": 13,
+    "waitMinutes": 21
+  }
 },
 {
   "address": "17/35 Hẻm đường Hoàng Diệu, Nha Trang, Khánh Hòa 57100, Việt Nam",
@@ -3862,7 +4302,15 @@
     "fourStar": 1,
     "fiveStar": 51
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=B%E1%BA%BFp%20X%C6%B0a%20-%20C%C3%A2y%20Xo%C3%A0i%20T%C3%A2y&query_place_id=ChIJ2VJZ8_NncDERoNp_wyCCJGI"
+  "url": "https://www.google.com/maps/search/?api=1&query=B%E1%BA%BFp%20X%C6%B0a%20-%20C%C3%A2y%20Xo%C3%A0i%20T%C3%A2y&query_place_id=ChIJ2VJZ8_NncDERoNp_wyCCJGI",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 487,
+    "comfortCapacityPeople": 262,
+    "currentPeople": 99,
+    "queuePeople": 10,
+    "waitMinutes": 19
+  }
 },
 {
   "address": "27 Bửu Đóa, Nha Trang, Khánh Hòa 000065, Việt Nam",
@@ -3933,7 +4381,15 @@
   "totalScore": null,
   "wasOpenAtScrapeTime": true,
   "website": "https://knest.net/",
-  "url": "https://www.google.com/maps/search/?api=1&query=Y%E1%BA%BFn%20s%C3%A0o%20K%E2%80%99nest&query_place_id=ChIJefot8QVncDERIbehFGz4P2U"
+  "url": "https://www.google.com/maps/search/?api=1&query=Y%E1%BA%BFn%20s%C3%A0o%20K%E2%80%99nest&query_place_id=ChIJefot8QVncDERIbehFGz4P2U",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1614,
+    "comfortCapacityPeople": 182,
+    "currentPeople": 103,
+    "queuePeople": 20,
+    "waitMinutes": 16
+  }
 },
 {
   "address": "66 Trần Phú, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -3981,7 +4437,15 @@
     "fourStar": 0,
     "fiveStar": 3
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Pa%20Mind%20-%20Street%20Food%20Lobster%20grill&query_place_id=ChIJQ_O_QldncDERum-Ztx5LcSk"
+  "url": "https://www.google.com/maps/search/?api=1&query=Pa%20Mind%20-%20Street%20Food%20Lobster%20grill&query_place_id=ChIJQ_O_QldncDERum-Ztx5LcSk",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1196,
+    "comfortCapacityPeople": 384,
+    "currentPeople": 308,
+    "queuePeople": 58,
+    "waitMinutes": 19
+  }
 },
 {
   "address": "164 Bạch Đằng, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -4059,7 +4523,15 @@
     "fourStar": 639,
     "fiveStar": 2900
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=B%C3%A1nh%20M%C3%AC%20Phan&query_place_id=ChIJUS2RKKdncDERX-2xeRMHUZ8"
+  "url": "https://www.google.com/maps/search/?api=1&query=B%C3%A1nh%20M%C3%AC%20Phan&query_place_id=ChIJUS2RKKdncDERX-2xeRMHUZ8",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 356,
+    "comfortCapacityPeople": 244,
+    "currentPeople": 109,
+    "queuePeople": 15,
+    "waitMinutes": 26
+  }
 },
 {
   "address": "56 Nguyễn Thiện Thuật, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -4136,7 +4608,15 @@
     "fourStar": 85,
     "fiveStar": 275
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Nh%C3%A0%20h%C3%A0ng%20Cheers&query_place_id=ChIJ_eN2UXtncDERuIe16Wckpuw"
+  "url": "https://www.google.com/maps/search/?api=1&query=Nh%C3%A0%20h%C3%A0ng%20Cheers&query_place_id=ChIJ_eN2UXtncDERuIe16Wckpuw",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2267,
+    "comfortCapacityPeople": 232,
+    "currentPeople": 198,
+    "queuePeople": 26,
+    "waitMinutes": 3
+  }
 },
 {
   "address": "Sheraton Nha Trang Hotel & Spa, 26-28 Trần Phú, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -4214,7 +4694,15 @@
     "fourStar": 166,
     "fiveStar": 1895
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Altitude%20Rooftop%20Bar&query_place_id=ChIJ_ZOJdoJncDERwm0jp8CiPSI"
+  "url": "https://www.google.com/maps/search/?api=1&query=Altitude%20Rooftop%20Bar&query_place_id=ChIJ_ZOJdoJncDERwm0jp8CiPSI",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1539,
+    "comfortCapacityPeople": 312,
+    "currentPeople": 151,
+    "queuePeople": 10,
+    "waitMinutes": 4
+  }
 },
 {
   "address": "20 Trần Phú, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -4292,7 +4780,15 @@
     "fourStar": 0,
     "fiveStar": 17
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Vietnam%20Local%20Food%20-%20%EB%82%98%ED%8A%B8%EB%9E%91%20%ED%8A%B9%EC%82%B0%EB%AC%BC%20-%20%EB%B2%A0%ED%8A%B8%EB%82%A8%20%EB%A1%9C%EC%BB%AC%20%ED%91%B8%EB%93%9C&query_place_id=ChIJ2e3Z4qhncDER4ehlkOM5cPs"
+  "url": "https://www.google.com/maps/search/?api=1&query=Vietnam%20Local%20Food%20-%20%EB%82%98%ED%8A%B8%EB%9E%91%20%ED%8A%B9%EC%82%B0%EB%AC%BC%20-%20%EB%B2%A0%ED%8A%B8%EB%82%A8%20%EB%A1%9C%EC%BB%AC%20%ED%91%B8%EB%93%9C&query_place_id=ChIJ2e3Z4qhncDER4ehlkOM5cPs",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2001,
+    "comfortCapacityPeople": 194,
+    "currentPeople": 106,
+    "queuePeople": 11,
+    "waitMinutes": 25
+  }
 },
 {
   "address": "31 /E9, Biệt Thự, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -4369,7 +4865,15 @@
     "fourStar": 2,
     "fiveStar": 55
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Alley%20cat%20cafe%20food%20%26%20drink&query_place_id=ChIJvR87ZOFncDERWjlwy8oOKD4"
+  "url": "https://www.google.com/maps/search/?api=1&query=Alley%20cat%20cafe%20food%20%26%20drink&query_place_id=ChIJvR87ZOFncDERWjlwy8oOKD4",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1235,
+    "comfortCapacityPeople": 247,
+    "currentPeople": 141,
+    "queuePeople": 23,
+    "waitMinutes": 28
+  }
 },
 {
   "address": "Hẻm 83 Nguyễn Thị Minh Khai, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -4448,7 +4952,15 @@
     "fourStar": 426,
     "fiveStar": 2570
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=L%C3%A0ng%20Ngon&query_place_id=ChIJtx5tNn1ncDERPgHGJ6KfLug"
+  "url": "https://www.google.com/maps/search/?api=1&query=L%C3%A0ng%20Ngon&query_place_id=ChIJtx5tNn1ncDERPgHGJ6KfLug",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1462,
+    "comfortCapacityPeople": 337,
+    "currentPeople": 285,
+    "queuePeople": 39,
+    "waitMinutes": 4
+  }
 },
 {
   "address": "93 Trịnh Phong, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -4526,7 +5038,15 @@
     "fourStar": 12,
     "fiveStar": 118
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Phu%CC%81c%20Mi%C3%AAu%20Dimsum%20%26Tea%20House&query_place_id=ChIJDfE5agtncDERR4vsgss8k3A"
+  "url": "https://www.google.com/maps/search/?api=1&query=Phu%CC%81c%20Mi%C3%AAu%20Dimsum%20%26Tea%20House&query_place_id=ChIJDfE5agtncDERR4vsgss8k3A",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 359,
+    "comfortCapacityPeople": 122,
+    "currentPeople": 66,
+    "queuePeople": 4,
+    "waitMinutes": 12
+  }
 },
 {
   "address": "1/39 Trần Quang Khải, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -4612,7 +5132,15 @@
     "fourStar": 68,
     "fiveStar": 606
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Killed%20Kenny%20Sports%20Bar&query_place_id=ChIJpV1uOLpncDERfPkHqLFiVmk"
+  "url": "https://www.google.com/maps/search/?api=1&query=Killed%20Kenny%20Sports%20Bar&query_place_id=ChIJpV1uOLpncDERfPkHqLFiVmk",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1356,
+    "comfortCapacityPeople": 239,
+    "currentPeople": 72,
+    "queuePeople": 7,
+    "waitMinutes": 23
+  }
 },
 {
   "address": "72 74 Trần Phú, Nha Trang, Khánh Hòa 570000, Việt Nam",
@@ -4691,7 +5219,15 @@
     "fourStar": 2869,
     "fiveStar": 6059
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Sailing%20Club%20Nha%20Trang&query_place_id=ChIJix8YGGVncDERjFbduc6Ffrg"
+  "url": "https://www.google.com/maps/search/?api=1&query=Sailing%20Club%20Nha%20Trang&query_place_id=ChIJix8YGGVncDERjFbduc6Ffrg",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 974,
+    "comfortCapacityPeople": 353,
+    "currentPeople": 289,
+    "queuePeople": 40,
+    "waitMinutes": 20
+  }
 },
 {
   "address": "11 Dã Tượng, Nha Trang, Khánh Hòa, Việt Nam",
@@ -4739,7 +5275,15 @@
     "fourStar": 6,
     "fiveStar": 35
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=B%C3%BAn%20%C4%90%E1%BA%ADu%20Lee&query_place_id=ChIJtzXlUgBncDERb7vRI6ldV8A"
+  "url": "https://www.google.com/maps/search/?api=1&query=B%C3%BAn%20%C4%90%E1%BA%ADu%20Lee&query_place_id=ChIJtzXlUgBncDERb7vRI6ldV8A",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1809,
+    "comfortCapacityPeople": 167,
+    "currentPeople": 102,
+    "queuePeople": 9,
+    "waitMinutes": 29
+  }
 },
 {
   "address": "Lương Thế Vinh, Nam Nha Trang, Khánh Hòa, Việt Nam",
@@ -4816,7 +5360,15 @@
     "fourStar": 3,
     "fiveStar": 14
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Ch%E1%BA%A3%20gi%C3%B2%20b%E1%BA%AFc&query_place_id=ChIJ-zbcmZxncDERZZP7qFQ88mc"
+  "url": "https://www.google.com/maps/search/?api=1&query=Ch%E1%BA%A3%20gi%C3%B2%20b%E1%BA%AFc&query_place_id=ChIJ-zbcmZxncDERZZP7qFQ88mc",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2042,
+    "comfortCapacityPeople": 248,
+    "currentPeople": 37,
+    "queuePeople": 4,
+    "waitMinutes": 13
+  }
 },
 {
   "address": "21 Hoàng Diệu, Nam Nha Trang, Khánh Hòa, Việt Nam",
@@ -4893,7 +5445,15 @@
     "fourStar": 4,
     "fiveStar": 11
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Nem%20Ninh%20H%C3%B2a&query_place_id=ChIJPTMQ4fBncDERpLARN_MgWGE"
+  "url": "https://www.google.com/maps/search/?api=1&query=Nem%20Ninh%20H%C3%B2a&query_place_id=ChIJPTMQ4fBncDERpLARN_MgWGE",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2576,
+    "comfortCapacityPeople": 394,
+    "currentPeople": 105,
+    "queuePeople": 7,
+    "waitMinutes": 11
+  }
 },
 {
   "address": "94 Hoàng Diệu, Nha Trang, Khánh Hòa, Việt Nam",
@@ -4970,7 +5530,15 @@
     "fourStar": 1,
     "fiveStar": 11
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=C%C6%A1m%20B%C3%ACnh%20D%C3%A2n%20H%C3%B9ng%20M%E1%BA%ADp&query_place_id=ChIJj49RZA9ncDERsiLcZEvrpkM"
+  "url": "https://www.google.com/maps/search/?api=1&query=C%C6%A1m%20B%C3%ACnh%20D%C3%A2n%20H%C3%B9ng%20M%E1%BA%ADp&query_place_id=ChIJj49RZA9ncDERsiLcZEvrpkM",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2769,
+    "comfortCapacityPeople": 164,
+    "currentPeople": 76,
+    "queuePeople": 15,
+    "waitMinutes": 3
+  }
 },
 {
   "address": "98c/5, Nha Trang, Khánh Hòa, Việt Nam",
@@ -5047,7 +5615,15 @@
     "fourStar": 0,
     "fiveStar": 9
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=SPA%20HONGKONG%20BODY%20%2CNAIL%2CHAIR%2C%20FACE.FOOD&query_place_id=ChIJjYWxWs9ncDER_lZZv1Zz92o"
+  "url": "https://www.google.com/maps/search/?api=1&query=SPA%20HONGKONG%20BODY%20%2CNAIL%2CHAIR%2C%20FACE.FOOD&query_place_id=ChIJjYWxWs9ncDER_lZZv1Zz92o",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1862,
+    "comfortCapacityPeople": 380,
+    "currentPeople": 211,
+    "queuePeople": 38,
+    "waitMinutes": 13
+  }
 },
 {
   "address": "3/13A, Trần Quang Khải, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -5095,7 +5671,15 @@
     "fourStar": 434,
     "fiveStar": 724
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Nh%C3%A0%20H%C3%A0ng%20Y%E1%BA%BFn&query_place_id=ChIJaSyyimRncDERLwthetmp37Y"
+  "url": "https://www.google.com/maps/search/?api=1&query=Nh%C3%A0%20H%C3%A0ng%20Y%E1%BA%BFn&query_place_id=ChIJaSyyimRncDERLwthetmp37Y",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1522,
+    "comfortCapacityPeople": 245,
+    "currentPeople": 112,
+    "queuePeople": 19,
+    "waitMinutes": 11
+  }
 },
 {
   "address": "20 Tản Đà, Nam Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -5172,7 +5756,15 @@
     "fourStar": 0,
     "fiveStar": 4
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Ph%C3%BAc%20Xu%C3%A2n%20Foods&query_place_id=ChIJJZd5ReJncDERIRjNJBZvqKA"
+  "url": "https://www.google.com/maps/search/?api=1&query=Ph%C3%BAc%20Xu%C3%A2n%20Foods&query_place_id=ChIJJZd5ReJncDERIRjNJBZvqKA",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1616,
+    "comfortCapacityPeople": 110,
+    "currentPeople": 22,
+    "queuePeople": 1,
+    "waitMinutes": 25
+  }
 },
 {
   "address": "29 Võ Thị Sáu, Nam Nha Trang, Khánh Hòa, Việt Nam",
@@ -5249,7 +5841,15 @@
     "fourStar": 0,
     "fiveStar": 1
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Gi%C3%B2%20ch%E1%BA%A3%20b%E1%BA%AFc%20Li%E1%BB%87u%20Ph%C6%B0%C6%A1ng&query_place_id=ChIJe5TKTABncDERpHgGKf--qrg"
+  "url": "https://www.google.com/maps/search/?api=1&query=Gi%C3%B2%20ch%E1%BA%A3%20b%E1%BA%AFc%20Li%E1%BB%87u%20Ph%C6%B0%C6%A1ng&query_place_id=ChIJe5TKTABncDERpHgGKf--qrg",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2548,
+    "comfortCapacityPeople": 189,
+    "currentPeople": 151,
+    "queuePeople": 14,
+    "waitMinutes": 18
+  }
 },
 {
   "address": "23 Trường Sơn, Nam Nha Trang, Khánh Hòa, Việt Nam",
@@ -5326,7 +5926,15 @@
     "fourStar": 0,
     "fiveStar": 3
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=N%C6%AF%E1%BB%9AC%20M%E1%BA%AEM%20CH%C3%8DN%20TUY&query_place_id=ChIJWwvlwKhncDERJS9X7MhqBrU"
+  "url": "https://www.google.com/maps/search/?api=1&query=N%C6%AF%E1%BB%9AC%20M%E1%BA%AEM%20CH%C3%8DN%20TUY&query_place_id=ChIJWwvlwKhncDERJS9X7MhqBrU",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1783,
+    "comfortCapacityPeople": 318,
+    "currentPeople": 280,
+    "queuePeople": 54,
+    "waitMinutes": 29
+  }
 },
 {
   "address": "30 Dã Tượng, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -5403,7 +6011,15 @@
     "fourStar": 15,
     "fiveStar": 1383
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Qu%C3%A1n%20Kem%20Mixue%20D%C3%A3%20T%C6%B0%E1%BB%A3ng&query_place_id=ChIJ5W-snX1ncDERS2Wg7TcAcik"
+  "url": "https://www.google.com/maps/search/?api=1&query=Qu%C3%A1n%20Kem%20Mixue%20D%C3%A3%20T%C6%B0%E1%BB%A3ng&query_place_id=ChIJ5W-snX1ncDERS2Wg7TcAcik",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 342,
+    "comfortCapacityPeople": 80,
+    "currentPeople": 28,
+    "queuePeople": 4,
+    "waitMinutes": 21
+  }
 },
 {
   "address": "59 Tuệ Tĩnh, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -5480,7 +6096,15 @@
     "fourStar": 23,
     "fiveStar": 111
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Geestar%20Coffee%20%26%20Ph%C3%B2ng%20Tr%C3%A0%20Nha%20Trang&query_place_id=ChIJcUfbxcFncDERzp7n4ox4Lqs"
+  "url": "https://www.google.com/maps/search/?api=1&query=Geestar%20Coffee%20%26%20Ph%C3%B2ng%20Tr%C3%A0%20Nha%20Trang&query_place_id=ChIJcUfbxcFncDERzp7n4ox4Lqs",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2204,
+    "comfortCapacityPeople": 313,
+    "currentPeople": 250,
+    "queuePeople": 41,
+    "waitMinutes": 9
+  }
 },
 {
   "address": "55 Đ. Phước Long, Nha Trang, Khánh Hòa 58000, Việt Nam",
@@ -5559,7 +6183,15 @@
     "fourStar": 0,
     "fiveStar": 56
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Mee%20tea%20Ph%C6%B0%E1%BB%9Bc%20Long&query_place_id=ChIJ3z4_7cJncDERD9KCHW7ZBsQ"
+  "url": "https://www.google.com/maps/search/?api=1&query=Mee%20tea%20Ph%C6%B0%E1%BB%9Bc%20Long&query_place_id=ChIJ3z4_7cJncDERD9KCHW7ZBsQ",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 666,
+    "comfortCapacityPeople": 362,
+    "currentPeople": 103,
+    "queuePeople": 5,
+    "waitMinutes": 5
+  }
 },
 {
   "address": "96 Trần Phú, Nha Trang, Khánh Hòa 570000, Việt Nam",
@@ -5637,7 +6269,15 @@
     "fourStar": 3,
     "fiveStar": 140
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Melinda%20may%20-%20Nha%20Trang%20souffle%20pancake&query_place_id=ChIJbT2zip1ncDER0737RT-K2k8"
+  "url": "https://www.google.com/maps/search/?api=1&query=Melinda%20may%20-%20Nha%20Trang%20souffle%20pancake&query_place_id=ChIJbT2zip1ncDER0737RT-K2k8",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2896,
+    "comfortCapacityPeople": 348,
+    "currentPeople": 221,
+    "queuePeople": 35,
+    "waitMinutes": 18
+  }
 },
 {
   "address": "63 Dã Tượng, Nha Trang, Khánh Hòa, Việt Nam",
@@ -5715,7 +6355,15 @@
     "fourStar": 27,
     "fiveStar": 144
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=C%C6%A1m%20Chay%20Thi%C3%AAn%20Ph%C6%B0%E1%BB%9Bc&query_place_id=ChIJY-waEFtncDERvfEfX-lNAos"
+  "url": "https://www.google.com/maps/search/?api=1&query=C%C6%A1m%20Chay%20Thi%C3%AAn%20Ph%C6%B0%E1%BB%9Bc&query_place_id=ChIJY-waEFtncDERvfEfX-lNAos",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1629,
+    "comfortCapacityPeople": 122,
+    "currentPeople": 97,
+    "queuePeople": 15,
+    "waitMinutes": 28
+  }
 },
 {
   "address": "36-38 Trần Phú, Cầu Đá, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -5792,7 +6440,15 @@
     "fourStar": 11,
     "fiveStar": 131
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Ch%E1%BB%A5t%20T%20Coffee&query_place_id=ChIJq8Vk97JncDERg6SteBi_dqw"
+  "url": "https://www.google.com/maps/search/?api=1&query=Ch%E1%BB%A5t%20T%20Coffee&query_place_id=ChIJq8Vk97JncDERg6SteBi_dqw",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2881,
+    "comfortCapacityPeople": 109,
+    "currentPeople": 70,
+    "queuePeople": 7,
+    "waitMinutes": 23
+  }
 },
 {
   "address": "51/19/2 Tuệ Tĩnh, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -5869,7 +6525,15 @@
     "fourStar": 47,
     "fiveStar": 306
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Hybrid%20Nha%20Trang&query_place_id=ChIJ04zatVNncDERykP71bQE1tU"
+  "url": "https://www.google.com/maps/search/?api=1&query=Hybrid%20Nha%20Trang&query_place_id=ChIJ04zatVNncDERykP71bQE1tU",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2900,
+    "comfortCapacityPeople": 345,
+    "currentPeople": 142,
+    "queuePeople": 25,
+    "waitMinutes": 17
+  }
 },
 {
   "address": "5A Tô Hiệu, Nha Trang, Khánh Hòa, Việt Nam",
@@ -5948,7 +6612,15 @@
     "fourStar": 143,
     "fiveStar": 1167
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Qu%C3%A1n%20H%E1%BA%A3i%20S%E1%BA%A3n%20Ty%20R%C3%B4&query_place_id=ChIJF6AtWVhncDERXlQdSVSpSo4"
+  "url": "https://www.google.com/maps/search/?api=1&query=Qu%C3%A1n%20H%E1%BA%A3i%20S%E1%BA%A3n%20Ty%20R%C3%B4&query_place_id=ChIJF6AtWVhncDERXlQdSVSpSo4",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1926,
+    "comfortCapacityPeople": 112,
+    "currentPeople": 37,
+    "queuePeople": 2,
+    "waitMinutes": 5
+  }
 },
 {
   "address": "318 Dã Tượng, Nam Nha Trang, Khánh Hòa, Việt Nam",
@@ -6026,7 +6698,15 @@
     "fourStar": 20,
     "fiveStar": 194
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Ti%E1%BB%87m%20c%C3%A0%20ph%C3%AA%20Kh%C3%B3m%20Nh%E1%BB%8F&query_place_id=ChIJ5_SXFwBncDER7QX7HLifiQw"
+  "url": "https://www.google.com/maps/search/?api=1&query=Ti%E1%BB%87m%20c%C3%A0%20ph%C3%AA%20Kh%C3%B3m%20Nh%E1%BB%8F&query_place_id=ChIJ5_SXFwBncDER7QX7HLifiQw",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1154,
+    "comfortCapacityPeople": 376,
+    "currentPeople": 194,
+    "queuePeople": 32,
+    "waitMinutes": 30
+  }
 },
 {
   "address": "73/16 Trần Quang Khải, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -6103,7 +6783,15 @@
     "fourStar": 1,
     "fiveStar": 12
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=%EC%A0%95%ED%86%B5%20%EC%9D%B8%EB%8F%84%20%EB%A0%88%EC%8A%A4%ED%86%A0%EB%9E%91%EA%B3%BC%20%EC%98%A5%EC%83%81%20%EB%B0%94&query_place_id=ChIJJ18wDotncDERB64G6tX5-js"
+  "url": "https://www.google.com/maps/search/?api=1&query=%EC%A0%95%ED%86%B5%20%EC%9D%B8%EB%8F%84%20%EB%A0%88%EC%8A%A4%ED%86%A0%EB%9E%91%EA%B3%BC%20%EC%98%A5%EC%83%81%20%EB%B0%94&query_place_id=ChIJJ18wDotncDERB64G6tX5-js",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2605,
+    "comfortCapacityPeople": 134,
+    "currentPeople": 43,
+    "queuePeople": 5,
+    "waitMinutes": 29
+  }
 },
 {
   "address": "Trường Sơn, Nha Trang, Khánh Hòa 57129, Việt Nam",
@@ -6178,7 +6866,15 @@
   "totalScore": null,
   "wasOpenAtScrapeTime": true,
   "website": "https://safefoods.vn/",
-  "url": "https://www.google.com/maps/search/?api=1&query=SAFE%20FOODS&query_place_id=ChIJSaKP8mpncDERdhjAm1T-p-Y"
+  "url": "https://www.google.com/maps/search/?api=1&query=SAFE%20FOODS&query_place_id=ChIJSaKP8mpncDERdhjAm1T-p-Y",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 568,
+    "comfortCapacityPeople": 261,
+    "currentPeople": 201,
+    "queuePeople": 39,
+    "waitMinutes": 11
+  }
 },
 {
   "address": "114 Dã Tượng, Nha Trang, Khánh Hòa, Việt Nam",
@@ -6255,7 +6951,15 @@
     "fourStar": 1,
     "fiveStar": 37
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Y%E1%BA%BFn%20S%C3%A0o%20Ho%C3%A0ng%20Vi%E1%BB%87t&query_place_id=ChIJSdkL0xFncDERX1Ip_oR_bqE"
+  "url": "https://www.google.com/maps/search/?api=1&query=Y%E1%BA%BFn%20S%C3%A0o%20Ho%C3%A0ng%20Vi%E1%BB%87t&query_place_id=ChIJSdkL0xFncDERX1Ip_oR_bqE",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 894,
+    "comfortCapacityPeople": 237,
+    "currentPeople": 93,
+    "queuePeople": 14,
+    "waitMinutes": 21
+  }
 },
 {
   "address": "Lê Hồng Phong/1035 Đ. Phước Long, Nam Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -6335,7 +7039,15 @@
     "fourStar": 647,
     "fiveStar": 2327
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Vincom%20Ninh%20Thu%E1%BA%ADn&query_place_id=ChIJzxUfhdLPcDERF5Qb1VIUJiU"
+  "url": "https://www.google.com/maps/search/?api=1&query=Vincom%20Ninh%20Thu%E1%BA%ADn&query_place_id=ChIJzxUfhdLPcDERF5Qb1VIUJiU",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2530,
+    "comfortCapacityPeople": 399,
+    "currentPeople": 148,
+    "queuePeople": 11,
+    "waitMinutes": 25
+  }
 },
 {
   "address": "108 Dã Tượng, Nha Trang, Khánh Hòa, Việt Nam",
@@ -6413,7 +7125,15 @@
     "fourStar": 130,
     "fiveStar": 207
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Nh%C3%A0%20h%C3%A0ng%20Zallo%20H%C6%B0%C6%A1ng%20Bi%E1%BB%83n&query_place_id=ChIJVd4N1EJdcDERhfWHh6FvZDY"
+  "url": "https://www.google.com/maps/search/?api=1&query=Nh%C3%A0%20h%C3%A0ng%20Zallo%20H%C6%B0%C6%A1ng%20Bi%E1%BB%83n&query_place_id=ChIJVd4N1EJdcDERhfWHh6FvZDY",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2987,
+    "comfortCapacityPeople": 338,
+    "currentPeople": 81,
+    "queuePeople": 15,
+    "waitMinutes": 17
+  }
 },
 {
   "address": "Hem 86B Trần Phú, Thành phố, Khánh Hòa 650000, Việt Nam",
@@ -6492,7 +7212,15 @@
     "fourStar": 93,
     "fiveStar": 414
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Nh%C3%A0%20Bar&query_place_id=ChIJJ60qoJRncDERDi82dYMWVa8"
+  "url": "https://www.google.com/maps/search/?api=1&query=Nh%C3%A0%20Bar&query_place_id=ChIJJ60qoJRncDERDi82dYMWVa8",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2566,
+    "comfortCapacityPeople": 368,
+    "currentPeople": 328,
+    "queuePeople": 31,
+    "waitMinutes": 25
+  }
 },
 {
   "address": "47 Nguyễn Đức Cảnh, Nam Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -6569,7 +7297,15 @@
     "fourStar": 47,
     "fiveStar": 198
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Craft%20Beer%20UB%20Eatrang&query_place_id=ChIJJzbmXqtncDER1MorQbHkPyQ"
+  "url": "https://www.google.com/maps/search/?api=1&query=Craft%20Beer%20UB%20Eatrang&query_place_id=ChIJJzbmXqtncDER1MorQbHkPyQ",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1077,
+    "comfortCapacityPeople": 186,
+    "currentPeople": 54,
+    "queuePeople": 8,
+    "waitMinutes": 8
+  }
 },
 {
   "address": "49 Nguyễn Đức Cảnh, Nam Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -6646,7 +7382,15 @@
     "fourStar": 8,
     "fiveStar": 51
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Ng%C3%A0n%20H%C6%B0%C6%A1ng%20Ho%C3%A0nh%20Th%C3%A1nh&query_place_id=ChIJ907dwAdncDERfU9RMvjz82w"
+  "url": "https://www.google.com/maps/search/?api=1&query=Ng%C3%A0n%20H%C6%B0%C6%A1ng%20Ho%C3%A0nh%20Th%C3%A1nh&query_place_id=ChIJ907dwAdncDERfU9RMvjz82w",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2448,
+    "comfortCapacityPeople": 230,
+    "currentPeople": 173,
+    "queuePeople": 19,
+    "waitMinutes": 13
+  }
 },
 {
   "address": "Trần Phú &, Cầu Đá Street, Cầu Đá, Nha Trang, Khánh Hòa 57129, Việt Nam",
@@ -6726,7 +7470,15 @@
     "fourStar": 0,
     "fiveStar": 1
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=OCEAN%20FOODS&query_place_id=ChIJJcZZVmxncDERiinh_ZiNyMQ"
+  "url": "https://www.google.com/maps/search/?api=1&query=OCEAN%20FOODS&query_place_id=ChIJJcZZVmxncDERiinh_ZiNyMQ",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2468,
+    "comfortCapacityPeople": 165,
+    "currentPeople": 124,
+    "queuePeople": 25,
+    "waitMinutes": 17
+  }
 },
 {
   "address": "20 Đường Nguyễn Thị Định, Nam Nha Trang, Khánh Hòa, Việt Nam",
@@ -6774,7 +7526,15 @@
     "fourStar": 4,
     "fiveStar": 14
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=B%C3%ADch%20An%20H%C3%A0%20N%E1%BB%99i&query_place_id=ChIJy3jWkMlncDERTxwpLVFmxZ4"
+  "url": "https://www.google.com/maps/search/?api=1&query=B%C3%ADch%20An%20H%C3%A0%20N%E1%BB%99i&query_place_id=ChIJy3jWkMlncDERTxwpLVFmxZ4",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2854,
+    "comfortCapacityPeople": 225,
+    "currentPeople": 83,
+    "queuePeople": 9,
+    "waitMinutes": 11
+  }
 },
 {
   "address": "51/19/8, Tuệ Tĩnh, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -6851,7 +7611,15 @@
     "fourStar": 1,
     "fiveStar": 365
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=THE%20FRESH%20BREAD%20AND%20COFFEE&query_place_id=ChIJx6joHgBncDERw-3sZrTs9pw"
+  "url": "https://www.google.com/maps/search/?api=1&query=THE%20FRESH%20BREAD%20AND%20COFFEE&query_place_id=ChIJx6joHgBncDERw-3sZrTs9pw",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 676,
+    "comfortCapacityPeople": 256,
+    "currentPeople": 198,
+    "queuePeople": 15,
+    "waitMinutes": 21
+  }
 },
 {
   "address": "17 Nguyễn Đức Cảnh, Nam Nha Trang, Khánh Hòa, Việt Nam",
@@ -6930,7 +7698,15 @@
     "fourStar": 16,
     "fiveStar": 284
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Fish%20House%20Nha%20Trang&query_place_id=ChIJvdN6UwBncDERi-X-zhULT1o"
+  "url": "https://www.google.com/maps/search/?api=1&query=Fish%20House%20Nha%20Trang&query_place_id=ChIJvdN6UwBncDERi-X-zhULT1o",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2159,
+    "comfortCapacityPeople": 95,
+    "currentPeople": 25,
+    "queuePeople": 4,
+    "waitMinutes": 19
+  }
 },
 {
   "address": "86с, Trần Phú, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -7008,7 +7784,15 @@
     "fourStar": 227,
     "fiveStar": 897
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=V%C6%B0%E1%BB%9Dn%20N%C6%B0%E1%BB%9Bng%20Grill%20Garden%202%20(BBQ%20Buffet)&query_place_id=ChIJ45eh1PtncDER9ELeVW9qf5Q"
+  "url": "https://www.google.com/maps/search/?api=1&query=V%C6%B0%E1%BB%9Dn%20N%C6%B0%E1%BB%9Bng%20Grill%20Garden%202%20(BBQ%20Buffet)&query_place_id=ChIJ45eh1PtncDER9ELeVW9qf5Q",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2701,
+    "comfortCapacityPeople": 266,
+    "currentPeople": 64,
+    "queuePeople": 7,
+    "waitMinutes": 20
+  }
 },
 {
   "address": "45 Trần Phú, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -7087,7 +7871,15 @@
     "fourStar": 5,
     "fiveStar": 160
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=V%E1%BB%B1a%20H%E1%BA%A3i%20S%E1%BA%A3n&query_place_id=ChIJveY6YOxncDERwmOohVTF9VA"
+  "url": "https://www.google.com/maps/search/?api=1&query=V%E1%BB%B1a%20H%E1%BA%A3i%20S%E1%BA%A3n&query_place_id=ChIJveY6YOxncDERwmOohVTF9VA",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 799,
+    "comfortCapacityPeople": 138,
+    "currentPeople": 87,
+    "queuePeople": 13,
+    "waitMinutes": 12
+  }
 },
 {
   "address": "9A Hoàng Diệu, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -7165,7 +7957,15 @@
     "fourStar": 11,
     "fiveStar": 157
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Nha%CC%80%20ha%CC%80ng%20Ha%CC%89i%20Sa%CC%89n%205%20Vi%C3%AAn%20(%20%E4%B8%AD%E5%BC%8F%E6%B5%B7%E9%B2%9C%E9%A4%90%E5%8E%85%20-%205%20VIEN%20%D0%A0%D0%95%D0%A1%D0%A2%D0%9E%D0%A0%D0%90%D0%9D%20%D0%9C%D0%9E%D0%A0%D0%95%D0%9F%D0%A0%D0%9E%D0%94%D0%A3%D0%9A%D0%A2%D0%9E%D0%92)&query_place_id=ChIJO2KP_nxncDERgsBhHjqo1e0"
+  "url": "https://www.google.com/maps/search/?api=1&query=Nha%CC%80%20ha%CC%80ng%20Ha%CC%89i%20Sa%CC%89n%205%20Vi%C3%AAn%20(%20%E4%B8%AD%E5%BC%8F%E6%B5%B7%E9%B2%9C%E9%A4%90%E5%8E%85%20-%205%20VIEN%20%D0%A0%D0%95%D0%A1%D0%A2%D0%9E%D0%A0%D0%90%D0%9D%20%D0%9C%D0%9E%D0%A0%D0%95%D0%9F%D0%A0%D0%9E%D0%94%D0%A3%D0%9A%D0%A2%D0%9E%D0%92)&query_place_id=ChIJO2KP_nxncDERgsBhHjqo1e0",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1373,
+    "comfortCapacityPeople": 248,
+    "currentPeople": 63,
+    "queuePeople": 12,
+    "waitMinutes": 18
+  }
 },
 {
   "address": "107 Hùng Vương, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -7242,7 +8042,15 @@
     "fourStar": 28,
     "fiveStar": 270
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Same%20Same%20But%20Different&query_place_id=ChIJXaxJeS9ncDERuDBFFhMGYjQ"
+  "url": "https://www.google.com/maps/search/?api=1&query=Same%20Same%20But%20Different&query_place_id=ChIJXaxJeS9ncDERuDBFFhMGYjQ",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 369,
+    "comfortCapacityPeople": 247,
+    "currentPeople": 216,
+    "queuePeople": 24,
+    "waitMinutes": 30
+  }
 },
 {
   "address": "163 Nguyễn Thiện Thuật, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -7322,7 +8130,15 @@
     "fourStar": 26,
     "fiveStar": 671
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=The%20Cloud%20Bar&query_place_id=ChIJu4rr9GRncDERiZUt92dcqRY"
+  "url": "https://www.google.com/maps/search/?api=1&query=The%20Cloud%20Bar&query_place_id=ChIJu4rr9GRncDERiZUt92dcqRY",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1171,
+    "comfortCapacityPeople": 334,
+    "currentPeople": 296,
+    "queuePeople": 44,
+    "waitMinutes": 30
+  }
 },
 {
   "address": "43 Nguyễn Thị Minh Khai, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -7399,7 +8215,15 @@
     "fourStar": 377,
     "fiveStar": 3282
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=%E1%BB%9At%20Hi%E1%BB%83m&query_place_id=ChIJ8dZFhnZncDERam9EtTqMiDY"
+  "url": "https://www.google.com/maps/search/?api=1&query=%E1%BB%9At%20Hi%E1%BB%83m&query_place_id=ChIJ8dZFhnZncDERam9EtTqMiDY",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1861,
+    "comfortCapacityPeople": 190,
+    "currentPeople": 80,
+    "queuePeople": 16,
+    "waitMinutes": 30
+  }
 },
 {
   "address": "86 Hùng Vương, Nha Trang, Khánh Hòa 57000, Việt Nam",
@@ -7476,7 +8300,15 @@
     "fourStar": 30,
     "fiveStar": 527
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=An%20Lam%20Vietnamese%20Cuisine&query_place_id=ChIJB12qw_VncDER-kRYaqtaGrQ"
+  "url": "https://www.google.com/maps/search/?api=1&query=An%20Lam%20Vietnamese%20Cuisine&query_place_id=ChIJB12qw_VncDER-kRYaqtaGrQ",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2355,
+    "comfortCapacityPeople": 390,
+    "currentPeople": 128,
+    "queuePeople": 6,
+    "waitMinutes": 23
+  }
 },
 {
   "address": "96B1 Trần Phú, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -7553,7 +8385,15 @@
     "fourStar": 11,
     "fiveStar": 96
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=QU%C3%82N%20S%C6%A0N%20RESTAURANT%20-%20VIETNAMESE%20CUISINE&query_place_id=ChIJE8d2KWZncDERmDh-nRN5vGE"
+  "url": "https://www.google.com/maps/search/?api=1&query=QU%C3%82N%20S%C6%A0N%20RESTAURANT%20-%20VIETNAMESE%20CUISINE&query_place_id=ChIJE8d2KWZncDERmDh-nRN5vGE",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2540,
+    "comfortCapacityPeople": 266,
+    "currentPeople": 68,
+    "queuePeople": 9,
+    "waitMinutes": 8
+  }
 },
 {
   "address": "73 16 Trần Quang Khải, Nha Trang, Khánh Hòa 65000, Việt Nam",
@@ -7632,7 +8472,15 @@
     "fourStar": 25,
     "fiveStar": 126
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Tamarind%2C%20The%20rooftop%20Bar&query_place_id=ChIJ5y9wD21ncDERTp8rI0M402w"
+  "url": "https://www.google.com/maps/search/?api=1&query=Tamarind%2C%20The%20rooftop%20Bar&query_place_id=ChIJ5y9wD21ncDERTp8rI0M402w",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2637,
+    "comfortCapacityPeople": 254,
+    "currentPeople": 154,
+    "queuePeople": 7,
+    "waitMinutes": 10
+  }
 },
 {
   "address": "68 Đường Nguyễn Thị Định, Nam Nha Trang, Khánh Hòa, Việt Nam",
@@ -7710,7 +8558,15 @@
     "fourStar": 22,
     "fiveStar": 261
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Jasmine%20Cafe&query_place_id=ChIJOQBvIIlncDER51n42UEZR9k"
+  "url": "https://www.google.com/maps/search/?api=1&query=Jasmine%20Cafe&query_place_id=ChIJOQBvIIlncDER51n42UEZR9k",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2109,
+    "comfortCapacityPeople": 365,
+    "currentPeople": 219,
+    "queuePeople": 19,
+    "waitMinutes": 20
+  }
 },
 {
   "address": "86B Trần Phú, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -7788,7 +8644,15 @@
     "fourStar": 169,
     "fiveStar": 1073
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=MissBamboo%20Brewhouse%20(Restaurant)&query_place_id=ChIJn46ImVNncDERJHnsUoruvAU"
+  "url": "https://www.google.com/maps/search/?api=1&query=MissBamboo%20Brewhouse%20(Restaurant)&query_place_id=ChIJn46ImVNncDERJHnsUoruvAU",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1066,
+    "comfortCapacityPeople": 369,
+    "currentPeople": 224,
+    "queuePeople": 30,
+    "waitMinutes": 16
+  }
 },
 {
   "address": "58 Tô Hiệu, Nha Trang, Khánh Hòa, Việt Nam",
@@ -7865,7 +8729,15 @@
     "fourStar": 0,
     "fiveStar": 9
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=M%C3%A8%20Rang%20Kh%C3%B3i%20Food%20%26%20Drink&query_place_id=ChIJ22APS61ncDER-7fGMpP1Y7w"
+  "url": "https://www.google.com/maps/search/?api=1&query=M%C3%A8%20Rang%20Kh%C3%B3i%20Food%20%26%20Drink&query_place_id=ChIJ22APS61ncDER-7fGMpP1Y7w",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1568,
+    "comfortCapacityPeople": 230,
+    "currentPeople": 112,
+    "queuePeople": 11,
+    "waitMinutes": 25
+  }
 },
 {
   "address": "115 Dã Tượng, Nha Trang, Khánh Hòa, Việt Nam",
@@ -7943,7 +8815,15 @@
     "fourStar": 1,
     "fiveStar": 52
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Beer%20B%E1%BB%8Dt&query_place_id=ChIJuURQukVncDERAfshF5u-ZI0"
+  "url": "https://www.google.com/maps/search/?api=1&query=Beer%20B%E1%BB%8Dt&query_place_id=ChIJuURQukVncDERAfshF5u-ZI0",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2502,
+    "comfortCapacityPeople": 155,
+    "currentPeople": 126,
+    "queuePeople": 17,
+    "waitMinutes": 12
+  }
 },
 {
   "address": "Trần Phú, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -8021,7 +8901,15 @@
     "fourStar": 11,
     "fiveStar": 367
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Restaurant%20Casa%20Di%20Mare&query_place_id=ChIJmcu0UwBncDERjgLj1MMNKBo"
+  "url": "https://www.google.com/maps/search/?api=1&query=Restaurant%20Casa%20Di%20Mare&query_place_id=ChIJmcu0UwBncDERjgLj1MMNKBo",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1553,
+    "comfortCapacityPeople": 178,
+    "currentPeople": 143,
+    "queuePeople": 17,
+    "waitMinutes": 20
+  }
 },
 {
   "address": "120/22A, Nguyễn Thiện Thuật, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -8098,7 +8986,15 @@
     "fourStar": 6,
     "fiveStar": 467
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Sim%C3%AA%20-%20Healthy%20Kitchen%20%26%20More&query_place_id=ChIJOWaehDFncDERfZyn9ZM2qZc"
+  "url": "https://www.google.com/maps/search/?api=1&query=Sim%C3%AA%20-%20Healthy%20Kitchen%20%26%20More&query_place_id=ChIJOWaehDFncDERfZyn9ZM2qZc",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 342,
+    "comfortCapacityPeople": 271,
+    "currentPeople": 190,
+    "queuePeople": 17,
+    "waitMinutes": 18
+  }
 },
 {
   "address": "23 Đinh Lễ, Street, Nam Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -8176,7 +9072,15 @@
     "fourStar": 16,
     "fiveStar": 367
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Fork%E2%80%99n%20Lekker%20Garden%20Cafe&query_place_id=ChIJz83XlzhncDERh8D98l7tP-s"
+  "url": "https://www.google.com/maps/search/?api=1&query=Fork%E2%80%99n%20Lekker%20Garden%20Cafe&query_place_id=ChIJz83XlzhncDERh8D98l7tP-s",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2767,
+    "comfortCapacityPeople": 400,
+    "currentPeople": 356,
+    "queuePeople": 60,
+    "waitMinutes": 28
+  }
 },
 {
   "address": "100A Trần Phú, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -8253,7 +9157,15 @@
     "fourStar": 8,
     "fiveStar": 815
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Santorini%20Cafe%20%26%20Restaurant%20Nha%20Trang&query_place_id=ChIJaXz7D0JncDERK6fz5MRC5nA"
+  "url": "https://www.google.com/maps/search/?api=1&query=Santorini%20Cafe%20%26%20Restaurant%20Nha%20Trang&query_place_id=ChIJaXz7D0JncDERK6fz5MRC5nA",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2245,
+    "comfortCapacityPeople": 180,
+    "currentPeople": 43,
+    "queuePeople": 4,
+    "waitMinutes": 20
+  }
 },
 {
   "address": "17/35a Hẻm đường Hoàng Diệu, Nha Trang, Khánh Hòa 57129, Việt Nam",
@@ -8333,7 +9245,15 @@
     "fourStar": 60,
     "fiveStar": 1457
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Artisan%20Cafe%20%26%20Eatery&query_place_id=ChIJG3qWJDJncDER1wJv5BQXBFI"
+  "url": "https://www.google.com/maps/search/?api=1&query=Artisan%20Cafe%20%26%20Eatery&query_place_id=ChIJG3qWJDJncDER1wJv5BQXBFI",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 340,
+    "comfortCapacityPeople": 376,
+    "currentPeople": 304,
+    "queuePeople": 59,
+    "waitMinutes": 9
+  }
 },
 {
   "address": "78/38 Tuệ Tĩnh, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -8410,7 +9330,15 @@
     "fourStar": 4,
     "fiveStar": 93
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=%D0%92%D0%9A%D0%A3%D0%A1%D0%9D%D0%9E%20-%20BISTRO&query_place_id=ChIJH2XrTABncDER2gJvMTb3ymw"
+  "url": "https://www.google.com/maps/search/?api=1&query=%D0%92%D0%9A%D0%A3%D0%A1%D0%9D%D0%9E%20-%20BISTRO&query_place_id=ChIJH2XrTABncDER2gJvMTb3ymw",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1618,
+    "comfortCapacityPeople": 168,
+    "currentPeople": 33,
+    "queuePeople": 3,
+    "waitMinutes": 26
+  }
 },
 {
   "address": "73/16 Trần Quang Khải, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -8489,7 +9417,15 @@
     "fourStar": 504,
     "fiveStar": 2347
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=N%C3%B4m%20N%C3%B4m%20Restaurant%20%26%20Cafe&query_place_id=ChIJS2Cia31ncDERJ7Xak7sCnNA"
+  "url": "https://www.google.com/maps/search/?api=1&query=N%C3%B4m%20N%C3%B4m%20Restaurant%20%26%20Cafe&query_place_id=ChIJS2Cia31ncDERJ7Xak7sCnNA",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 567,
+    "comfortCapacityPeople": 298,
+    "currentPeople": 90,
+    "queuePeople": 7,
+    "waitMinutes": 9
+  }
 },
 {
   "address": "24 Tô Hiến Thành, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -8573,7 +9509,15 @@
     "fourStar": 684,
     "fiveStar": 1992
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Kem%20B%C6%A1%20Vfruit&query_place_id=ChIJ3UtlQXxncDERvWZuM7_VRwg"
+  "url": "https://www.google.com/maps/search/?api=1&query=Kem%20B%C6%A1%20Vfruit&query_place_id=ChIJ3UtlQXxncDERvWZuM7_VRwg",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1238,
+    "comfortCapacityPeople": 258,
+    "currentPeople": 175,
+    "queuePeople": 35,
+    "waitMinutes": 29
+  }
 },
 {
   "address": "Nguyên Thiện Thuật ( số mới, 34C Nguyễn Thiện Thuật, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -8651,7 +9595,15 @@
     "fourStar": 40,
     "fiveStar": 813
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=%EB%82%A8%EC%9D%B4%EC%8B%9D%EB%8B%B9%20Nami%20Korean%20BBQ%20Restaurant&query_place_id=ChIJAeBZs8cTcTERHAkuWzRx43o"
+  "url": "https://www.google.com/maps/search/?api=1&query=%EB%82%A8%EC%9D%B4%EC%8B%9D%EB%8B%B9%20Nami%20Korean%20BBQ%20Restaurant&query_place_id=ChIJAeBZs8cTcTERHAkuWzRx43o",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 429,
+    "comfortCapacityPeople": 234,
+    "currentPeople": 187,
+    "queuePeople": 28,
+    "waitMinutes": 21
+  }
 },
 {
   "address": "32 - 34 Trần Phú, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -8729,7 +9681,15 @@
     "fourStar": 13,
     "fiveStar": 271
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Cookbook%20Cafe&query_place_id=ChIJGb2LXzNncDERCcY9t2b4Lu4"
+  "url": "https://www.google.com/maps/search/?api=1&query=Cookbook%20Cafe&query_place_id=ChIJGb2LXzNncDERCcY9t2b4Lu4",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1789,
+    "comfortCapacityPeople": 230,
+    "currentPeople": 78,
+    "queuePeople": 6,
+    "waitMinutes": 21
+  }
 },
 {
   "address": "100/22 Hùng Vương, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -8807,7 +9767,15 @@
     "fourStar": 97,
     "fiveStar": 825
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=La%20Velvet&query_place_id=ChIJ-deUmXtncDERfMDbrZvjJeI"
+  "url": "https://www.google.com/maps/search/?api=1&query=La%20Velvet&query_place_id=ChIJ-deUmXtncDERfMDbrZvjJeI",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1350,
+    "comfortCapacityPeople": 355,
+    "currentPeople": 97,
+    "queuePeople": 10,
+    "waitMinutes": 13
+  }
 },
 {
   "address": "144 Đ. Võ Trứ, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -8887,7 +9855,15 @@
     "fourStar": 1000,
     "fiveStar": 14786
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=X%C3%B3m%20M%E1%BB%9Bi%20Garden&query_place_id=ChIJWU9s5chncDERTiomOGbHjQM"
+  "url": "https://www.google.com/maps/search/?api=1&query=X%C3%B3m%20M%E1%BB%9Bi%20Garden&query_place_id=ChIJWU9s5chncDERTiomOGbHjQM",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 924,
+    "comfortCapacityPeople": 178,
+    "currentPeople": 119,
+    "queuePeople": 8,
+    "waitMinutes": 17
+  }
 },
 {
   "address": "160 Hùng Vương, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -8966,7 +9942,15 @@
     "fourStar": 254,
     "fiveStar": 6699
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Luong%20Son%20Cang%20Restaurant&query_place_id=ChIJ76O9Wr5ncDERPDSDjrd2qys"
+  "url": "https://www.google.com/maps/search/?api=1&query=Luong%20Son%20Cang%20Restaurant&query_place_id=ChIJ76O9Wr5ncDERPDSDjrd2qys",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 621,
+    "comfortCapacityPeople": 111,
+    "currentPeople": 27,
+    "queuePeople": 5,
+    "waitMinutes": 29
+  }
 },
 {
   "address": "102b Trần Phú, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -9015,7 +9999,15 @@
     "fourStar": 83,
     "fiveStar": 509
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Best%20Western%20Premier%20Marvella%20Nha%20Trang%20Hotel&query_place_id=ChIJm-O06u1ncDERhbrCZcbgq5I"
+  "url": "https://www.google.com/maps/search/?api=1&query=Best%20Western%20Premier%20Marvella%20Nha%20Trang%20Hotel&query_place_id=ChIJm-O06u1ncDERhbrCZcbgq5I",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2351,
+    "comfortCapacityPeople": 131,
+    "currentPeople": 76,
+    "queuePeople": 15,
+    "waitMinutes": 24
+  }
 },
 {
   "address": "Four Seasons Park, Trần Phú, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -9063,7 +10055,15 @@
     "fourStar": 55,
     "fiveStar": 190
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=AKIRA%20SUSHI%20-%20Japanese%20Cuisine&query_place_id=ChIJu7zEd3lncDEROST8fIfEAiQ"
+  "url": "https://www.google.com/maps/search/?api=1&query=AKIRA%20SUSHI%20-%20Japanese%20Cuisine&query_place_id=ChIJu7zEd3lncDEROST8fIfEAiQ",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 582,
+    "comfortCapacityPeople": 301,
+    "currentPeople": 160,
+    "queuePeople": 26,
+    "waitMinutes": 15
+  }
 },
 {
   "address": "70 Đ. Lê Đại Hành, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -9140,7 +10140,15 @@
     "fourStar": 83,
     "fiveStar": 232
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Ng%C3%B2%20r%C3%AD%20Coriander%20-%20Thai%20Cuisine&query_place_id=ChIJCbkYVn5ncDERbdt6BeXrI5I"
+  "url": "https://www.google.com/maps/search/?api=1&query=Ng%C3%B2%20r%C3%AD%20Coriander%20-%20Thai%20Cuisine&query_place_id=ChIJCbkYVn5ncDERbdt6BeXrI5I",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2574,
+    "comfortCapacityPeople": 142,
+    "currentPeople": 92,
+    "queuePeople": 17,
+    "waitMinutes": 9
+  }
 },
 {
   "address": "668R+W2G, Nha Trang, Khánh Hòa, Việt Nam",
@@ -9217,7 +10225,15 @@
     "fourStar": 17,
     "fiveStar": 98
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=S%C3%A2n%20kh%E1%BA%A5u%20th%E1%BB%B1c%20c%E1%BA%A3nh%20Tata%20Show&query_place_id=ChIJefNOHABncDER9RjSG5wEsQ8"
+  "url": "https://www.google.com/maps/search/?api=1&query=S%C3%A2n%20kh%E1%BA%A5u%20th%E1%BB%B1c%20c%E1%BA%A3nh%20Tata%20Show&query_place_id=ChIJefNOHABncDER9RjSG5wEsQ8",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2378,
+    "comfortCapacityPeople": 179,
+    "currentPeople": 74,
+    "queuePeople": 13,
+    "waitMinutes": 12
+  }
 },
 {
   "address": "48A Đ.Mạc Đĩnh Chi, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -9295,7 +10311,15 @@
     "fourStar": 3,
     "fiveStar": 476
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Nha%20Trang%20Sea%20Star%20Diving%20Center&query_place_id=ChIJtVb3fWhncDERB9Tfv6uOLdc"
+  "url": "https://www.google.com/maps/search/?api=1&query=Nha%20Trang%20Sea%20Star%20Diving%20Center&query_place_id=ChIJtVb3fWhncDERB9Tfv6uOLdc",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 604,
+    "comfortCapacityPeople": 214,
+    "currentPeople": 107,
+    "queuePeople": 14,
+    "waitMinutes": 6
+  }
 },
 {
   "address": "66CV+HQ9, Hòn Tre, Nha Trang, Khánh Hòa, Việt Nam",
@@ -9372,7 +10396,15 @@
     "fourStar": 4,
     "fiveStar": 30
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Khu%20v%C6%B0%E1%BB%9Dn%20Nh%E1%BA%ADt%20(Japanese%20Garden)&query_place_id=ChIJzepSUgBncDERajpcnX5uDjo"
+  "url": "https://www.google.com/maps/search/?api=1&query=Khu%20v%C6%B0%E1%BB%9Dn%20Nh%E1%BA%ADt%20(Japanese%20Garden)&query_place_id=ChIJzepSUgBncDERajpcnX5uDjo",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2061,
+    "comfortCapacityPeople": 151,
+    "currentPeople": 34,
+    "queuePeople": 2,
+    "waitMinutes": 8
+  }
 },
 {
   "address": "388 Võ Thị Sáu, Nam Nha Trang, Khánh Hòa, Việt Nam",
@@ -9451,7 +10483,15 @@
     "fourStar": 457,
     "fiveStar": 815
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=B%E1%BA%BFn%20T%C3%A0u%20Du%20L%E1%BB%8Bch%20Nha%20Trang&query_place_id=ChIJxyWUaShhcDERBuvbaj8N6eY"
+  "url": "https://www.google.com/maps/search/?api=1&query=B%E1%BA%BFn%20T%C3%A0u%20Du%20L%E1%BB%8Bch%20Nha%20Trang&query_place_id=ChIJxyWUaShhcDERBuvbaj8N6eY",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1209,
+    "comfortCapacityPeople": 367,
+    "currentPeople": 298,
+    "queuePeople": 33,
+    "waitMinutes": 23
+  }
 },
 {
   "address": "15 Đ. Trần Hưng Đạo, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -9528,7 +10568,15 @@
     "fourStar": 1,
     "fiveStar": 1
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Food%20Court%20Nha%20Trang&query_place_id=ChIJnQxpJXlncDERd3Ud4EKvJJk"
+  "url": "https://www.google.com/maps/search/?api=1&query=Food%20Court%20Nha%20Trang&query_place_id=ChIJnQxpJXlncDERd3Ud4EKvJJk",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2886,
+    "comfortCapacityPeople": 384,
+    "currentPeople": 324,
+    "queuePeople": 63,
+    "waitMinutes": 6
+  }
 },
 {
   "address": "23b Bửu Đóa, Nam Nha Trang, Khánh Hòa, Việt Nam",
@@ -9605,7 +10653,15 @@
     "fourStar": 17,
     "fiveStar": 53
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Halal%20Food%20Karim&query_place_id=ChIJB8r-j6BdcDER2cLQqRDKtV4"
+  "url": "https://www.google.com/maps/search/?api=1&query=Halal%20Food%20Karim&query_place_id=ChIJB8r-j6BdcDER2cLQqRDKtV4",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 770,
+    "comfortCapacityPeople": 169,
+    "currentPeople": 72,
+    "queuePeople": 6,
+    "waitMinutes": 22
+  }
 },
 {
   "address": "Chung cư 9 Nguyễn Thiện Thuật, A13 Hẻm 37, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -9682,7 +10738,15 @@
     "fourStar": 114,
     "fiveStar": 2159
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Tomyum%20-%20Thai%20Food&query_place_id=ChIJzaWp4u9ncDERqTVgdmoS-qA"
+  "url": "https://www.google.com/maps/search/?api=1&query=Tomyum%20-%20Thai%20Food&query_place_id=ChIJzaWp4u9ncDERqTVgdmoS-qA",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 516,
+    "comfortCapacityPeople": 131,
+    "currentPeople": 54,
+    "queuePeople": 3,
+    "waitMinutes": 15
+  }
 },
 {
   "address": "11 Yersin, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -9760,7 +10824,15 @@
     "fourStar": 63,
     "fiveStar": 325
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Senta%20Vegetarian&query_place_id=ChIJq2z_InxncDERPXYRWSrnReY"
+  "url": "https://www.google.com/maps/search/?api=1&query=Senta%20Vegetarian&query_place_id=ChIJq2z_InxncDERPXYRWSrnReY",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2823,
+    "comfortCapacityPeople": 314,
+    "currentPeople": 190,
+    "queuePeople": 13,
+    "waitMinutes": 29
+  }
 },
 {
   "address": "31 A5, Biệt Thự, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -9837,7 +10909,15 @@
     "fourStar": 2,
     "fiveStar": 12
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Stuffed%20Pancake%20Traditional%20Food%20(Miss%20H%C6%B0%C6%A1ng)%20b%C3%A1nh%20cu%E1%BB%91n%20H%C3%A0%20N%E1%BB%99i&query_place_id=ChIJk5H1sn5ncDERrKA6fok2DvQ"
+  "url": "https://www.google.com/maps/search/?api=1&query=Stuffed%20Pancake%20Traditional%20Food%20(Miss%20H%C6%B0%C6%A1ng)%20b%C3%A1nh%20cu%E1%BB%91n%20H%C3%A0%20N%E1%BB%99i&query_place_id=ChIJk5H1sn5ncDERrKA6fok2DvQ",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2245,
+    "comfortCapacityPeople": 98,
+    "currentPeople": 32,
+    "queuePeople": 5,
+    "waitMinutes": 22
+  }
 },
 {
   "address": "45 Tô Hiến Thành, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -9914,7 +10994,15 @@
     "fourStar": 6,
     "fiveStar": 32
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Guys%20Vexican%20Food&query_place_id=ChIJ7fjUEn5ncDERnXJyPSJsiUs"
+  "url": "https://www.google.com/maps/search/?api=1&query=Guys%20Vexican%20Food&query_place_id=ChIJ7fjUEn5ncDERnXJyPSJsiUs",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1366,
+    "comfortCapacityPeople": 251,
+    "currentPeople": 212,
+    "queuePeople": 39,
+    "waitMinutes": 24
+  }
 },
 {
   "address": "32C Trần Phú, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -9992,7 +11080,15 @@
     "fourStar": 355,
     "fiveStar": 640
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Costa%20Seafood%20Nha%20Trang&query_place_id=ChIJlaXv8XhncDERClMvFw0zr4U"
+  "url": "https://www.google.com/maps/search/?api=1&query=Costa%20Seafood%20Nha%20Trang&query_place_id=ChIJlaXv8XhncDERClMvFw0zr4U",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 947,
+    "comfortCapacityPeople": 364,
+    "currentPeople": 70,
+    "queuePeople": 9,
+    "waitMinutes": 4
+  }
 },
 {
   "address": "31 Đ. Huỳnh Thúc Kháng, Nha Trang, Khánh Hòa 57000, Việt Nam",
@@ -10072,7 +11168,15 @@
     "fourStar": 52,
     "fiveStar": 1312
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=SHAKTI%20VEGGIES%20BISTRO%20(%20Chay%20)&query_place_id=ChIJuaGUcptncDERmRbCeVeIFiI"
+  "url": "https://www.google.com/maps/search/?api=1&query=SHAKTI%20VEGGIES%20BISTRO%20(%20Chay%20)&query_place_id=ChIJuaGUcptncDERmRbCeVeIFiI",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1580,
+    "comfortCapacityPeople": 244,
+    "currentPeople": 139,
+    "queuePeople": 17,
+    "waitMinutes": 9
+  }
 },
 {
   "address": "51a Đ. Huỳnh Thúc Kháng, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -10150,7 +11254,15 @@
     "fourStar": 0,
     "fiveStar": 16
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Korean%20Food%201987&query_place_id=ChIJlTt3fwBncDERQ-ljcyCXvpA"
+  "url": "https://www.google.com/maps/search/?api=1&query=Korean%20Food%201987&query_place_id=ChIJlTt3fwBncDERQ-ljcyCXvpA",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2344,
+    "comfortCapacityPeople": 385,
+    "currentPeople": 135,
+    "queuePeople": 25,
+    "waitMinutes": 29
+  }
 },
 {
   "address": "68/4 Đống Đa, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -10230,7 +11342,15 @@
     "fourStar": 216,
     "fiveStar": 1102
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Ti%E1%BB%87m%20C%C6%A1m%20B%C3%A0%20T%C3%B4i&query_place_id=ChIJwYQPm0FncDERT_VetGtfFcI"
+  "url": "https://www.google.com/maps/search/?api=1&query=Ti%E1%BB%87m%20C%C6%A1m%20B%C3%A0%20T%C3%B4i&query_place_id=ChIJwYQPm0FncDERT_VetGtfFcI",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1952,
+    "comfortCapacityPeople": 203,
+    "currentPeople": 53,
+    "queuePeople": 2,
+    "waitMinutes": 19
+  }
 },
 {
   "address": "120/3 Nguyễn Thiện Thuật, P, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -10313,7 +11433,15 @@
     "fourStar": 18,
     "fiveStar": 281
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Red%20Gate%20Bakery%20Cafe&query_place_id=ChIJe9U3arVncDER6SKRDTzsIyQ"
+  "url": "https://www.google.com/maps/search/?api=1&query=Red%20Gate%20Bakery%20Cafe&query_place_id=ChIJe9U3arVncDER6SKRDTzsIyQ",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2808,
+    "comfortCapacityPeople": 84,
+    "currentPeople": 23,
+    "queuePeople": 2,
+    "waitMinutes": 21
+  }
 },
 {
   "address": "120/25-26 Nguyễn Thiện Thuật, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -10399,7 +11527,15 @@
     "fourStar": 134,
     "fiveStar": 1458
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Cafe%20Culture&query_place_id=ChIJ20mLIApocDERT2oBMY3KBuc"
+  "url": "https://www.google.com/maps/search/?api=1&query=Cafe%20Culture&query_place_id=ChIJ20mLIApocDERT2oBMY3KBuc",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 611,
+    "comfortCapacityPeople": 179,
+    "currentPeople": 30,
+    "queuePeople": 3,
+    "waitMinutes": 20
+  }
 },
 {
   "address": "119 Nguyễn Thiện Thuật, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -10477,7 +11613,15 @@
     "fourStar": 188,
     "fiveStar": 1966
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Yashoda&query_place_id=ChIJg2GAgnxncDER2lrnU_T6qJs"
+  "url": "https://www.google.com/maps/search/?api=1&query=Yashoda&query_place_id=ChIJg2GAgnxncDER2lrnU_T6qJs",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2067,
+    "comfortCapacityPeople": 233,
+    "currentPeople": 101,
+    "queuePeople": 14,
+    "waitMinutes": 23
+  }
 },
 {
   "address": "84 Đ. Huỳnh Thúc Kháng, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -10525,7 +11669,15 @@
     "fourStar": 6,
     "fiveStar": 155
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Elephant%20Korean%20Food&query_place_id=ChIJB9zxswxncDER5QaLCZHoEIU"
+  "url": "https://www.google.com/maps/search/?api=1&query=Elephant%20Korean%20Food&query_place_id=ChIJB9zxswxncDER5QaLCZHoEIU",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 337,
+    "comfortCapacityPeople": 141,
+    "currentPeople": 58,
+    "queuePeople": 8,
+    "waitMinutes": 4
+  }
 },
 {
   "address": "04 Đ. Núi Một, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -10603,7 +11755,15 @@
     "fourStar": 28,
     "fiveStar": 1040
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=C%C6%A1m%20G%C3%A0%20X%E1%BB%91i%20M%E1%BA%AFm%20B-Food&query_place_id=ChIJI54-oLNncDERcUhrMWgYV7g"
+  "url": "https://www.google.com/maps/search/?api=1&query=C%C6%A1m%20G%C3%A0%20X%E1%BB%91i%20M%E1%BA%AFm%20B-Food&query_place_id=ChIJI54-oLNncDERcUhrMWgYV7g",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 3000,
+    "comfortCapacityPeople": 254,
+    "currentPeople": 224,
+    "queuePeople": 43,
+    "waitMinutes": 11
+  }
 },
 {
   "address": "73 16 Trần Quang Khải, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -10680,7 +11840,15 @@
     "fourStar": 52,
     "fiveStar": 417
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Vandana%20Authentic%20Indian%20Food&query_place_id=ChIJnbttMV9ncDERno2jbjkrEOo"
+  "url": "https://www.google.com/maps/search/?api=1&query=Vandana%20Authentic%20Indian%20Food&query_place_id=ChIJnbttMV9ncDERno2jbjkrEOo",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1707,
+    "comfortCapacityPeople": 378,
+    "currentPeople": 141,
+    "queuePeople": 17,
+    "waitMinutes": 23
+  }
 },
 {
   "address": "50 Đ. Lê Thánh Tôn, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -10759,7 +11927,15 @@
     "fourStar": 379,
     "fiveStar": 986
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Nh%C3%A0%20H%C3%A0ng%20Palms%20Bistro%20Nhatrang&query_place_id=ChIJHfraQXlncDERXvx7h-d4JHc"
+  "url": "https://www.google.com/maps/search/?api=1&query=Nh%C3%A0%20H%C3%A0ng%20Palms%20Bistro%20Nhatrang&query_place_id=ChIJHfraQXlncDERXvx7h-d4JHc",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2863,
+    "comfortCapacityPeople": 200,
+    "currentPeople": 56,
+    "queuePeople": 7,
+    "waitMinutes": 14
+  }
 },
 {
   "address": "24 Trần Quang Khải, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -10808,7 +11984,15 @@
     "fourStar": 388,
     "fiveStar": 1688
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=KhanhKat%20Mockba&query_place_id=ChIJnXjC7WRncDERj3gehbSxaNM"
+  "url": "https://www.google.com/maps/search/?api=1&query=KhanhKat%20Mockba&query_place_id=ChIJnXjC7WRncDERj3gehbSxaNM",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2598,
+    "comfortCapacityPeople": 340,
+    "currentPeople": 54,
+    "queuePeople": 6,
+    "waitMinutes": 22
+  }
 },
 {
   "address": "R24 Phố Rừng, Nha Trang, Khánh Hòa, Việt Nam",
@@ -10857,7 +12041,15 @@
     "fourStar": 2,
     "fiveStar": 17
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=AVILLA&query_place_id=ChIJexpx39BncDERj6sP2F2v9FM"
+  "url": "https://www.google.com/maps/search/?api=1&query=AVILLA&query_place_id=ChIJexpx39BncDERj6sP2F2v9FM",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2297,
+    "comfortCapacityPeople": 127,
+    "currentPeople": 89,
+    "queuePeople": 6,
+    "waitMinutes": 15
+  }
 },
 {
   "address": "39 Đ. Hoàng Hoa Thám, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -10936,7 +12128,15 @@
     "fourStar": 401,
     "fiveStar": 2050
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=%E1%BB%9At%20Hi%E1%BB%83m&query_place_id=ChIJ4w2U7HpncDERcX2nliBlphA"
+  "url": "https://www.google.com/maps/search/?api=1&query=%E1%BB%9At%20Hi%E1%BB%83m&query_place_id=ChIJ4w2U7HpncDERcX2nliBlphA",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1588,
+    "comfortCapacityPeople": 255,
+    "currentPeople": 172,
+    "queuePeople": 12,
+    "waitMinutes": 8
+  }
 },
 {
   "address": "181 Nguyễn Thiện Thuật, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -11014,7 +12214,15 @@
     "fourStar": 532,
     "fiveStar": 2421
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Mix%20Greek%20Restaurant&query_place_id=ChIJ5S5cM3tncDERceyRUdd5ops"
+  "url": "https://www.google.com/maps/search/?api=1&query=Mix%20Greek%20Restaurant&query_place_id=ChIJ5S5cM3tncDERceyRUdd5ops",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2066,
+    "comfortCapacityPeople": 323,
+    "currentPeople": 92,
+    "queuePeople": 14,
+    "waitMinutes": 18
+  }
 },
 {
   "address": "Sheraton Hotel, 28 Trần Phú, Nha Trang, Khánh Hòa 57000, Việt Nam",
@@ -11098,7 +12306,15 @@
     "fourStar": 716,
     "fiveStar": 14552
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Pizza%204P's%20Nha%20Trang&query_place_id=ChIJ5eXo6B5ncDERrZI20z-QgvQ"
+  "url": "https://www.google.com/maps/search/?api=1&query=Pizza%204P's%20Nha%20Trang&query_place_id=ChIJ5eXo6B5ncDERrZI20z-QgvQ",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 862,
+    "comfortCapacityPeople": 110,
+    "currentPeople": 26,
+    "queuePeople": 3,
+    "waitMinutes": 23
+  }
 },
 {
   "address": "2 Nguyễn Thị Minh Khai, Nha Trang, Khánh Hòa 57000, Việt Nam",
@@ -11176,7 +12392,15 @@
     "fourStar": 0,
     "fiveStar": 19
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Ph%E1%BB%9F%20X%C6%B0a%201968%20Fast%20-%20Sea%20Food&query_place_id=ChIJk2CHbN9ncDERUwTZwyhZu90"
+  "url": "https://www.google.com/maps/search/?api=1&query=Ph%E1%BB%9F%20X%C6%B0a%201968%20Fast%20-%20Sea%20Food&query_place_id=ChIJk2CHbN9ncDERUwTZwyhZu90",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1095,
+    "comfortCapacityPeople": 320,
+    "currentPeople": 173,
+    "queuePeople": 32,
+    "waitMinutes": 25
+  }
 },
 {
   "address": "1-A Biệt Thự, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -11255,7 +12479,15 @@
     "fourStar": 436,
     "fiveStar": 1599
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Nh%C3%A0%20h%C3%A0ng%20Galangal&query_place_id=ChIJvQl-ImNncDERhCeoeJVKIuY"
+  "url": "https://www.google.com/maps/search/?api=1&query=Nh%C3%A0%20h%C3%A0ng%20Galangal&query_place_id=ChIJvQl-ImNncDERhCeoeJVKIuY",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2911,
+    "comfortCapacityPeople": 122,
+    "currentPeople": 66,
+    "queuePeople": 4,
+    "waitMinutes": 17
+  }
 },
 {
   "address": "176 Hùng Vương, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -11340,7 +12572,15 @@
     "fourStar": 253,
     "fiveStar": 1345
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Nh%C3%A0%20h%C3%A0ng%20Cactus%20Bogosov&query_place_id=ChIJc_VjyWRncDERI0NlC_rsS_w"
+  "url": "https://www.google.com/maps/search/?api=1&query=Nh%C3%A0%20h%C3%A0ng%20Cactus%20Bogosov&query_place_id=ChIJc_VjyWRncDERI0NlC_rsS_w",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 861,
+    "comfortCapacityPeople": 135,
+    "currentPeople": 116,
+    "queuePeople": 20,
+    "waitMinutes": 30
+  }
 },
 {
   "address": "Đ. Pasteur/16a 6, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -11419,7 +12659,15 @@
     "fourStar": 0,
     "fiveStar": 28
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=An-Ka%20food&query_place_id=ChIJA1oY4htncDERiD6BfCiWPOU"
+  "url": "https://www.google.com/maps/search/?api=1&query=An-Ka%20food&query_place_id=ChIJA1oY4htncDERiD6BfCiWPOU",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2669,
+    "comfortCapacityPeople": 152,
+    "currentPeople": 37,
+    "queuePeople": 4,
+    "waitMinutes": 10
+  }
 },
 {
   "address": "31 Hùng Vương, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -11496,7 +12744,15 @@
     "fourStar": 0,
     "fiveStar": 3
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=%C4%82n%20v%E1%BA%B7t%20%C4%91%C6%B0%E1%BB%9Dng%20ph%E1%BB%91%20Vi%E1%BB%87t%20Nh%E1%BA%ADt%20-%20Take%20Away%20Japanese%20Food&query_place_id=ChIJh4Bn6lJncDER3ytVVi_salI"
+  "url": "https://www.google.com/maps/search/?api=1&query=%C4%82n%20v%E1%BA%B7t%20%C4%91%C6%B0%E1%BB%9Dng%20ph%E1%BB%91%20Vi%E1%BB%87t%20Nh%E1%BA%ADt%20-%20Take%20Away%20Japanese%20Food&query_place_id=ChIJh4Bn6lJncDER3ytVVi_salI",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 860,
+    "comfortCapacityPeople": 300,
+    "currentPeople": 250,
+    "queuePeople": 48,
+    "waitMinutes": 7
+  }
 },
 {
   "address": "8/16 Nguyễn Thiện Thuật, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -11576,7 +12832,15 @@
     "fourStar": 12,
     "fiveStar": 471
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Phyto%20Bistro%20vegan%20%26%20vegetarian%20healthy%20restaurant%20%EA%B1%B4%EA%B0%95%EC%8B%9D%20%EC%8B%9D%EB%8B%B9&query_place_id=ChIJSc3irJtdcDERGTC_9YvqaM4"
+  "url": "https://www.google.com/maps/search/?api=1&query=Phyto%20Bistro%20vegan%20%26%20vegetarian%20healthy%20restaurant%20%EA%B1%B4%EA%B0%95%EC%8B%9D%20%EC%8B%9D%EB%8B%B9&query_place_id=ChIJSc3irJtdcDERGTC_9YvqaM4",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2482,
+    "comfortCapacityPeople": 202,
+    "currentPeople": 104,
+    "queuePeople": 10,
+    "waitMinutes": 10
+  }
 },
 {
   "address": "97 Hùng Vương, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -11653,7 +12917,15 @@
     "fourStar": 42,
     "fiveStar": 405
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Qu%C3%A1n%20Qu%C3%AA%20H%C6%B0%C6%A1ng%20Ph%E1%BB%9F%20C%C6%A1m%20Vi%E1%BB%87t%20Nam&query_place_id=ChIJI7MDTiZncDERKSgRJS07XmY"
+  "url": "https://www.google.com/maps/search/?api=1&query=Qu%C3%A1n%20Qu%C3%AA%20H%C6%B0%C6%A1ng%20Ph%E1%BB%9F%20C%C6%A1m%20Vi%E1%BB%87t%20Nam&query_place_id=ChIJI7MDTiZncDERKSgRJS07XmY",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 713,
+    "comfortCapacityPeople": 354,
+    "currentPeople": 94,
+    "queuePeople": 6,
+    "waitMinutes": 24
+  }
 },
 {
   "address": "97 Nguyễn Thị Minh Khai, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -11732,7 +13004,15 @@
     "fourStar": 394,
     "fiveStar": 4491
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Ngoc%20Trai%20Seafood%20Restaurant%20-%20Since%202004&query_place_id=ChIJl255An1ncDER0HWBSEqA9CA"
+  "url": "https://www.google.com/maps/search/?api=1&query=Ngoc%20Trai%20Seafood%20Restaurant%20-%20Since%202004&query_place_id=ChIJl255An1ncDER0HWBSEqA9CA",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2755,
+    "comfortCapacityPeople": 135,
+    "currentPeople": 44,
+    "queuePeople": 6,
+    "waitMinutes": 10
+  }
 },
 {
   "address": "115 Nguyễn Thiện Thuật, Nha Trang, Khánh Hòa 57000, Việt Nam",
@@ -11810,7 +13090,15 @@
     "fourStar": 299,
     "fiveStar": 2434
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Greek%20Souvlaki%20Nha%20Trang&query_place_id=ChIJ8zgM1pddcDER93n4u2PSQYk"
+  "url": "https://www.google.com/maps/search/?api=1&query=Greek%20Souvlaki%20Nha%20Trang&query_place_id=ChIJ8zgM1pddcDER93n4u2PSQYk",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2688,
+    "comfortCapacityPeople": 83,
+    "currentPeople": 54,
+    "queuePeople": 9,
+    "waitMinutes": 7
+  }
 },
 {
   "address": "100/15 Hùng Vương, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -11888,7 +13176,15 @@
     "fourStar": 90,
     "fiveStar": 600
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Haus%20Bremen&query_place_id=ChIJR7_ObntncDEREjIxmJsE36o"
+  "url": "https://www.google.com/maps/search/?api=1&query=Haus%20Bremen&query_place_id=ChIJR7_ObntncDEREjIxmJsE36o",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 895,
+    "comfortCapacityPeople": 308,
+    "currentPeople": 135,
+    "queuePeople": 17,
+    "waitMinutes": 12
+  }
 },
 {
   "address": "28a Đ. Ngô Thời Nhiệm, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -11966,7 +13262,15 @@
     "fourStar": 1,
     "fiveStar": 9
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=%E1%BB%90c%2028%20-%20Food%20%26%20beer&query_place_id=ChIJ4QAvGOJncDERdg71N-y3NEM"
+  "url": "https://www.google.com/maps/search/?api=1&query=%E1%BB%90c%2028%20-%20Food%20%26%20beer&query_place_id=ChIJ4QAvGOJncDERdg71N-y3NEM",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2154,
+    "comfortCapacityPeople": 371,
+    "currentPeople": 271,
+    "queuePeople": 49,
+    "waitMinutes": 26
+  }
 },
 {
   "address": "668R+W2G, Nha Trang, Khánh Hòa, Việt Nam",
@@ -12014,7 +13318,15 @@
     "fourStar": 3,
     "fiveStar": 30
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Tata%20Aventure&query_place_id=ChIJ3zYVFiBncDER2tYesq2Osvg"
+  "url": "https://www.google.com/maps/search/?api=1&query=Tata%20Aventure&query_place_id=ChIJ3zYVFiBncDER2tYesq2Osvg",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1084,
+    "comfortCapacityPeople": 160,
+    "currentPeople": 129,
+    "queuePeople": 25,
+    "waitMinutes": 22
+  }
 },
 {
   "address": "68A Nguyễn Thị Minh Khai, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -12094,7 +13406,15 @@
     "fourStar": 151,
     "fiveStar": 5302
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Huy%E1%BB%81n%20H%C6%B0%C6%A1ng%20C%C6%A1m%20B%E1%BA%AFc%2C%20C%C6%A1m%20Ni%C3%AAu%20Restaurant%20%ED%9B%84%EC%97%94%ED%9D%90%EC%97%89%20%EB%B6%81%EB%B6%80%EB%B0%A5%20%EB%B0%8F%20%EB%82%98%EC%A7%B1%20%EB%9A%9D%EB%B0%B0%EA%B8%B0%EB%B0%A5&query_place_id=ChIJ_YKlEX1ncDERe9kwcdUSuuk"
+  "url": "https://www.google.com/maps/search/?api=1&query=Huy%E1%BB%81n%20H%C6%B0%C6%A1ng%20C%C6%A1m%20B%E1%BA%AFc%2C%20C%C6%A1m%20Ni%C3%AAu%20Restaurant%20%ED%9B%84%EC%97%94%ED%9D%90%EC%97%89%20%EB%B6%81%EB%B6%80%EB%B0%A5%20%EB%B0%8F%20%EB%82%98%EC%A7%B1%20%EB%9A%9D%EB%B0%B0%EA%B8%B0%EB%B0%A5&query_place_id=ChIJ_YKlEX1ncDERe9kwcdUSuuk",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2382,
+    "comfortCapacityPeople": 134,
+    "currentPeople": 83,
+    "queuePeople": 12,
+    "waitMinutes": 9
+  }
 },
 {
   "address": "10/1B Nguyễn Thiện Thuật, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -12178,7 +13498,15 @@
     "fourStar": 466,
     "fiveStar": 6111
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Alpaca&query_place_id=ChIJBQeZkHtncDERDHPjUfZwEys"
+  "url": "https://www.google.com/maps/search/?api=1&query=Alpaca&query_place_id=ChIJBQeZkHtncDERDHPjUfZwEys",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 635,
+    "comfortCapacityPeople": 96,
+    "currentPeople": 29,
+    "queuePeople": 5,
+    "waitMinutes": 23
+  }
 },
 {
   "address": "42/ 16 Hùng Vương, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -12255,7 +13583,15 @@
     "fourStar": 46,
     "fiveStar": 606
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Nh%C3%A0%20H%C3%A0ng%20B%C3%B4ng%20Crazy&query_place_id=ChIJKRI6xwtncDERDG0eVBzF5WQ"
+  "url": "https://www.google.com/maps/search/?api=1&query=Nh%C3%A0%20H%C3%A0ng%20B%C3%B4ng%20Crazy&query_place_id=ChIJKRI6xwtncDERDG0eVBzF5WQ",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1576,
+    "comfortCapacityPeople": 212,
+    "currentPeople": 116,
+    "queuePeople": 23,
+    "waitMinutes": 15
+  }
 },
 {
   "address": "Sheraton Nha Trang Hotel & Spa, 26-28 Trần Phú, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -12333,7 +13669,15 @@
     "fourStar": 33,
     "fiveStar": 501
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Steam%20n'%20Spice&query_place_id=ChIJ03m8dYJncDERiZLGtqIqfZQ"
+  "url": "https://www.google.com/maps/search/?api=1&query=Steam%20n'%20Spice&query_place_id=ChIJ03m8dYJncDERiZLGtqIqfZQ",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1058,
+    "comfortCapacityPeople": 287,
+    "currentPeople": 196,
+    "queuePeople": 10,
+    "waitMinutes": 15
+  }
 },
 {
   "address": "120/32 Nguyễn Thiện Thuật, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -12414,7 +13758,15 @@
     "fourStar": 88,
     "fiveStar": 839
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Armenia%20Nha%20Trang&query_place_id=ChIJ86eeYWtncDERcqTGgdgjEhM"
+  "url": "https://www.google.com/maps/search/?api=1&query=Armenia%20Nha%20Trang&query_place_id=ChIJ86eeYWtncDERcqTGgdgjEhM",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2321,
+    "comfortCapacityPeople": 242,
+    "currentPeople": 196,
+    "queuePeople": 18,
+    "waitMinutes": 16
+  }
 },
 {
   "address": "1a Biệt Thự, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -12462,7 +13814,15 @@
     "fourStar": 10,
     "fiveStar": 74
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Street%20Food%20Restaurant&query_place_id=ChIJIcNy3x9ncDERUo2nIz2Rf6k"
+  "url": "https://www.google.com/maps/search/?api=1&query=Street%20Food%20Restaurant&query_place_id=ChIJIcNy3x9ncDERUo2nIz2Rf6k",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 941,
+    "comfortCapacityPeople": 90,
+    "currentPeople": 22,
+    "queuePeople": 3,
+    "waitMinutes": 10
+  }
 },
 {
   "address": "119 Lý Nam Đế, Nam Nha Trang, Khánh Hòa, Việt Nam",
@@ -12539,7 +13899,15 @@
     "fourStar": 22,
     "fiveStar": 73
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Street%20Food%20Nha%20Trang&query_place_id=ChIJtcwRwGhncDERhP-EjMJD0Vk"
+  "url": "https://www.google.com/maps/search/?api=1&query=Street%20Food%20Nha%20Trang&query_place_id=ChIJtcwRwGhncDERhP-EjMJD0Vk",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2348,
+    "comfortCapacityPeople": 317,
+    "currentPeople": 160,
+    "queuePeople": 23,
+    "waitMinutes": 3
+  }
 },
 {
   "address": "05 Trần Quang Khải, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -12617,7 +13985,15 @@
     "fourStar": 110,
     "fiveStar": 1640
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Tuan%E2%80%99s%20Vietnamese%20Cuisine&query_place_id=ChIJF6jT3fZncDER-jHx4xy-NF8"
+  "url": "https://www.google.com/maps/search/?api=1&query=Tuan%E2%80%99s%20Vietnamese%20Cuisine&query_place_id=ChIJF6jT3fZncDER-jHx4xy-NF8",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 729,
+    "comfortCapacityPeople": 172,
+    "currentPeople": 151,
+    "queuePeople": 18,
+    "waitMinutes": 12
+  }
 },
 {
   "address": "96A7 Trần Phú, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -12694,7 +14070,15 @@
     "fourStar": 82,
     "fiveStar": 1038
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Tuan's%20Vietnamese%20Cuisine&query_place_id=ChIJWVkBOyhdcDERVeRlb5dew84"
+  "url": "https://www.google.com/maps/search/?api=1&query=Tuan's%20Vietnamese%20Cuisine&query_place_id=ChIJWVkBOyhdcDERVeRlb5dew84",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2128,
+    "comfortCapacityPeople": 378,
+    "currentPeople": 276,
+    "queuePeople": 46,
+    "waitMinutes": 5
+  }
 },
 {
   "address": "55 Nguyễn Thị Minh Khai, Nha Trang, Khánh Hòa 60000, Việt Nam",
@@ -12771,7 +14155,15 @@
     "fourStar": 3,
     "fiveStar": 264
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Nhatrang%20Local%20Food&query_place_id=ChIJg5rSPAtncDERrl2asMFVMPA"
+  "url": "https://www.google.com/maps/search/?api=1&query=Nhatrang%20Local%20Food&query_place_id=ChIJg5rSPAtncDERrl2asMFVMPA",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2866,
+    "comfortCapacityPeople": 242,
+    "currentPeople": 103,
+    "queuePeople": 9,
+    "waitMinutes": 3
+  }
 },
 {
   "address": "43A Đống Đa, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -12848,7 +14240,15 @@
     "fourStar": 63,
     "fiveStar": 765
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Hanju%20k-food&query_place_id=ChIJj7QgLA9ncDERdrO4IzmZ2UE"
+  "url": "https://www.google.com/maps/search/?api=1&query=Hanju%20k-food&query_place_id=ChIJj7QgLA9ncDERdrO4IzmZ2UE",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2215,
+    "comfortCapacityPeople": 198,
+    "currentPeople": 62,
+    "queuePeople": 7,
+    "waitMinutes": 21
+  }
 },
 {
   "address": "Hem 86B Trần Phú, Loc tho, Khánh Hòa 650000, Việt Nam",
@@ -12934,7 +14334,15 @@
     "fourStar": 42,
     "fiveStar": 408
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Nh%C3%A0%20h%C3%A0ng%20Dinner%20at%20Cim's&query_place_id=ChIJbUp5wJpncDERCPUDZat9Bjc"
+  "url": "https://www.google.com/maps/search/?api=1&query=Nh%C3%A0%20h%C3%A0ng%20Dinner%20at%20Cim's&query_place_id=ChIJbUp5wJpncDERCPUDZat9Bjc",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 330,
+    "comfortCapacityPeople": 198,
+    "currentPeople": 57,
+    "queuePeople": 10,
+    "waitMinutes": 21
+  }
 },
 {
   "address": "5a Đ. Ngô Thời Nhiệm, Phường, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -13017,7 +14425,15 @@
     "fourStar": 493,
     "fiveStar": 2499
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=LIVIN%20Barbecue&query_place_id=ChIJUevVLXxncDER-0SWISCGm54"
+  "url": "https://www.google.com/maps/search/?api=1&query=LIVIN%20Barbecue&query_place_id=ChIJUevVLXxncDER-0SWISCGm54",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1331,
+    "comfortCapacityPeople": 308,
+    "currentPeople": 71,
+    "queuePeople": 12,
+    "waitMinutes": 13
+  }
 },
 {
   "address": "66FP+W3, Nha Trang, Khánh Hòa, Việt Nam",
@@ -13065,7 +14481,15 @@
     "fourStar": 2,
     "fiveStar": 54
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Vinpearl%20Resort%20%26%20Spa%20Nha%20Trang%20Beach&query_place_id=ChIJr6PyegBncDERdtXc3rfW0V8"
+  "url": "https://www.google.com/maps/search/?api=1&query=Vinpearl%20Resort%20%26%20Spa%20Nha%20Trang%20Beach&query_place_id=ChIJr6PyegBncDERdtXc3rfW0V8",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2809,
+    "comfortCapacityPeople": 256,
+    "currentPeople": 69,
+    "queuePeople": 10,
+    "waitMinutes": 16
+  }
 },
 {
   "address": "66FQ+X47, Nha Trang, Khánh Hòa, Việt Nam",
@@ -13113,7 +14537,15 @@
     "fourStar": 0,
     "fiveStar": 4
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Buffet%20Restaurant_Vinpearl%20Resort&query_place_id=ChIJ00hFfABncDERr4gO5iRh_aY"
+  "url": "https://www.google.com/maps/search/?api=1&query=Buffet%20Restaurant_Vinpearl%20Resort&query_place_id=ChIJ00hFfABncDERr4gO5iRh_aY",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1120,
+    "comfortCapacityPeople": 203,
+    "currentPeople": 140,
+    "queuePeople": 25,
+    "waitMinutes": 21
+  }
 },
 {
   "address": "56VC+3M8, Hồ Cá, Trí Nguyên, Nha Trang, Khánh Hòa, Việt Nam",
@@ -13161,7 +14593,15 @@
     "fourStar": 0,
     "fiveStar": 3
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Doanh%20Nghi%E1%BB%87p%20T%C6%B0%20Nh%C3%A2n%20L%C3%AA%20%C3%82n&query_place_id=ChIJ02RDTM5gcDER_kfIWCILLuk"
+  "url": "https://www.google.com/maps/search/?api=1&query=Doanh%20Nghi%E1%BB%87p%20T%C6%B0%20Nh%C3%A2n%20L%C3%AA%20%C3%82n&query_place_id=ChIJ02RDTM5gcDER_kfIWCILLuk",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2208,
+    "comfortCapacityPeople": 127,
+    "currentPeople": 66,
+    "queuePeople": 12,
+    "waitMinutes": 3
+  }
 },
 {
   "address": "tổ 1, Trí Nguyên, Nha Trang, Khánh Hòa, Việt Nam",
@@ -13231,7 +14671,15 @@
   "title": "quán nhậu con hai bầu",
   "totalScore": null,
   "wasOpenAtScrapeTime": false,
-  "url": "https://www.google.com/maps/search/?api=1&query=qu%C3%A1n%20nh%E1%BA%ADu%20con%20hai%20b%E1%BA%A7u&query_place_id=ChIJexOkrl1hcDERIXoUz-fBtfM"
+  "url": "https://www.google.com/maps/search/?api=1&query=qu%C3%A1n%20nh%E1%BA%ADu%20con%20hai%20b%E1%BA%A7u&query_place_id=ChIJexOkrl1hcDERIXoUz-fBtfM",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1570,
+    "comfortCapacityPeople": 158,
+    "currentPeople": 34,
+    "queuePeople": 4,
+    "waitMinutes": 14
+  }
 },
 {
   "address": "Unnamed, Road, Nha Trang, Khánh Hòa, Việt Nam",
@@ -13308,7 +14756,15 @@
     "fourStar": 5,
     "fiveStar": 41
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=B%C3%A8%20Y%C3%AAn%20-%20Nh%C3%A0%20B%C3%A8%20H%E1%BA%A3i%20S%E1%BA%A3n&query_place_id=ChIJS2OTrtphcDER8jybU1MYDIg"
+  "url": "https://www.google.com/maps/search/?api=1&query=B%C3%A8%20Y%C3%AAn%20-%20Nh%C3%A0%20B%C3%A8%20H%E1%BA%A3i%20S%E1%BA%A3n&query_place_id=ChIJS2OTrtphcDER8jybU1MYDIg",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2456,
+    "comfortCapacityPeople": 222,
+    "currentPeople": 126,
+    "queuePeople": 23,
+    "waitMinutes": 12
+  }
 },
 {
   "address": "66CV+P4X, Nha Trang, Khánh Hòa, Việt Nam",
@@ -13385,7 +14841,15 @@
     "fourStar": 25,
     "fiveStar": 168
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Sky%20Wheel&query_place_id=ChIJtWRRQudmcDERM7pYaRqfkNk"
+  "url": "https://www.google.com/maps/search/?api=1&query=Sky%20Wheel&query_place_id=ChIJtWRRQudmcDERM7pYaRqfkNk",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2426,
+    "comfortCapacityPeople": 294,
+    "currentPeople": 194,
+    "queuePeople": 31,
+    "waitMinutes": 10
+  }
 },
 {
   "address": "Đảo Hòn Tằm, Nha Trang, Khánh Hòa 570000, Việt Nam",
@@ -13464,7 +14928,15 @@
     "fourStar": 3,
     "fiveStar": 1508
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=H%C3%B2n%20T%E1%BA%B1m%20Mud%20Bath&query_place_id=ChIJCd57-MRhcDERNraen5eWWz0"
+  "url": "https://www.google.com/maps/search/?api=1&query=H%C3%B2n%20T%E1%BA%B1m%20Mud%20Bath&query_place_id=ChIJCd57-MRhcDERNraen5eWWz0",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 574,
+    "comfortCapacityPeople": 359,
+    "currentPeople": 303,
+    "queuePeople": 31,
+    "waitMinutes": 3
+  }
 },
 {
   "address": "668R+MXJ, P, Nha Trang, Khánh Hòa, Việt Nam",
@@ -13512,7 +14984,15 @@
     "fourStar": 0,
     "fiveStar": 1
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Monta%20Express&query_place_id=ChIJOYTbFwBncDERRecK8BaCtFY"
+  "url": "https://www.google.com/maps/search/?api=1&query=Monta%20Express&query_place_id=ChIJOYTbFwBncDERRecK8BaCtFY",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1493,
+    "comfortCapacityPeople": 324,
+    "currentPeople": 144,
+    "queuePeople": 24,
+    "waitMinutes": 9
+  }
 },
 {
   "address": "Hon Tre Island, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -13593,7 +15073,15 @@
     "fourStar": 109,
     "fiveStar": 771
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Vinpearl%20Golf%20Nha%20Trang&query_place_id=ChIJ7f3lfMhmcDERLV-MPJG2W3I"
+  "url": "https://www.google.com/maps/search/?api=1&query=Vinpearl%20Golf%20Nha%20Trang&query_place_id=ChIJ7f3lfMhmcDERLV-MPJG2W3I",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 575,
+    "comfortCapacityPeople": 271,
+    "currentPeople": 98,
+    "queuePeople": 7,
+    "waitMinutes": 24
+  }
 },
 {
   "address": "10 Bạch Đằng, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -13670,7 +15158,15 @@
     "fourStar": 12,
     "fiveStar": 334
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=V%E1%BB%8Bnh%20Cafe&query_place_id=ChIJa3_wegBdcDERO1_QS19_FB0"
+  "url": "https://www.google.com/maps/search/?api=1&query=V%E1%BB%8Bnh%20Cafe&query_place_id=ChIJa3_wegBdcDERO1_QS19_FB0",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2972,
+    "comfortCapacityPeople": 340,
+    "currentPeople": 220,
+    "queuePeople": 30,
+    "waitMinutes": 16
+  }
 },
 {
   "address": "Vinpearl, GH-04 Phố mua sắm, VinWonder, Nha Trang, Khánh Hòa, Việt Nam",
@@ -13748,7 +15244,15 @@
     "fourStar": 9,
     "fiveStar": 226
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Hola%20Vietnamese%20Cuisine&query_place_id=ChIJlexUSsZncDER_h3y4SqsujA"
+  "url": "https://www.google.com/maps/search/?api=1&query=Hola%20Vietnamese%20Cuisine&query_place_id=ChIJlexUSsZncDER_h3y4SqsujA",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 467,
+    "comfortCapacityPeople": 122,
+    "currentPeople": 56,
+    "queuePeople": 7,
+    "waitMinutes": 23
+  }
 },
 {
   "address": "Nha Trang, Khánh Hòa, Việt Nam",
@@ -13825,7 +15329,15 @@
     "fourStar": 10,
     "fiveStar": 86
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Dolphin%20BBQ%20GRILL&query_place_id=ChIJVYvEUy5ncDERd7zM88LD6OU"
+  "url": "https://www.google.com/maps/search/?api=1&query=Dolphin%20BBQ%20GRILL&query_place_id=ChIJVYvEUy5ncDERd7zM88LD6OU",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 320,
+    "comfortCapacityPeople": 298,
+    "currentPeople": 102,
+    "queuePeople": 16,
+    "waitMinutes": 27
+  }
 },
 {
   "address": "City, Nha Trang Marriott Resort & Spa Hon Tre Island, Nha Trang, Khánh Hòa 57100, Việt Nam",
@@ -13876,7 +15388,15 @@
     "fourStar": 9,
     "fiveStar": 25
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Aqua%20Bar&query_place_id=ChIJASByILFncDER8HBAiw4JPE8"
+  "url": "https://www.google.com/maps/search/?api=1&query=Aqua%20Bar&query_place_id=ChIJASByILFncDER8HBAiw4JPE8",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1172,
+    "comfortCapacityPeople": 141,
+    "currentPeople": 90,
+    "queuePeople": 10,
+    "waitMinutes": 30
+  }
 },
 {
   "address": "ẩm thực, 67 Vinpearl, Harbour, Nha Trang, Khánh Hòa 50000, Việt Nam",
@@ -13924,7 +15444,15 @@
     "fourStar": 0,
     "fiveStar": 7
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=67%20Vinpearl%20Harbour&query_place_id=ChIJ0Tb_MMBncDEROeJ7T7-HNDY"
+  "url": "https://www.google.com/maps/search/?api=1&query=67%20Vinpearl%20Harbour&query_place_id=ChIJ0Tb_MMBncDEROeJ7T7-HNDY",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1298,
+    "comfortCapacityPeople": 106,
+    "currentPeople": 62,
+    "queuePeople": 10,
+    "waitMinutes": 9
+  }
 },
 {
   "address": "City, Hon Tre Island, Ward, Nha Trang, Khánh Hòa 57100, Việt Nam",
@@ -14002,7 +15530,15 @@
     "fourStar": 23,
     "fiveStar": 82
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Nh%C3%A0%20h%C3%A0ng%20Windy&query_place_id=ChIJHS9VdX9ncDER1Y6PwtG1KG0"
+  "url": "https://www.google.com/maps/search/?api=1&query=Nh%C3%A0%20h%C3%A0ng%20Windy&query_place_id=ChIJHS9VdX9ncDER1Y6PwtG1KG0",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1865,
+    "comfortCapacityPeople": 199,
+    "currentPeople": 156,
+    "queuePeople": 25,
+    "waitMinutes": 29
+  }
 },
 {
   "address": "Hon Tre island, Nha Trang, Khánh Hòa 571000, Việt Nam",
@@ -14051,7 +15587,15 @@
     "fourStar": 885,
     "fiveStar": 7004
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Nha%20Trang%20Marriott%20Resort%20%26%20Spa&query_place_id=ChIJHz9rryJncDEREEsynP2uz_M"
+  "url": "https://www.google.com/maps/search/?api=1&query=Nha%20Trang%20Marriott%20Resort%20%26%20Spa&query_place_id=ChIJHz9rryJncDEREEsynP2uz_M",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2448,
+    "comfortCapacityPeople": 244,
+    "currentPeople": 176,
+    "queuePeople": 23,
+    "waitMinutes": 10
+  }
 },
 {
   "address": "58VM+RHW, Nha Trang, Khánh Hòa, Việt Nam",
@@ -14128,7 +15672,15 @@
     "fourStar": 7,
     "fiveStar": 85
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=H%E1%BA%A3i%20%C4%91%C4%83ng%20H%C3%B2n%20L%E1%BB%9Bn&query_place_id=ChIJz1iFrYFkcDERxc8IThYcBc8"
+  "url": "https://www.google.com/maps/search/?api=1&query=H%E1%BA%A3i%20%C4%91%C4%83ng%20H%C3%B2n%20L%E1%BB%9Bn&query_place_id=ChIJz1iFrYFkcDERxc8IThYcBc8",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 661,
+    "comfortCapacityPeople": 163,
+    "currentPeople": 68,
+    "queuePeople": 7,
+    "waitMinutes": 5
+  }
 },
 {
   "address": "438 Ngô Đến, Tây Nha Trang, Khánh Hòa, Việt Nam",
@@ -14207,7 +15759,15 @@
     "fourStar": 1377,
     "fiveStar": 3354
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Trung%20T%C3%A2m%20Su%E1%BB%91i%20kho%C3%A1ng%20n%C3%B3ng%20TH%C3%81P%20B%C3%80%20NHA%20TRANG&query_place_id=ChIJ4VW1NWZncDERpd1vBrdAL44"
+  "url": "https://www.google.com/maps/search/?api=1&query=Trung%20T%C3%A2m%20Su%E1%BB%91i%20kho%C3%A1ng%20n%C3%B3ng%20TH%C3%81P%20B%C3%80%20NHA%20TRANG&query_place_id=ChIJ4VW1NWZncDERpd1vBrdAL44",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1604,
+    "comfortCapacityPeople": 209,
+    "currentPeople": 49,
+    "queuePeople": 2,
+    "waitMinutes": 24
+  }
 },
 {
   "address": "172/8A Bạch Đằng, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -14286,7 +15846,15 @@
     "fourStar": 58,
     "fiveStar": 1891
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Luxury%20Anna%20Spa&query_place_id=ChIJq4KsCuNncDERbxjgaFVkbhE"
+  "url": "https://www.google.com/maps/search/?api=1&query=Luxury%20Anna%20Spa&query_place_id=ChIJq4KsCuNncDERbxjgaFVkbhE",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 738,
+    "comfortCapacityPeople": 214,
+    "currentPeople": 76,
+    "queuePeople": 10,
+    "waitMinutes": 6
+  }
 },
 {
   "address": "Quảng trường 2-4, Nha Trang, Khánh Hòa 65000, Việt Nam",
@@ -14356,7 +15924,15 @@
   "title": "Đại Lý Vé Vinwonders - Hòn Tằm - Tour Đảo",
   "totalScore": null,
   "wasOpenAtScrapeTime": true,
-  "url": "https://www.google.com/maps/search/?api=1&query=%C4%90%E1%BA%A1i%20L%C3%BD%20V%C3%A9%20Vinwonders%20-%20H%C3%B2n%20T%E1%BA%B1m%20-%20Tour%20%C4%90%E1%BA%A3o&query_place_id=ChIJoYNEwOxncDERnX__umujpqc"
+  "url": "https://www.google.com/maps/search/?api=1&query=%C4%90%E1%BA%A1i%20L%C3%BD%20V%C3%A9%20Vinwonders%20-%20H%C3%B2n%20T%E1%BA%B1m%20-%20Tour%20%C4%90%E1%BA%A3o&query_place_id=ChIJoYNEwOxncDERnX__umujpqc",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 799,
+    "comfortCapacityPeople": 185,
+    "currentPeople": 37,
+    "queuePeople": 4,
+    "waitMinutes": 27
+  }
 },
 {
   "address": "Đ. Trần Hữu Duyệt, Vĩnh Điềm Trung, Tây Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -14427,7 +16003,15 @@
   "totalScore": null,
   "wasOpenAtScrapeTime": true,
   "website": "https://vinpearlvoucher.net/",
-  "url": "https://www.google.com/maps/search/?api=1&query=Voucher%20Vinpearl%20Nha%20Trang&query_place_id=ChIJJX7pzgJdcDERcsRQM9qnT6A"
+  "url": "https://www.google.com/maps/search/?api=1&query=Voucher%20Vinpearl%20Nha%20Trang&query_place_id=ChIJJX7pzgJdcDERcsRQM9qnT6A",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1345,
+    "comfortCapacityPeople": 101,
+    "currentPeople": 58,
+    "queuePeople": 3,
+    "waitMinutes": 18
+  }
 },
 {
   "address": "L16A-22, Đường T8, Khu Đô Thị An Bình Tân, Nam Nha Trang, Khánh Hòa 57000, Việt Nam",
@@ -14505,7 +16089,15 @@
     "fourStar": 23,
     "fiveStar": 81
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=A%20%C4%90%E1%BB%A5t%20Qu%C3%A1n%20-%20B%C3%A1nh%20Khoai%20T%C3%B4m%20%C4%90%E1%BA%A5t%20%2C%20%C4%82n%20V%E1%BA%B7t&query_place_id=ChIJwwqOZuhdcDERiKDlYqag49I"
+  "url": "https://www.google.com/maps/search/?api=1&query=A%20%C4%90%E1%BB%A5t%20Qu%C3%A1n%20-%20B%C3%A1nh%20Khoai%20T%C3%B4m%20%C4%90%E1%BA%A5t%20%2C%20%C4%82n%20V%E1%BA%B7t&query_place_id=ChIJwwqOZuhdcDERiKDlYqag49I",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1431,
+    "comfortCapacityPeople": 264,
+    "currentPeople": 46,
+    "queuePeople": 8,
+    "waitMinutes": 16
+  }
 },
 {
   "address": "Hotel & Spa, 26 - 28 Trần Phú Sheraton, 28 Trần Phú, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -14584,7 +16176,15 @@
     "fourStar": 17,
     "fiveStar": 385
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=%26More%20by%20Sheraton&query_place_id=ChIJ-91FiH1ncDERloMtxIfnlw4"
+  "url": "https://www.google.com/maps/search/?api=1&query=%26More%20by%20Sheraton&query_place_id=ChIJ-91FiH1ncDERloMtxIfnlw4",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 936,
+    "comfortCapacityPeople": 137,
+    "currentPeople": 49,
+    "queuePeople": 10,
+    "waitMinutes": 27
+  }
 },
 {
   "address": "Sân Thượng, 1 Nguyễn Thị Minh Khai, Phường Lộc Thọ, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -14662,7 +16262,15 @@
     "fourStar": 63,
     "fiveStar": 787
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Ch%E1%BB%91n%20B%C3%ACnh%20Y%C3%AAn%20Coffee%20-%20Nha%20Trang&query_place_id=ChIJPyOdXfFncDERtebHlHGj6TA"
+  "url": "https://www.google.com/maps/search/?api=1&query=Ch%E1%BB%91n%20B%C3%ACnh%20Y%C3%AAn%20Coffee%20-%20Nha%20Trang&query_place_id=ChIJPyOdXfFncDERtebHlHGj6TA",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1899,
+    "comfortCapacityPeople": 91,
+    "currentPeople": 77,
+    "queuePeople": 13,
+    "waitMinutes": 4
+  }
 },
 {
   "address": "78 - 80 Trần Phú, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -14741,7 +16349,15 @@
     "fourStar": 4,
     "fiveStar": 24
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Coral%20buffet%20restaurant&query_place_id=ChIJAQmGJ3NncDERGBJmfvZVMMU"
+  "url": "https://www.google.com/maps/search/?api=1&query=Coral%20buffet%20restaurant&query_place_id=ChIJAQmGJ3NncDERGBJmfvZVMMU",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1903,
+    "comfortCapacityPeople": 190,
+    "currentPeople": 124,
+    "queuePeople": 21,
+    "waitMinutes": 25
+  }
 },
 {
   "address": "12a Trần Phú, Nha Trang, Khánh Hòa, Việt Nam",
@@ -14818,7 +16434,15 @@
     "fourStar": 71,
     "fiveStar": 188
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=C%C3%B4ng%20Vi%C3%AAn%20Thanh%20Ni%C3%AAn&query_place_id=ChIJn2AiskNncDERQjCX-h4tLUE"
+  "url": "https://www.google.com/maps/search/?api=1&query=C%C3%B4ng%20Vi%C3%AAn%20Thanh%20Ni%C3%AAn&query_place_id=ChIJn2AiskNncDERQjCX-h4tLUE",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 686,
+    "comfortCapacityPeople": 283,
+    "currentPeople": 105,
+    "queuePeople": 14,
+    "waitMinutes": 22
+  }
 },
 {
   "address": "100 Trần Phú, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -14895,7 +16519,15 @@
     "fourStar": 32,
     "fiveStar": 77
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=C%C3%B4ng%20Vi%C3%AAn%20Ph%C3%B9%20%C4%90%E1%BB%95ng&query_place_id=ChIJ651BEmVncDERY1Pj2Zhbs1Q"
+  "url": "https://www.google.com/maps/search/?api=1&query=C%C3%B4ng%20Vi%C3%AAn%20Ph%C3%B9%20%C4%90%E1%BB%95ng&query_place_id=ChIJ651BEmVncDERY1Pj2Zhbs1Q",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2823,
+    "comfortCapacityPeople": 349,
+    "currentPeople": 153,
+    "queuePeople": 11,
+    "waitMinutes": 30
+  }
 },
 {
   "address": "75CG+X3W, Tổ 19 thôn Xuân Ngọc, Tây Nha Trang, Khánh Hòa, Việt Nam",
@@ -14946,7 +16578,15 @@
     "fourStar": 3341,
     "fiveStar": 8053
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=B%C3%B9n%20kho%C3%A1ng%20n%C3%B3ng%20I-Resort%20Nha%20Trang&query_place_id=ChIJD4Fjw0JdcDERVdkOw0y6LeE"
+  "url": "https://www.google.com/maps/search/?api=1&query=B%C3%B9n%20kho%C3%A1ng%20n%C3%B3ng%20I-Resort%20Nha%20Trang&query_place_id=ChIJD4Fjw0JdcDERVdkOw0y6LeE",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2696,
+    "comfortCapacityPeople": 168,
+    "currentPeople": 114,
+    "queuePeople": 21,
+    "waitMinutes": 17
+  }
 },
 {
   "address": "Nha Trang, Khánh Hòa, Việt Nam",
@@ -15025,7 +16665,15 @@
     "fourStar": 757,
     "fiveStar": 1436
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=B%C3%A3i%20Tranh%20Nha%20Trang&query_place_id=ChIJs1Dr-dpgcDERpoTmal9PkHc"
+  "url": "https://www.google.com/maps/search/?api=1&query=B%C3%A3i%20Tranh%20Nha%20Trang&query_place_id=ChIJs1Dr-dpgcDERpoTmal9PkHc",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1771,
+    "comfortCapacityPeople": 372,
+    "currentPeople": 260,
+    "queuePeople": 24,
+    "waitMinutes": 13
+  }
 },
 {
   "address": "Nha Trang, Khánh Hòa, Việt Nam",
@@ -15073,7 +16721,15 @@
     "fourStar": 3,
     "fiveStar": 24
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=B%C3%A3i%20t%E1%BA%AFm%20Tre&query_place_id=ChIJOWAckkJkcDERRNHlSKeUMbc"
+  "url": "https://www.google.com/maps/search/?api=1&query=B%C3%A3i%20t%E1%BA%AFm%20Tre&query_place_id=ChIJOWAckkJkcDERRNHlSKeUMbc",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 823,
+    "comfortCapacityPeople": 353,
+    "currentPeople": 191,
+    "queuePeople": 10,
+    "waitMinutes": 17
+  }
 },
 {
   "address": "An Viên, Nam Nha Trang, Khánh Hòa, Việt Nam",
@@ -15150,7 +16806,15 @@
     "fourStar": 37,
     "fiveStar": 158
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=A%E2%80%99memoir%20Cafe%20%26%20Kitchen&query_place_id=ChIJL9raKVVhcDERqYK51S8FwFQ"
+  "url": "https://www.google.com/maps/search/?api=1&query=A%E2%80%99memoir%20Cafe%20%26%20Kitchen&query_place_id=ChIJL9raKVVhcDERqYK51S8FwFQ",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1280,
+    "comfortCapacityPeople": 250,
+    "currentPeople": 160,
+    "queuePeople": 18,
+    "waitMinutes": 13
+  }
 },
 {
   "address": "Số C-02, Vinpearl Harbour, Hòn Tre, Nha Trang, Khánh Hòa, Việt Nam",
@@ -15228,7 +16892,15 @@
     "fourStar": 1,
     "fiveStar": 7
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Circle%20K&query_place_id=ChIJy2v90XdncDERswIkuHNzCyk"
+  "url": "https://www.google.com/maps/search/?api=1&query=Circle%20K&query_place_id=ChIJy2v90XdncDERswIkuHNzCyk",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2607,
+    "comfortCapacityPeople": 110,
+    "currentPeople": 66,
+    "queuePeople": 3,
+    "waitMinutes": 25
+  }
 },
 {
   "address": "669R+39Q, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -15305,7 +16977,15 @@
     "fourStar": 3,
     "fiveStar": 4
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Com%20Ga&query_place_id=ChIJdWXyaQBncDERuwsSnMmMYGw"
+  "url": "https://www.google.com/maps/search/?api=1&query=Com%20Ga&query_place_id=ChIJdWXyaQBncDERuwsSnMmMYGw",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2853,
+    "comfortCapacityPeople": 223,
+    "currentPeople": 65,
+    "queuePeople": 10,
+    "waitMinutes": 6
+  }
 },
 {
   "address": "23 Vinpearl, Harbour, Nha Trang, Khánh Hòa, Việt Nam",
@@ -15382,7 +17062,15 @@
     "fourStar": 0,
     "fiveStar": 0
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Karosta%20Food%20%26%20Tea&query_place_id=ChIJSa2jeABncDERaeEjIEkgVuY"
+  "url": "https://www.google.com/maps/search/?api=1&query=Karosta%20Food%20%26%20Tea&query_place_id=ChIJSa2jeABncDERaeEjIEkgVuY",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1438,
+    "comfortCapacityPeople": 115,
+    "currentPeople": 89,
+    "queuePeople": 13,
+    "waitMinutes": 22
+  }
 },
 {
   "address": "Đảo, Nha Trang - Hòn Tre, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -15459,7 +17147,15 @@
     "fourStar": 2,
     "fiveStar": 13
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Nha%20Trang%20Delight&query_place_id=ChIJpwxL2yBncDERUaRgHdKz7-Y"
+  "url": "https://www.google.com/maps/search/?api=1&query=Nha%20Trang%20Delight&query_place_id=ChIJpwxL2yBncDERUaRgHdKz7-Y",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1026,
+    "comfortCapacityPeople": 289,
+    "currentPeople": 192,
+    "queuePeople": 38,
+    "waitMinutes": 29
+  }
 },
 {
   "address": "669R+JM8, Nha Trang, Khánh Hòa, Việt Nam",
@@ -15507,7 +17203,15 @@
     "fourStar": 1,
     "fiveStar": 2
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Chingu%20bbq&query_place_id=ChIJcZgWCPtncDER0S6fjxocslY"
+  "url": "https://www.google.com/maps/search/?api=1&query=Chingu%20bbq&query_place_id=ChIJcZgWCPtncDER0S6fjxocslY",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1285,
+    "comfortCapacityPeople": 329,
+    "currentPeople": 192,
+    "queuePeople": 11,
+    "waitMinutes": 30
+  }
 },
 {
   "address": "PC-15 vinpearl harbour, Nha Trang, Khánh Hòa 57000, Việt Nam",
@@ -15584,7 +17288,15 @@
     "fourStar": 1,
     "fiveStar": 16
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=HELLO%20MART%20-%20Vinpearl%20Harbour&query_place_id=ChIJI_DGRPdncDERgb8eb7L7vVM"
+  "url": "https://www.google.com/maps/search/?api=1&query=HELLO%20MART%20-%20Vinpearl%20Harbour&query_place_id=ChIJI_DGRPdncDERgb8eb7L7vVM",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1804,
+    "comfortCapacityPeople": 229,
+    "currentPeople": 120,
+    "queuePeople": 14,
+    "waitMinutes": 20
+  }
 },
 {
   "address": "Lô FB18 Vinwonders, đảo Hòn Tre, Nha Trang, Khánh Hòa, Việt Nam",
@@ -15661,7 +17373,15 @@
     "fourStar": 0,
     "fiveStar": 5
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Scoopy%20Creamy%20Station&query_place_id=ChIJVY-hk5FncDERyS6FM2JQGlE"
+  "url": "https://www.google.com/maps/search/?api=1&query=Scoopy%20Creamy%20Station&query_place_id=ChIJVY-hk5FncDERyS6FM2JQGlE",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1699,
+    "comfortCapacityPeople": 377,
+    "currentPeople": 328,
+    "queuePeople": 32,
+    "waitMinutes": 8
+  }
 },
 {
   "address": "Vinpearl, Nha Trang, Khánh Hòa, Việt Nam",
@@ -15739,7 +17459,15 @@
     "fourStar": 7,
     "fiveStar": 3560
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=TocoToco&query_place_id=ChIJd-Phi_NncDERhmfCvBcJ5F8"
+  "url": "https://www.google.com/maps/search/?api=1&query=TocoToco&query_place_id=ChIJd-Phi_NncDERhmfCvBcJ5F8",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 535,
+    "comfortCapacityPeople": 108,
+    "currentPeople": 64,
+    "queuePeople": 9,
+    "waitMinutes": 10
+  }
 },
 {
   "address": "Nha Trang, Khánh Hòa, Việt Nam",
@@ -15817,7 +17545,15 @@
     "fourStar": 7,
     "fiveStar": 8
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Yummy%20Land&query_place_id=ChIJo9J2Dd5mcDERB7DIlUrcN14"
+  "url": "https://www.google.com/maps/search/?api=1&query=Yummy%20Land&query_place_id=ChIJo9J2Dd5mcDERB7DIlUrcN14",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2656,
+    "comfortCapacityPeople": 194,
+    "currentPeople": 66,
+    "queuePeople": 4,
+    "waitMinutes": 27
+  }
 },
 {
   "address": "667V+X5, PC02-PC03 Vinpearl Harbour, Nha Trang, Khánh Hòa, Việt Nam",
@@ -15894,7 +17630,15 @@
     "fourStar": 0,
     "fiveStar": 15
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Sen%20Mart%20Vinpearl%20-%20%D0%92%D1%8C%D0%B5%D1%82%D0%BD%D0%B0%D0%BC%D1%81%D0%BA%D0%B8%D0%B9%20%D1%81%D1%83%D0%BF%D0%B5%D1%80%D0%BC%D0%B0%D1%80%D0%BA%D0%B5%D1%82%20%D0%B8%20%D1%84%D0%B8%D1%80%D0%BC%D0%B5%D0%BD%D0%BD%D1%8B%D0%B5%20%D0%B1%D0%BB%D1%8E%D0%B4%D0%B0&query_place_id=ChIJ1ycMAQBncDERlHaJ3urmgiI"
+  "url": "https://www.google.com/maps/search/?api=1&query=Sen%20Mart%20Vinpearl%20-%20%D0%92%D1%8C%D0%B5%D1%82%D0%BD%D0%B0%D0%BC%D1%81%D0%BA%D0%B8%D0%B9%20%D1%81%D1%83%D0%BF%D0%B5%D1%80%D0%BC%D0%B0%D1%80%D0%BA%D0%B5%D1%82%20%D0%B8%20%D1%84%D0%B8%D1%80%D0%BC%D0%B5%D0%BD%D0%BD%D1%8B%D0%B5%20%D0%B1%D0%BB%D1%8E%D0%B4%D0%B0&query_place_id=ChIJ1ycMAQBncDERlHaJ3urmgiI",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1614,
+    "comfortCapacityPeople": 160,
+    "currentPeople": 117,
+    "queuePeople": 15,
+    "waitMinutes": 7
+  }
 },
 {
   "address": "Đảo Hòn Tre Nha Trang City, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -15943,7 +17687,15 @@
     "fourStar": 1,
     "fiveStar": 11
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=The%20Lagoon&query_place_id=ChIJD5i1wkVncDERpBKhpfaF6zY"
+  "url": "https://www.google.com/maps/search/?api=1&query=The%20Lagoon&query_place_id=ChIJD5i1wkVncDERpBKhpfaF6zY",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1263,
+    "comfortCapacityPeople": 380,
+    "currentPeople": 61,
+    "queuePeople": 8,
+    "waitMinutes": 16
+  }
 },
 {
   "address": "668V+VCJ, đảo Hòn Tre, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -16021,7 +17773,15 @@
     "fourStar": 0,
     "fiveStar": 1
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Chingu%20Restaurant%20Vinpearl%20Land&query_place_id=ChIJ840qn0JncDERsiYfTzJ_NQw"
+  "url": "https://www.google.com/maps/search/?api=1&query=Chingu%20Restaurant%20Vinpearl%20Land&query_place_id=ChIJ840qn0JncDERsiYfTzJ_NQw",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 936,
+    "comfortCapacityPeople": 155,
+    "currentPeople": 124,
+    "queuePeople": 6,
+    "waitMinutes": 9
+  }
 },
 {
   "address": "668R+W6F, Nha Trang - Vinpearl Land, Nha Trang, Khánh Hòa, Việt Nam",
@@ -16069,7 +17829,15 @@
     "fourStar": 0,
     "fiveStar": 3
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=%C4%90%E1%BA%A3o%20H%E1%BB%93n%20tre%2C%20ph%C6%B0%E1%BB%9Dng%20V%C4%A9nh%20Nguy%C3%AAn%2C%20Tp%20Nha%20Trang&query_place_id=ChIJu0zUbwBncDER_EqGlicDDWU"
+  "url": "https://www.google.com/maps/search/?api=1&query=%C4%90%E1%BA%A3o%20H%E1%BB%93n%20tre%2C%20ph%C6%B0%E1%BB%9Dng%20V%C4%A9nh%20Nguy%C3%AAn%2C%20Tp%20Nha%20Trang&query_place_id=ChIJu0zUbwBncDER_EqGlicDDWU",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1166,
+    "comfortCapacityPeople": 400,
+    "currentPeople": 100,
+    "queuePeople": 15,
+    "waitMinutes": 26
+  }
 },
 {
   "address": "Đảo Hòn Tre, Nha Trang, Khánh Hòa, Việt Nam",
@@ -16147,7 +17915,15 @@
     "fourStar": 0,
     "fiveStar": 7
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Yummy%20Water%20World&query_place_id=ChIJJXs4FwBncDERtmqMS2wiLLE"
+  "url": "https://www.google.com/maps/search/?api=1&query=Yummy%20Water%20World&query_place_id=ChIJJXs4FwBncDERtmqMS2wiLLE",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1632,
+    "comfortCapacityPeople": 346,
+    "currentPeople": 158,
+    "queuePeople": 23,
+    "waitMinutes": 20
+  }
 },
 {
   "address": "668V+VCJ Hon Tre Island, Nha Trang, Khánh Hòa 65000, Việt Nam",
@@ -16196,7 +17972,15 @@
     "fourStar": 0,
     "fiveStar": 17
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Vinpearl%20Lotus%20Restaurant&query_place_id=ChIJEXCMwAdncDER1yrmB9XHk2c"
+  "url": "https://www.google.com/maps/search/?api=1&query=Vinpearl%20Lotus%20Restaurant&query_place_id=ChIJEXCMwAdncDER1yrmB9XHk2c",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1633,
+    "comfortCapacityPeople": 132,
+    "currentPeople": 96,
+    "queuePeople": 10,
+    "waitMinutes": 11
+  }
 },
 {
   "address": "66CW+WGC, Hòn Tre, Nha Trang, Khánh Hòa, Việt Nam",
@@ -16244,7 +18028,15 @@
     "fourStar": 4,
     "fiveStar": 466
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Jasmine&query_place_id=ChIJlTvvagBncDEROXa1vcb96AM"
+  "url": "https://www.google.com/maps/search/?api=1&query=Jasmine&query_place_id=ChIJlTvvagBncDEROXa1vcb96AM",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2600,
+    "comfortCapacityPeople": 235,
+    "currentPeople": 169,
+    "queuePeople": 19,
+    "waitMinutes": 6
+  }
 },
 {
   "address": "51 Đảo Hòn Tre, Cầu Đá, Nha Trang, Khánh Hòa, Việt Nam",
@@ -16322,7 +18114,15 @@
     "fourStar": 18,
     "fiveStar": 193
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Lotteria%20VinWonders%20Nha%20Trang%201&query_place_id=ChIJdXlvRNxmcDERJ0NBe2BfEDM"
+  "url": "https://www.google.com/maps/search/?api=1&query=Lotteria%20VinWonders%20Nha%20Trang%201&query_place_id=ChIJdXlvRNxmcDERJ0NBe2BfEDM",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 802,
+    "comfortCapacityPeople": 329,
+    "currentPeople": 219,
+    "queuePeople": 34,
+    "waitMinutes": 14
+  }
 },
 {
   "address": "66CV+73M, Unnamed Road, Nha Trang, Khánh Hòa, Việt Nam",
@@ -16399,7 +18199,15 @@
     "fourStar": 11,
     "fiveStar": 18
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Nh%C3%A0%20H%C3%A0ng%20H%C6%B0%C6%A1ng%20V%E1%BB%8B%20Vi%E1%BB%87t&query_place_id=ChIJh00XwUZncDERFDdxo4IFDWs"
+  "url": "https://www.google.com/maps/search/?api=1&query=Nh%C3%A0%20H%C3%A0ng%20H%C6%B0%C6%A1ng%20V%E1%BB%8B%20Vi%E1%BB%87t&query_place_id=ChIJh00XwUZncDERFDdxo4IFDWs",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1081,
+    "comfortCapacityPeople": 109,
+    "currentPeople": 57,
+    "queuePeople": 8,
+    "waitMinutes": 15
+  }
 },
 {
   "address": "667V+R7Q, Nha Trang - Vinpearl Land, Nha Trang, Khánh Hòa, Việt Nam",
@@ -16476,7 +18284,15 @@
     "fourStar": 6,
     "fiveStar": 16
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=VS%20Racing&query_place_id=ChIJf11McQBncDERm1SnCGe7gxs"
+  "url": "https://www.google.com/maps/search/?api=1&query=VS%20Racing&query_place_id=ChIJf11McQBncDERm1SnCGe7gxs",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2712,
+    "comfortCapacityPeople": 237,
+    "currentPeople": 36,
+    "queuePeople": 5,
+    "waitMinutes": 12
+  }
 },
 {
   "address": "669R+F6R, VinWonders, Nha Trang, Khánh Hòa, Việt Nam",
@@ -16524,7 +18340,15 @@
     "fourStar": 1,
     "fiveStar": 4
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=C%E1%BB%95ng%20c%C3%B4ng%20vi%C3%AAn%20n%C6%B0%E1%BB%9Bc&query_place_id=ChIJI0Z5GwBncDER7_kjSrk651s"
+  "url": "https://www.google.com/maps/search/?api=1&query=C%E1%BB%95ng%20c%C3%B4ng%20vi%C3%AAn%20n%C6%B0%E1%BB%9Bc&query_place_id=ChIJI0Z5GwBncDER7_kjSrk651s",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 305,
+    "comfortCapacityPeople": 298,
+    "currentPeople": 104,
+    "queuePeople": 5,
+    "waitMinutes": 17
+  }
 },
 {
   "address": "66CV+73M, Nha Trang, Khánh Hòa, Việt Nam",
@@ -16572,7 +18396,15 @@
     "fourStar": 8,
     "fiveStar": 23
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=V%C6%B0%E1%BB%9Dn%20Hoang%20M%E1%BA%A1c&query_place_id=ChIJMRZXH7NncDER-8m4Z5lTJNk"
+  "url": "https://www.google.com/maps/search/?api=1&query=V%C6%B0%E1%BB%9Dn%20Hoang%20M%E1%BA%A1c&query_place_id=ChIJMRZXH7NncDER-8m4Z5lTJNk",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 408,
+    "comfortCapacityPeople": 283,
+    "currentPeople": 112,
+    "queuePeople": 14,
+    "waitMinutes": 5
+  }
 },
 {
   "address": "Quảng trường Vinpearl Harbour Nha Trang là Đảo Hòn Tre, Nha Trang, Khánh Hòa, Việt Nam",
@@ -16650,7 +18482,15 @@
     "fourStar": 1,
     "fiveStar": 158
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=%C3%81i%20Nguy%E1%BB%87n%20H%E1%BB%93%20-%20Wishing%20Fountain&query_place_id=ChIJoUyfPwBncDERo5lD-5B1rYo"
+  "url": "https://www.google.com/maps/search/?api=1&query=%C3%81i%20Nguy%E1%BB%87n%20H%E1%BB%93%20-%20Wishing%20Fountain&query_place_id=ChIJoUyfPwBncDERo5lD-5B1rYo",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 898,
+    "comfortCapacityPeople": 354,
+    "currentPeople": 189,
+    "queuePeople": 22,
+    "waitMinutes": 4
+  }
 },
 {
   "address": "Việt Nam, Khánh Hòa, Nha Trang, Hòn Tre",
@@ -16698,7 +18538,15 @@
     "fourStar": 2,
     "fiveStar": 21
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Mine%20Adventure&query_place_id=ChIJd-0tIlJncDER6RTbBMbcVVE"
+  "url": "https://www.google.com/maps/search/?api=1&query=Mine%20Adventure&query_place_id=ChIJd-0tIlJncDER6RTbBMbcVVE",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 781,
+    "comfortCapacityPeople": 345,
+    "currentPeople": 237,
+    "queuePeople": 28,
+    "waitMinutes": 23
+  }
 },
 {
   "address": "LK46 đường số 32, Thái Xuân, KĐT Mỹ Gia, Nam Nha Trang, Khánh Hòa 65000, Việt Nam",
@@ -16776,7 +18624,15 @@
     "fourStar": 0,
     "fiveStar": 157
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Vivu%20Nha%20Trang%20-%20Combo%20du%20l%E1%BB%8Bch%2C%20Tour%2C%20Vinpearl&query_place_id=ChIJ_bM3Nc1dcDERE45_QAqjlzE"
+  "url": "https://www.google.com/maps/search/?api=1&query=Vivu%20Nha%20Trang%20-%20Combo%20du%20l%E1%BB%8Bch%2C%20Tour%2C%20Vinpearl&query_place_id=ChIJ_bM3Nc1dcDERE45_QAqjlzE",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2228,
+    "comfortCapacityPeople": 325,
+    "currentPeople": 79,
+    "queuePeople": 3,
+    "waitMinutes": 20
+  }
 },
 {
   "address": "668V+VCJ, Hon Tre Island, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -16824,7 +18680,15 @@
     "fourStar": 0,
     "fiveStar": 3
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=VINPEARL%20DISCOVERY%202%20NHA%20TRANG&query_place_id=ChIJlX5vRNxmcDERf1ErQ03KJyw"
+  "url": "https://www.google.com/maps/search/?api=1&query=VINPEARL%20DISCOVERY%202%20NHA%20TRANG&query_place_id=ChIJlX5vRNxmcDERf1ErQ03KJyw",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 346,
+    "comfortCapacityPeople": 268,
+    "currentPeople": 221,
+    "queuePeople": 18,
+    "waitMinutes": 14
+  }
 },
 {
   "address": "66CV+HC5, Nha Trang, Khánh Hòa, Việt Nam",
@@ -16872,7 +18736,15 @@
     "fourStar": 5,
     "fiveStar": 51
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=%C4%90%E1%BB%93i%20V%E1%BA%A1n%20Hoa&query_place_id=ChIJzVHZ4GJncDERPs4NjvBvlOk"
+  "url": "https://www.google.com/maps/search/?api=1&query=%C4%90%E1%BB%93i%20V%E1%BA%A1n%20Hoa&query_place_id=ChIJzVHZ4GJncDERPs4NjvBvlOk",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1099,
+    "comfortCapacityPeople": 244,
+    "currentPeople": 40,
+    "queuePeople": 8,
+    "waitMinutes": 26
+  }
 },
 {
   "address": "6743+RHQ, Unnamed Road, Nha Trang, Khánh Hòa, Việt Nam",
@@ -16921,7 +18793,15 @@
     "fourStar": 4,
     "fiveStar": 78
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Vinpearl%20Convention%20Centre&query_place_id=ChIJJ5jM67lncDERUv31vEgEpck"
+  "url": "https://www.google.com/maps/search/?api=1&query=Vinpearl%20Convention%20Centre&query_place_id=ChIJJ5jM67lncDERUv31vEgEpck",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1260,
+    "comfortCapacityPeople": 92,
+    "currentPeople": 65,
+    "queuePeople": 10,
+    "waitMinutes": 16
+  }
 },
 {
   "address": "Ng. Lê Minh Hải/60 khu K98 Trần Nhật Duật, Nha Trang, Khánh Hòa 65000, Việt Nam",
@@ -16999,7 +18879,15 @@
     "fourStar": 2,
     "fiveStar": 38
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Qu%C3%A1n%20cafe%20WIND%20%26%20WINE%20COFFEE&query_place_id=ChIJBZFytGldcDER6e5UfpRdbm4"
+  "url": "https://www.google.com/maps/search/?api=1&query=Qu%C3%A1n%20cafe%20WIND%20%26%20WINE%20COFFEE&query_place_id=ChIJBZFytGldcDER6e5UfpRdbm4",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 680,
+    "comfortCapacityPeople": 180,
+    "currentPeople": 53,
+    "queuePeople": 3,
+    "waitMinutes": 20
+  }
 },
 {
   "address": "Nha Trang, Khánh Hòa, Việt Nam",
@@ -17048,7 +18936,15 @@
     "fourStar": 0,
     "fiveStar": 17
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Nh%C3%A0%20H%C3%A0ng%204Seasons%20-%20Restaurant%20Vinwonder&query_place_id=ChIJg5XpBwBncDERIUf2Mc_BVWw"
+  "url": "https://www.google.com/maps/search/?api=1&query=Nh%C3%A0%20H%C3%A0ng%204Seasons%20-%20Restaurant%20Vinwonder&query_place_id=ChIJg5XpBwBncDERIUf2Mc_BVWw",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 814,
+    "comfortCapacityPeople": 318,
+    "currentPeople": 111,
+    "queuePeople": 10,
+    "waitMinutes": 3
+  }
 },
 {
   "address": "32 Đảo Hòn Tre, Cầu Đá P, Nha Trang, Khánh Hòa, Việt Nam",
@@ -17126,7 +19022,15 @@
     "fourStar": 6,
     "fiveStar": 78
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Lotteria%20Vinwonders%20Nha%20Trang%202&query_place_id=ChIJw_37NrhncDERxcW4vWKcXtg"
+  "url": "https://www.google.com/maps/search/?api=1&query=Lotteria%20Vinwonders%20Nha%20Trang%202&query_place_id=ChIJw_37NrhncDERxcW4vWKcXtg",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1436,
+    "comfortCapacityPeople": 166,
+    "currentPeople": 27,
+    "queuePeople": 2,
+    "waitMinutes": 9
+  }
 },
 {
   "address": "Vinwonders Amusment Park (Next to Starbuck Đảo Hòn Tre, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -17205,7 +19109,15 @@
     "fourStar": 6,
     "fiveStar": 11
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Rip%20Curl&query_place_id=ChIJPcPnImVncDERAoiRbcVsaCY"
+  "url": "https://www.google.com/maps/search/?api=1&query=Rip%20Curl&query_place_id=ChIJPcPnImVncDERAoiRbcVsaCY",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1324,
+    "comfortCapacityPeople": 249,
+    "currentPeople": 89,
+    "queuePeople": 8,
+    "waitMinutes": 15
+  }
 },
 {
   "address": "669R+39Q, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -17283,7 +19195,15 @@
     "fourStar": 1,
     "fiveStar": 2
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Gustavo%20Gano%20store%20-%20Vinwonders%20Nha%20Trang&query_place_id=ChIJ-68qJABncDERLXnq95-7QiA"
+  "url": "https://www.google.com/maps/search/?api=1&query=Gustavo%20Gano%20store%20-%20Vinwonders%20Nha%20Trang&query_place_id=ChIJ-68qJABncDERLXnq95-7QiA",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 444,
+    "comfortCapacityPeople": 148,
+    "currentPeople": 118,
+    "queuePeople": 16,
+    "waitMinutes": 12
+  }
 },
 {
   "address": "668R+W6C, Vinpearl Harbour Nha Trangđảo, đảo hòn tre, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -17361,7 +19281,15 @@
     "fourStar": 0,
     "fiveStar": 4
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=KUME.vn%20(vinpearl%20harbour%20market%20khu%20b21)&query_place_id=ChIJ3Rck-rBncDER7L0vpb0NotU"
+  "url": "https://www.google.com/maps/search/?api=1&query=KUME.vn%20(vinpearl%20harbour%20market%20khu%20b21)&query_place_id=ChIJ3Rck-rBncDER7L0vpb0NotU",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 593,
+    "comfortCapacityPeople": 281,
+    "currentPeople": 177,
+    "queuePeople": 35,
+    "waitMinutes": 26
+  }
 },
 {
   "address": "Tp. Nha Trang, Khánh Hòa, Việt Nam",
@@ -17409,7 +19337,15 @@
     "fourStar": 104,
     "fiveStar": 337
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Vinpearl%20Land&query_place_id=ChIJv_FhqN5mcDERS5Mb2BUw0Fc"
+  "url": "https://www.google.com/maps/search/?api=1&query=Vinpearl%20Land&query_place_id=ChIJv_FhqN5mcDERS5Mb2BUw0Fc",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 723,
+    "comfortCapacityPeople": 235,
+    "currentPeople": 100,
+    "queuePeople": 10,
+    "waitMinutes": 10
+  }
 },
 {
   "address": "Hòn Tre, Khánh Hòa, Việt Nam",
@@ -17486,7 +19422,15 @@
     "fourStar": 9,
     "fiveStar": 46
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=V%E1%BB%8Bnh%20Phao%20N%E1%BB%95i%20Splash%20Bay&query_place_id=ChIJ27FghMFncDERSk2aFV86gOI"
+  "url": "https://www.google.com/maps/search/?api=1&query=V%E1%BB%8Bnh%20Phao%20N%E1%BB%95i%20Splash%20Bay&query_place_id=ChIJ27FghMFncDERSk2aFV86gOI",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2734,
+    "comfortCapacityPeople": 216,
+    "currentPeople": 129,
+    "queuePeople": 11,
+    "waitMinutes": 14
+  }
 },
 {
   "address": "78-80 Trần Phú, phường, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -17536,7 +19480,15 @@
     "fourStar": 874,
     "fiveStar": 28653
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Vinpearl%20Beachfront%20Nha%20Trang&query_place_id=ChIJXZ2cGO9ncDERm5wUjlVIb6c"
+  "url": "https://www.google.com/maps/search/?api=1&query=Vinpearl%20Beachfront%20Nha%20Trang&query_place_id=ChIJXZ2cGO9ncDERm5wUjlVIb6c",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 319,
+    "comfortCapacityPeople": 302,
+    "currentPeople": 257,
+    "queuePeople": 39,
+    "waitMinutes": 25
+  }
 },
 {
   "address": "Đảo Hòn Tre, Nha Trang, Khánh Hòa 65000, Việt Nam",
@@ -17585,7 +19537,15 @@
     "fourStar": 1890,
     "fiveStar": 32044
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Vinpearl%20Resort%20Nha%20Trang&query_place_id=ChIJu4iW3eFmcDER24HB38M54Go"
+  "url": "https://www.google.com/maps/search/?api=1&query=Vinpearl%20Resort%20Nha%20Trang&query_place_id=ChIJu4iW3eFmcDER24HB38M54Go",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1735,
+    "comfortCapacityPeople": 224,
+    "currentPeople": 53,
+    "queuePeople": 7,
+    "waitMinutes": 14
+  }
 },
 {
   "address": "78-80 Trần Phú, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -17633,7 +19593,15 @@
     "fourStar": 1,
     "fiveStar": 12
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Vincharm%20Spa&query_place_id=ChIJxWOLD2VncDERxTJ6nOzFYXM"
+  "url": "https://www.google.com/maps/search/?api=1&query=Vincharm%20Spa&query_place_id=ChIJxWOLD2VncDERxTJ6nOzFYXM",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1387,
+    "comfortCapacityPeople": 298,
+    "currentPeople": 107,
+    "queuePeople": 15,
+    "waitMinutes": 5
+  }
 },
 {
   "address": "669R+P9F, Nha Trang, Khánh Hòa, Việt Nam",
@@ -17681,7 +19649,15 @@
     "fourStar": 8,
     "fiveStar": 33
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Underwater%20World&query_place_id=ChIJ87XYbnxncDERGpyC-5V6PbA"
+  "url": "https://www.google.com/maps/search/?api=1&query=Underwater%20World&query_place_id=ChIJ87XYbnxncDERGpyC-5V6PbA",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1057,
+    "comfortCapacityPeople": 230,
+    "currentPeople": 125,
+    "queuePeople": 14,
+    "waitMinutes": 27
+  }
 },
 {
   "address": "669R+QC2, Nha Trang, Khánh Hòa, Việt Nam",
@@ -17729,7 +19705,15 @@
     "fourStar": 61,
     "fiveStar": 259
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Th%E1%BB%A7y%20cung%20Vinpearl%20Nha%20Trang&query_place_id=ChIJN041CH9ncDERZbt9zOaXORs"
+  "url": "https://www.google.com/maps/search/?api=1&query=Th%E1%BB%A7y%20cung%20Vinpearl%20Nha%20Trang&query_place_id=ChIJN041CH9ncDERZbt9zOaXORs",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1748,
+    "comfortCapacityPeople": 241,
+    "currentPeople": 205,
+    "queuePeople": 31,
+    "waitMinutes": 13
+  }
 },
 {
   "address": "668R+HVF, Nha Trang, Khánh Hòa, Việt Nam",
@@ -17777,7 +19761,15 @@
     "fourStar": 2,
     "fiveStar": 12
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Carousels%20VinWonders&query_place_id=ChIJd1PanwNncDERu2Sa8oR_OR4"
+  "url": "https://www.google.com/maps/search/?api=1&query=Carousels%20VinWonders&query_place_id=ChIJd1PanwNncDERu2Sa8oR_OR4",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 821,
+    "comfortCapacityPeople": 108,
+    "currentPeople": 38,
+    "queuePeople": 2,
+    "waitMinutes": 22
+  }
 },
 {
   "address": "669R+8GM 빈원더스 놀이동산 Vinwonders, Nha Trang, Khánh Hòa, Việt Nam",
@@ -17825,7 +19817,15 @@
     "fourStar": 3,
     "fiveStar": 7
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=R%E1%BA%A1p%20phim%20bay%20-%20Flyover&query_place_id=ChIJ_YK6BQBncDER375l1nKcvVs"
+  "url": "https://www.google.com/maps/search/?api=1&query=R%E1%BA%A1p%20phim%20bay%20-%20Flyover&query_place_id=ChIJ_YK6BQBncDER375l1nKcvVs",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 344,
+    "comfortCapacityPeople": 337,
+    "currentPeople": 218,
+    "queuePeople": 22,
+    "waitMinutes": 19
+  }
 },
 {
   "address": "669Q+MC, Nha Trang, Khánh Hòa, Việt Nam",
@@ -17866,7 +19866,15 @@
   "title": "Bến cano vinwonder",
   "totalScore": null,
   "wasOpenAtScrapeTime": null,
-  "url": "https://www.google.com/maps/search/?api=1&query=B%E1%BA%BFn%20cano%20vinwonder&query_place_id=ChIJB6pMc61ncDERkE8qBpikrd4"
+  "url": "https://www.google.com/maps/search/?api=1&query=B%E1%BA%BFn%20cano%20vinwonder&query_place_id=ChIJB6pMc61ncDERkE8qBpikrd4",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1929,
+    "comfortCapacityPeople": 92,
+    "currentPeople": 21,
+    "queuePeople": 2,
+    "waitMinutes": 24
+  }
 },
 {
   "address": "667X+PM, Nha Trang, Khánh Hòa, Việt Nam",
@@ -17944,7 +19952,15 @@
     "fourStar": 31,
     "fiveStar": 208
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Vinpearl%20Nha%20Trang&query_place_id=ChIJFd_1XgBncDERVbgOPyMBIC4"
+  "url": "https://www.google.com/maps/search/?api=1&query=Vinpearl%20Nha%20Trang&query_place_id=ChIJFd_1XgBncDERVbgOPyMBIC4",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1473,
+    "comfortCapacityPeople": 382,
+    "currentPeople": 91,
+    "queuePeople": 11,
+    "waitMinutes": 26
+  }
 },
 {
   "address": "Hẻm 86B Trần Phú, Nha Trang, Khánh Hòa 65000, Việt Nam",
@@ -18025,7 +20041,15 @@
     "fourStar": 1,
     "fiveStar": 21
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=%C4%90%E1%BA%A1i%20l%C3%BD%20v%C3%A9%20Vinwonders%20Nha%20Trang%20(Vinpearl)%20-%201%20Day%20Trip%20Tourist&query_place_id=ChIJgxYJF_NncDERF9ZmWI3aC9g"
+  "url": "https://www.google.com/maps/search/?api=1&query=%C4%90%E1%BA%A1i%20l%C3%BD%20v%C3%A9%20Vinwonders%20Nha%20Trang%20(Vinpearl)%20-%201%20Day%20Trip%20Tourist&query_place_id=ChIJgxYJF_NncDERF9ZmWI3aC9g",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 824,
+    "comfortCapacityPeople": 321,
+    "currentPeople": 66,
+    "queuePeople": 12,
+    "waitMinutes": 22
+  }
 },
 {
   "address": "152/3 Trần Quý Cáp, Tây Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -18102,7 +20126,15 @@
     "fourStar": 0,
     "fiveStar": 17
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=%C4%90%E1%BA%A1i%20L%C3%BD%20V%C3%A9%20Vinpearl%20Nha%20Trang%20(Vinwonders)%20-%20HO%C3%80NG%20H%E1%BA%A2I%20%C4%90%C4%82NG%20Travel&query_place_id=ChIJFVNWJ00H-GsR3mZqMyrlj2E"
+  "url": "https://www.google.com/maps/search/?api=1&query=%C4%90%E1%BA%A1i%20L%C3%BD%20V%C3%A9%20Vinpearl%20Nha%20Trang%20(Vinwonders)%20-%20HO%C3%80NG%20H%E1%BA%A2I%20%C4%90%C4%82NG%20Travel&query_place_id=ChIJFVNWJ00H-GsR3mZqMyrlj2E",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1032,
+    "comfortCapacityPeople": 331,
+    "currentPeople": 129,
+    "queuePeople": 18,
+    "waitMinutes": 17
+  }
 },
 {
   "address": "66CV+WM4 Lầu vọng cảnh - Watching Tower, Nha Trang, Khánh Hòa, Việt Nam",
@@ -18150,7 +20182,15 @@
     "fourStar": 20,
     "fiveStar": 310
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Nh%C3%A0%20h%C3%A0ng%20B%C3%A1ch%20Giai&query_place_id=ChIJmSimn_VncDERSc3GzvxuzBU"
+  "url": "https://www.google.com/maps/search/?api=1&query=Nh%C3%A0%20h%C3%A0ng%20B%C3%A1ch%20Giai&query_place_id=ChIJmSimn_VncDERSc3GzvxuzBU",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1482,
+    "comfortCapacityPeople": 227,
+    "currentPeople": 174,
+    "queuePeople": 14,
+    "waitMinutes": 17
+  }
 },
 {
   "address": "Khu phố Ẩm thực VinWonders Nha Trang, Đảo Hòn Tre, Nha Trang, Khánh Hòa, Việt Nam",
@@ -18228,7 +20268,15 @@
     "fourStar": 2,
     "fiveStar": 10
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Four%20Seasons%20Street%20Food&query_place_id=ChIJDzMTt-RncDERlkR0zXeu1Ys"
+  "url": "https://www.google.com/maps/search/?api=1&query=Four%20Seasons%20Street%20Food&query_place_id=ChIJDzMTt-RncDERlkR0zXeu1Ys",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1803,
+    "comfortCapacityPeople": 331,
+    "currentPeople": 294,
+    "queuePeople": 46,
+    "waitMinutes": 24
+  }
 },
 {
   "address": "66FR+C4C, Đường đi Vinpearl, Nha Trang, Khánh Hòa, Việt Nam",
@@ -18276,7 +20324,15 @@
     "fourStar": 20,
     "fiveStar": 508
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=%EB%B9%88%ED%8E%84%20%EB%A6%AC%EC%A1%B0%ED%8A%B8%EC%95%A4%EC%8A%A4%ED%8C%8C%20%EB%82%98%ED%8A%B8%EB%9E%91%EB%B2%A0%EC%9D%B4%20%ED%92%80%EB%B9%8C%EB%9D%BC&query_place_id=ChIJZTViR8FncDER9DIL7x2EezY"
+  "url": "https://www.google.com/maps/search/?api=1&query=%EB%B9%88%ED%8E%84%20%EB%A6%AC%EC%A1%B0%ED%8A%B8%EC%95%A4%EC%8A%A4%ED%8C%8C%20%EB%82%98%ED%8A%B8%EB%9E%91%EB%B2%A0%EC%9D%B4%20%ED%92%80%EB%B9%8C%EB%9D%BC&query_place_id=ChIJZTViR8FncDER9DIL7x2EezY",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1910,
+    "comfortCapacityPeople": 214,
+    "currentPeople": 125,
+    "queuePeople": 24,
+    "waitMinutes": 10
+  }
 },
 {
   "address": "Đảo Hòn Tre, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -18326,7 +20382,15 @@
     "fourStar": 1435,
     "fiveStar": 50516
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Vinpearl%20Resort%20%26%20Spa%20Nha%20Trang%20Bay&query_place_id=ChIJt7Ke-4VncDERYYsESZv6EhI"
+  "url": "https://www.google.com/maps/search/?api=1&query=Vinpearl%20Resort%20%26%20Spa%20Nha%20Trang%20Bay&query_place_id=ChIJt7Ke-4VncDERYYsESZv6EhI",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2416,
+    "comfortCapacityPeople": 138,
+    "currentPeople": 57,
+    "queuePeople": 7,
+    "waitMinutes": 27
+  }
 },
 {
   "address": "668Q+XVJ, Vịnh, Nha Trang, Khánh Hòa, Việt Nam",
@@ -18374,7 +20438,15 @@
     "fourStar": 12,
     "fiveStar": 55
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Nh%C3%A0%20h%C3%A0ng%20Wind%26Sea%20-%20Wind%26Sea%20Restaurant&query_place_id=ChIJG6YUt_FncDERKGLF8MhWXmA"
+  "url": "https://www.google.com/maps/search/?api=1&query=Nh%C3%A0%20h%C3%A0ng%20Wind%26Sea%20-%20Wind%26Sea%20Restaurant&query_place_id=ChIJG6YUt_FncDERKGLF8MhWXmA",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1870,
+    "comfortCapacityPeople": 261,
+    "currentPeople": 167,
+    "queuePeople": 28,
+    "waitMinutes": 20
+  }
 },
 {
   "address": "빈원더스 놀이동산 Vinwonders, Nha Trang, Khánh Hòa, Việt Nam",
@@ -18451,7 +20523,15 @@
     "fourStar": 1,
     "fiveStar": 18
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=%EB%83%90%EC%A7%B1%20%EB%B9%88%EC%9B%90%EB%8D%94%EC%8A%A4%20%EB%A7%A4%EC%A7%81%ED%91%B8%EB%93%9C&query_place_id=ChIJy78TB9lncDERJIE7jxlXBgQ"
+  "url": "https://www.google.com/maps/search/?api=1&query=%EB%83%90%EC%A7%B1%20%EB%B9%88%EC%9B%90%EB%8D%94%EC%8A%A4%20%EB%A7%A4%EC%A7%81%ED%91%B8%EB%93%9C&query_place_id=ChIJy78TB9lncDERJIE7jxlXBgQ",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 797,
+    "comfortCapacityPeople": 163,
+    "currentPeople": 71,
+    "queuePeople": 5,
+    "waitMinutes": 15
+  }
 },
 {
   "address": "Nha Trang, Khánh Hòa, Việt Nam",
@@ -18529,7 +20609,15 @@
     "fourStar": 15,
     "fiveStar": 263
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Starbucks%20Nha%20Trang%20Vinwonders&query_place_id=ChIJKXR0JxVncDERQ7_CLG3SsC0"
+  "url": "https://www.google.com/maps/search/?api=1&query=Starbucks%20Nha%20Trang%20Vinwonders&query_place_id=ChIJKXR0JxVncDERQ7_CLG3SsC0",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1601,
+    "comfortCapacityPeople": 159,
+    "currentPeople": 113,
+    "queuePeople": 17,
+    "waitMinutes": 26
+  }
 },
 {
   "address": "152 Hùng Vương, Nha Trang, Khánh Hòa 650000, Việt Nam",
@@ -18607,7 +20695,15 @@
     "fourStar": 0,
     "fiveStar": 77
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=%C4%90%E1%BA%A1i%20l%C3%BD%20V%C3%A9%20Vinpearl%20Nha%20Trang%20(Vinwonders)%20-%20Ng%C3%A0y%20H%C3%A8%20V%C3%A0ng%20Tourist&query_place_id=ChIJlXvWC0xncDERT1aG7aXx3xw"
+  "url": "https://www.google.com/maps/search/?api=1&query=%C4%90%E1%BA%A1i%20l%C3%BD%20V%C3%A9%20Vinpearl%20Nha%20Trang%20(Vinwonders)%20-%20Ng%C3%A0y%20H%C3%A8%20V%C3%A0ng%20Tourist&query_place_id=ChIJlXvWC0xncDERT1aG7aXx3xw",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2416,
+    "comfortCapacityPeople": 375,
+    "currentPeople": 262,
+    "queuePeople": 16,
+    "waitMinutes": 21
+  }
 },
 {
   "address": "Hòn Tre, Nha Trang, Khánh Hòa, Việt Nam",
@@ -18686,7 +20782,15 @@
     "fourStar": 95,
     "fiveStar": 470
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=V%C6%B0%E1%BB%9Dn%20th%C3%BA%20King's%20Garden%20VinWonders%20Nha%20Trang&query_place_id=ChIJ62sV_lBncDEROXGhIMf0TgE"
+  "url": "https://www.google.com/maps/search/?api=1&query=V%C6%B0%E1%BB%9Dn%20th%C3%BA%20King's%20Garden%20VinWonders%20Nha%20Trang&query_place_id=ChIJ62sV_lBncDEROXGhIMf0TgE",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2010,
+    "comfortCapacityPeople": 155,
+    "currentPeople": 65,
+    "queuePeople": 11,
+    "waitMinutes": 21
+  }
 },
 {
   "address": "668R+MXJ, P, Nha Trang, Khánh Hòa, Việt Nam",
@@ -18763,7 +20867,15 @@
     "fourStar": 3,
     "fiveStar": 28
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=C%E1%BB%95ng%20v%C3%A0o%20VinWonders&query_place_id=ChIJt5c9-eVncDERrrXamcSHc-A"
+  "url": "https://www.google.com/maps/search/?api=1&query=C%E1%BB%95ng%20v%C3%A0o%20VinWonders&query_place_id=ChIJt5c9-eVncDERrrXamcSHc-A",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1082,
+    "comfortCapacityPeople": 172,
+    "currentPeople": 104,
+    "queuePeople": 5,
+    "waitMinutes": 13
+  }
 },
 {
   "address": "669R+X9G, Nha Trang, Khánh Hòa, Việt Nam",
@@ -18812,7 +20924,15 @@
     "fourStar": 6,
     "fiveStar": 37
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Aquapark%20VinWonders&query_place_id=ChIJxQTEkt9ncDERcBs9YlTLMpE"
+  "url": "https://www.google.com/maps/search/?api=1&query=Aquapark%20VinWonders&query_place_id=ChIJxQTEkt9ncDERcBs9YlTLMpE",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1651,
+    "comfortCapacityPeople": 252,
+    "currentPeople": 102,
+    "queuePeople": 11,
+    "waitMinutes": 14
+  }
 },
 {
   "address": "VinWonders Nha Trang, đảo, Nha Trang - Hòn Tre, Nha Trang, Khánh Hòa 57000, Việt Nam",
@@ -18890,7 +21010,15 @@
     "fourStar": 10,
     "fiveStar": 1017
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=Tata%20World%20River%20Adventure%20VinWonders%20Nha%20Trang&query_place_id=ChIJkUGmBixncDERFp4zmUmm_C0"
+  "url": "https://www.google.com/maps/search/?api=1&query=Tata%20World%20River%20Adventure%20VinWonders%20Nha%20Trang&query_place_id=ChIJkUGmBixncDERFp4zmUmm_C0",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 1879,
+    "comfortCapacityPeople": 301,
+    "currentPeople": 232,
+    "queuePeople": 43,
+    "waitMinutes": 28
+  }
 },
 {
   "address": "Đảo Hòn Tre, Nha Trang, Khánh Hòa, Việt Nam",
@@ -18953,5 +21081,13 @@
     "fourStar": 1036,
     "fiveStar": 17261
   },
-  "url": "https://www.google.com/maps/search/?api=1&query=VinWonders%20Nha%20Trang&query_place_id=ChIJUXQmxMdncDERI-V3_g5la4I"
+  "url": "https://www.google.com/maps/search/?api=1&query=VinWonders%20Nha%20Trang&query_place_id=ChIJUXQmxMdncDERI-V3_g5la4I",
+  "mockCrowd": {
+    "observedAt": "2026-09-19T09:00:00+07:00",
+    "areaM2": 2936,
+    "comfortCapacityPeople": 226,
+    "currentPeople": 100,
+    "queuePeople": 7,
+    "waitMinutes": 25
+  }
 }]

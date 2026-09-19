@@ -1,67 +1,234 @@
-2026-09-18T20:58:39 | SECURITY | v_ai.a1.planner | WARNING | L3: Search iteration limit reached (5000). Stopping permutation search.
-2026-09-18T22:42:08 | SECURITY | v_ai.a1.planner | WARNING | L3: Search iteration limit reached (5000). Stopping permutation search.
-2026-09-18T22:45:28 | SECURITY | v_ai.security.rate_limiter | WARNING | SECURITY: Rate limit exceeded — key='127.0.0.1', bucket_tokens=0.30
-2026-09-18T22:45:28 | SECURITY | v_ai.security.middleware | WARNING | SECURITY: Rate limit BLOCKED — ip=127.0.0.1, path=/api/session/new
-2026-09-18T22:45:28 | SECURITY | v_ai.security.rate_limiter | WARNING | SECURITY: Rate limit exceeded — key='127.0.0.1', bucket_tokens=0.30
-2026-09-18T22:45:28 | SECURITY | v_ai.security.middleware | WARNING | SECURITY: Rate limit BLOCKED — ip=127.0.0.1, path=/api/session/new
-2026-09-18T22:45:30 | SECURITY | v_ai.security.rate_limiter | WARNING | SECURITY: Rate limit exceeded — key='127.0.0.1', bucket_tokens=0.68
-2026-09-18T22:45:30 | SECURITY | v_ai.security.middleware | WARNING | SECURITY: Rate limit BLOCKED — ip=127.0.0.1, path=/api/session/new
-2026-09-18T22:45:30 | SECURITY | v_ai.security.rate_limiter | WARNING | SECURITY: Rate limit exceeded — key='127.0.0.1', bucket_tokens=0.68
-2026-09-18T22:45:30 | SECURITY | v_ai.security.middleware | WARNING | SECURITY: Rate limit BLOCKED — ip=127.0.0.1, path=/api/session/new
-2026-09-18T22:45:32 | SECURITY | v_ai.security.rate_limiter | WARNING | SECURITY: Rate limit exceeded — key='127.0.0.1', bucket_tokens=0.95
-2026-09-18T22:45:32 | SECURITY | v_ai.security.middleware | WARNING | SECURITY: Rate limit BLOCKED — ip=127.0.0.1, path=/api/session/new
-2026-09-18T22:45:32 | SECURITY | v_ai.security.rate_limiter | WARNING | SECURITY: Rate limit exceeded — key='127.0.0.1', bucket_tokens=0.95
-2026-09-18T22:45:32 | SECURITY | v_ai.security.middleware | WARNING | SECURITY: Rate limit BLOCKED — ip=127.0.0.1, path=/api/session/new
-2026-09-18T22:45:32 | SECURITY | v_ai.security.rate_limiter | WARNING | SECURITY: Rate limit exceeded — key='127.0.0.1', bucket_tokens=0.00
-2026-09-18T22:45:32 | SECURITY | v_ai.security.middleware | WARNING | SECURITY: Rate limit BLOCKED — ip=127.0.0.1, path=/api/session/new
-2026-09-18T22:45:33 | SECURITY | v_ai.security.rate_limiter | WARNING | SECURITY: Rate limit exceeded — key='127.0.0.1', bucket_tokens=0.05
-2026-09-18T22:45:33 | SECURITY | v_ai.security.middleware | WARNING | SECURITY: Rate limit BLOCKED — ip=127.0.0.1, path=/api/session/new
-2026-09-18T22:45:33 | SECURITY | v_ai.security.rate_limiter | WARNING | SECURITY: Rate limit exceeded — key='127.0.0.1', bucket_tokens=0.05
-2026-09-18T22:45:33 | SECURITY | v_ai.security.middleware | WARNING | SECURITY: Rate limit BLOCKED — ip=127.0.0.1, path=/api/session/new
-2026-09-18T22:45:34 | SECURITY | v_ai.security.rate_limiter | WARNING | SECURITY: Rate limit exceeded — key='127.0.0.1', bucket_tokens=0.23
-2026-09-18T22:45:34 | SECURITY | v_ai.security.middleware | WARNING | SECURITY: Rate limit BLOCKED — ip=127.0.0.1, path=/api/session/new
-2026-09-18T22:45:34 | SECURITY | v_ai.security.rate_limiter | WARNING | SECURITY: Rate limit exceeded — key='127.0.0.1', bucket_tokens=0.23
-2026-09-18T22:45:34 | SECURITY | v_ai.security.middleware | WARNING | SECURITY: Rate limit BLOCKED — ip=127.0.0.1, path=/api/session/new
-2026-09-18T22:45:35 | SECURITY | v_ai.security.rate_limiter | WARNING | SECURITY: Rate limit exceeded — key='127.0.0.1', bucket_tokens=0.37
-2026-09-18T22:45:35 | SECURITY | v_ai.security.middleware | WARNING | SECURITY: Rate limit BLOCKED — ip=127.0.0.1, path=/api/session/new
-2026-09-18T22:45:35 | SECURITY | v_ai.security.rate_limiter | WARNING | SECURITY: Rate limit exceeded — key='127.0.0.1', bucket_tokens=0.37
-2026-09-18T22:45:35 | SECURITY | v_ai.security.middleware | WARNING | SECURITY: Rate limit BLOCKED — ip=127.0.0.1, path=/api/session/new
-2026-09-18T22:45:35 | SECURITY | v_ai.security.rate_limiter | WARNING | SECURITY: Rate limit exceeded — key='127.0.0.1', bucket_tokens=0.46
-2026-09-18T22:45:35 | SECURITY | v_ai.security.middleware | WARNING | SECURITY: Rate limit BLOCKED — ip=127.0.0.1, path=/api/session/new
-2026-09-18T22:45:35 | SECURITY | v_ai.security.rate_limiter | WARNING | SECURITY: Rate limit exceeded — key='127.0.0.1', bucket_tokens=0.46
-2026-09-18T22:45:35 | SECURITY | v_ai.security.middleware | WARNING | SECURITY: Rate limit BLOCKED — ip=127.0.0.1, path=/api/session/new
-2026-09-18T22:45:36 | SECURITY | v_ai.security.rate_limiter | WARNING | SECURITY: Rate limit exceeded — key='127.0.0.1', bucket_tokens=0.53
-2026-09-18T22:45:36 | SECURITY | v_ai.security.middleware | WARNING | SECURITY: Rate limit BLOCKED — ip=127.0.0.1, path=/api/session/new
-2026-09-18T22:45:36 | SECURITY | v_ai.security.rate_limiter | WARNING | SECURITY: Rate limit exceeded — key='127.0.0.1', bucket_tokens=0.53
-2026-09-18T22:45:36 | SECURITY | v_ai.security.middleware | WARNING | SECURITY: Rate limit BLOCKED — ip=127.0.0.1, path=/api/session/new
-2026-09-18T22:45:36 | SECURITY | v_ai.security.rate_limiter | WARNING | SECURITY: Rate limit exceeded — key='127.0.0.1', bucket_tokens=0.62
-2026-09-18T22:45:36 | SECURITY | v_ai.security.middleware | WARNING | SECURITY: Rate limit BLOCKED — ip=127.0.0.1, path=/api/session/new
-2026-09-18T22:45:36 | SECURITY | v_ai.security.rate_limiter | WARNING | SECURITY: Rate limit exceeded — key='127.0.0.1', bucket_tokens=0.62
-2026-09-18T22:45:36 | SECURITY | v_ai.security.middleware | WARNING | SECURITY: Rate limit BLOCKED — ip=127.0.0.1, path=/api/session/new
-2026-09-18T22:45:38 | SECURITY | v_ai.security.rate_limiter | WARNING | SECURITY: Rate limit exceeded — key='127.0.0.1', bucket_tokens=0.88
-2026-09-18T22:45:38 | SECURITY | v_ai.security.middleware | WARNING | SECURITY: Rate limit BLOCKED — ip=127.0.0.1, path=/api/session/new
-2026-09-18T22:45:38 | SECURITY | v_ai.security.rate_limiter | WARNING | SECURITY: Rate limit exceeded — key='127.0.0.1', bucket_tokens=0.88
-2026-09-18T22:45:38 | SECURITY | v_ai.security.middleware | WARNING | SECURITY: Rate limit BLOCKED — ip=127.0.0.1, path=/api/session/new
-2026-09-18T22:45:40 | SECURITY | v_ai.security.rate_limiter | WARNING | SECURITY: Rate limit exceeded — key='127.0.0.1', bucket_tokens=0.30
-2026-09-18T22:45:40 | SECURITY | v_ai.security.middleware | WARNING | SECURITY: Rate limit BLOCKED — ip=127.0.0.1, path=/api/session/new
-2026-09-18T22:45:41 | SECURITY | v_ai.security.rate_limiter | WARNING | SECURITY: Rate limit exceeded — key='127.0.0.1', bucket_tokens=0.40
-2026-09-18T22:45:41 | SECURITY | v_ai.security.middleware | WARNING | SECURITY: Rate limit BLOCKED — ip=127.0.0.1, path=/api/session/new
-2026-09-18T22:45:41 | SECURITY | v_ai.security.rate_limiter | WARNING | SECURITY: Rate limit exceeded — key='127.0.0.1', bucket_tokens=0.40
-2026-09-18T22:45:41 | SECURITY | v_ai.security.middleware | WARNING | SECURITY: Rate limit BLOCKED — ip=127.0.0.1, path=/api/session/new
-2026-09-18T22:45:42 | SECURITY | v_ai.security.rate_limiter | WARNING | SECURITY: Rate limit exceeded — key='127.0.0.1', bucket_tokens=0.58
-2026-09-18T22:45:42 | SECURITY | v_ai.security.middleware | WARNING | SECURITY: Rate limit BLOCKED — ip=127.0.0.1, path=/api/session/new
-2026-09-18T22:45:42 | SECURITY | v_ai.security.rate_limiter | WARNING | SECURITY: Rate limit exceeded — key='127.0.0.1', bucket_tokens=0.58
-2026-09-18T22:45:42 | SECURITY | v_ai.security.middleware | WARNING | SECURITY: Rate limit BLOCKED — ip=127.0.0.1, path=/api/session/new
-2026-09-19T10:47:43 | SECURITY | v_ai.a1.planner | WARNING | L3: Search iteration limit reached (5000). Stopping permutation search.
-2026-09-19T10:50:13 | SECURITY | v_ai.a1.planner | WARNING | L3: Search iteration limit reached (5000). Stopping permutation search.
-2026-09-19T10:53:16 | SECURITY | v_ai.a1.planner | WARNING | L3: Search iteration limit reached (5000). Stopping permutation search.
-2026-09-19T10:56:33 | SECURITY | v_ai.a1.planner | WARNING | L3: Search iteration limit reached (5000). Stopping permutation search.
-2026-09-19T10:59:57 | SECURITY | v_ai.a1.planner | WARNING | L3: Search iteration limit reached (5000). Stopping permutation search.
-2026-09-19T11:01:50 | SECURITY | v_ai.a1.planner | WARNING | L3: Search iteration limit reached (5000). Stopping permutation search.
-2026-09-19T11:03:28 | SECURITY | v_ai.a1.planner | WARNING | L3: Search iteration limit reached (5000). Stopping permutation search.
-2026-09-19T11:12:30 | SECURITY | v_ai.a1.planner | WARNING | L3: Search iteration limit reached (5000). Stopping permutation search.
-2026-09-19T11:16:33 | SECURITY | v_ai.a1.planner | WARNING | L3: Search iteration limit reached (5000). Stopping permutation search.
-2026-09-19T11:18:17 | SECURITY | v_ai.a1.planner | WARNING | L3: Search iteration limit reached (5000). Stopping permutation search.
-2026-09-19T11:21:36 | SECURITY | v_ai.a1.planner | WARNING | L3: Search iteration limit reached (5000). Stopping permutation search.
-2026-09-19T11:40:01 | SECURITY | v_ai.a0.server | WARNING | Không thể ghi log sự kiện A2A: FOREIGN KEY constraint failed
-2026-09-19T12:03:23 | SECURITY | v_ai.a1.planner | WARNING | L3: Search iteration limit reached (5000). Stopping permutation search.
+2026-09-19T15:04:07 | SECURITY | v_ai.a0.orchestrator | WARNING | A2A call failed to http://127.0.0.1:8002: [WinError 10061] No connection could be made because the target machine actively refused it
+2026-09-19T15:04:09 | SECURITY | v_ai.a0.orchestrator | WARNING | A2A call failed to http://127.0.0.1:8001: [WinError 10061] No connection could be made because the target machine actively refused it
+2026-09-19T15:04:17 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 12 (5000 permutations).
+2026-09-19T15:04:17 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 11 (5000 permutations).
+2026-09-19T15:04:17 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 10 (5000 permutations).
+2026-09-19T15:04:17 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 9 (5000 permutations).
+2026-09-19T15:04:18 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 8 (5000 permutations).
+2026-09-19T15:04:18 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 7 (5000 permutations).
+2026-09-19T15:04:18 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 6 (5000 permutations).
+2026-09-19T15:05:27 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 12 (5000 permutations).
+2026-09-19T15:05:27 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 11 (5000 permutations).
+2026-09-19T15:05:28 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 10 (5000 permutations).
+2026-09-19T15:05:28 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 9 (5000 permutations).
+2026-09-19T15:05:28 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 8 (5000 permutations).
+2026-09-19T15:05:29 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 7 (5000 permutations).
+2026-09-19T15:05:29 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 6 (5000 permutations).
+2026-09-19T15:05:29 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 12 (5000 permutations).
+2026-09-19T15:05:30 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 11 (5000 permutations).
+2026-09-19T15:05:30 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 10 (5000 permutations).
+2026-09-19T15:05:30 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 9 (5000 permutations).
+2026-09-19T15:05:31 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 12 (5000 permutations).
+2026-09-19T15:05:31 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 11 (5000 permutations).
+2026-09-19T15:05:31 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 10 (5000 permutations).
+2026-09-19T15:05:32 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 9 (5000 permutations).
+2026-09-19T15:05:32 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 8 (5000 permutations).
+2026-09-19T15:05:32 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 7 (5000 permutations).
+2026-09-19T15:05:32 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 6 (5000 permutations).
+2026-09-19T15:05:32 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 12 (5000 permutations).
+2026-09-19T15:05:33 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 11 (5000 permutations).
+2026-09-19T15:05:33 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 10 (5000 permutations).
+2026-09-19T15:05:33 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 9 (5000 permutations).
+2026-09-19T15:05:33 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 8 (5000 permutations).
+2026-09-19T15:05:33 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 7 (5000 permutations).
+2026-09-19T15:05:33 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 6 (5000 permutations).
+2026-09-19T15:05:33 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 5 (5000 permutations).
+2026-09-19T15:06:17 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 12 (5000 permutations).
+2026-09-19T15:06:17 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 11 (5000 permutations).
+2026-09-19T15:06:17 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 10 (5000 permutations).
+2026-09-19T15:06:18 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 9 (5000 permutations).
+2026-09-19T15:06:18 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 8 (5000 permutations).
+2026-09-19T15:06:18 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 7 (5000 permutations).
+2026-09-19T15:06:18 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 6 (5000 permutations).
+2026-09-19T15:06:19 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 12 (5000 permutations).
+2026-09-19T15:06:19 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 11 (5000 permutations).
+2026-09-19T15:06:20 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 10 (5000 permutations).
+2026-09-19T15:06:20 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 9 (5000 permutations).
+2026-09-19T15:06:20 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 12 (5000 permutations).
+2026-09-19T15:06:21 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 11 (5000 permutations).
+2026-09-19T15:06:21 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 10 (5000 permutations).
+2026-09-19T15:06:21 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 9 (5000 permutations).
+2026-09-19T15:06:21 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 8 (5000 permutations).
+2026-09-19T15:06:22 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 7 (5000 permutations).
+2026-09-19T15:06:22 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 6 (5000 permutations).
+2026-09-19T15:06:22 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 12 (5000 permutations).
+2026-09-19T15:06:22 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 11 (5000 permutations).
+2026-09-19T15:06:22 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 10 (5000 permutations).
+2026-09-19T15:06:22 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 9 (5000 permutations).
+2026-09-19T15:06:22 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 8 (5000 permutations).
+2026-09-19T15:06:22 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 7 (5000 permutations).
+2026-09-19T15:06:22 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 6 (5000 permutations).
+2026-09-19T15:06:22 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 5 (5000 permutations).
+2026-09-19T15:06:53 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 12 (5000 permutations).
+2026-09-19T15:06:53 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 11 (5000 permutations).
+2026-09-19T15:06:53 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 10 (5000 permutations).
+2026-09-19T15:06:54 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 9 (5000 permutations).
+2026-09-19T15:06:54 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 8 (5000 permutations).
+2026-09-19T15:06:54 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 7 (5000 permutations).
+2026-09-19T15:06:54 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 6 (5000 permutations).
+2026-09-19T15:06:55 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 12 (5000 permutations).
+2026-09-19T15:06:55 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 12 (5000 permutations).
+2026-09-19T15:06:55 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 11 (5000 permutations).
+2026-09-19T15:06:56 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 10 (5000 permutations).
+2026-09-19T15:06:56 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 9 (5000 permutations).
+2026-09-19T15:06:56 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 11 (5000 permutations).
+2026-09-19T15:06:56 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 12 (5000 permutations).
+2026-09-19T15:06:57 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 11 (5000 permutations).
+2026-09-19T15:06:57 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 10 (5000 permutations).
+2026-09-19T15:06:57 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 9 (5000 permutations).
+2026-09-19T15:06:57 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 10 (5000 permutations).
+2026-09-19T15:06:57 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 8 (5000 permutations).
+2026-09-19T15:06:58 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 7 (5000 permutations).
+2026-09-19T15:06:58 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 6 (5000 permutations).
+2026-09-19T15:06:58 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 12 (5000 permutations).
+2026-09-19T15:06:58 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 11 (5000 permutations).
+2026-09-19T15:06:58 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 10 (5000 permutations).
+2026-09-19T15:06:58 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 9 (5000 permutations).
+2026-09-19T15:06:58 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 8 (5000 permutations).
+2026-09-19T15:06:58 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 7 (5000 permutations).
+2026-09-19T15:06:58 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 6 (5000 permutations).
+2026-09-19T15:06:58 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 5 (5000 permutations).
+2026-09-19T15:06:58 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 9 (5000 permutations).
+2026-09-19T15:06:59 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 8 (5000 permutations).
+2026-09-19T15:07:00 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 7 (5000 permutations).
+2026-09-19T15:07:00 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 6 (5000 permutations).
+2026-09-19T15:07:01 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 12 (5000 permutations).
+2026-09-19T15:07:02 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 11 (5000 permutations).
+2026-09-19T15:07:03 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 10 (5000 permutations).
+2026-09-19T15:07:04 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 9 (5000 permutations).
+2026-09-19T15:07:05 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 12 (5000 permutations).
+2026-09-19T15:07:06 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 11 (5000 permutations).
+2026-09-19T15:07:07 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 10 (5000 permutations).
+2026-09-19T15:07:08 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 9 (5000 permutations).
+2026-09-19T15:07:08 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 8 (5000 permutations).
+2026-09-19T15:07:09 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 7 (5000 permutations).
+2026-09-19T15:07:10 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 6 (5000 permutations).
+2026-09-19T15:07:10 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 12 (5000 permutations).
+2026-09-19T15:07:10 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 11 (5000 permutations).
+2026-09-19T15:07:10 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 10 (5000 permutations).
+2026-09-19T15:07:10 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 9 (5000 permutations).
+2026-09-19T15:07:10 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 8 (5000 permutations).
+2026-09-19T15:07:10 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 7 (5000 permutations).
+2026-09-19T15:07:10 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 6 (5000 permutations).
+2026-09-19T15:07:10 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 5 (5000 permutations).
+2026-09-19T15:08:38 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 12 (5000 permutations).
+2026-09-19T15:08:38 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 11 (5000 permutations).
+2026-09-19T15:08:39 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 10 (5000 permutations).
+2026-09-19T15:08:39 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 9 (5000 permutations).
+2026-09-19T15:08:39 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 8 (5000 permutations).
+2026-09-19T15:08:39 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 7 (5000 permutations).
+2026-09-19T15:08:39 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 6 (5000 permutations).
+2026-09-19T15:08:40 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 12 (5000 permutations).
+2026-09-19T15:08:40 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 11 (5000 permutations).
+2026-09-19T15:08:41 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 10 (5000 permutations).
+2026-09-19T15:08:41 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 9 (5000 permutations).
+2026-09-19T15:08:41 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 12 (5000 permutations).
+2026-09-19T15:08:42 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 11 (5000 permutations).
+2026-09-19T15:08:42 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 10 (5000 permutations).
+2026-09-19T15:08:42 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 9 (5000 permutations).
+2026-09-19T15:08:42 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 8 (5000 permutations).
+2026-09-19T15:08:43 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 7 (5000 permutations).
+2026-09-19T15:08:43 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 6 (5000 permutations).
+2026-09-19T15:08:43 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 12 (5000 permutations).
+2026-09-19T15:08:43 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 11 (5000 permutations).
+2026-09-19T15:08:43 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 10 (5000 permutations).
+2026-09-19T15:08:43 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 9 (5000 permutations).
+2026-09-19T15:08:43 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 8 (5000 permutations).
+2026-09-19T15:08:43 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 7 (5000 permutations).
+2026-09-19T15:08:43 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 6 (5000 permutations).
+2026-09-19T15:08:43 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 5 (5000 permutations).
+2026-09-19T15:09:31 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 12 (5000 permutations).
+2026-09-19T15:09:32 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 11 (5000 permutations).
+2026-09-19T15:09:33 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 10 (5000 permutations).
+2026-09-19T15:09:34 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 9 (5000 permutations).
+2026-09-19T15:09:35 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 8 (5000 permutations).
+2026-09-19T15:09:35 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 7 (5000 permutations).
+2026-09-19T15:09:36 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 6 (5000 permutations).
+2026-09-19T15:09:37 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 12 (5000 permutations).
+2026-09-19T15:09:39 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 11 (5000 permutations).
+2026-09-19T15:09:39 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 12 (5000 permutations).
+2026-09-19T15:09:40 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 11 (5000 permutations).
+2026-09-19T15:09:40 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 10 (5000 permutations).
+2026-09-19T15:09:40 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 10 (5000 permutations).
+2026-09-19T15:09:41 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 9 (5000 permutations).
+2026-09-19T15:09:41 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 9 (5000 permutations).
+2026-09-19T15:09:42 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 8 (5000 permutations).
+2026-09-19T15:09:42 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 12 (5000 permutations).
+2026-09-19T15:09:42 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 7 (5000 permutations).
+2026-09-19T15:09:43 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 6 (5000 permutations).
+2026-09-19T15:09:43 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 11 (5000 permutations).
+2026-09-19T15:09:43 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 5 (5000 permutations).
+2026-09-19T15:09:44 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 4 (5000 permutations).
+2026-09-19T15:09:44 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 10 (5000 permutations).
+2026-09-19T15:09:45 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 9 (5000 permutations).
+2026-09-19T15:09:46 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 8 (5000 permutations).
+2026-09-19T15:09:47 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 7 (5000 permutations).
+2026-09-19T15:09:48 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 6 (5000 permutations).
+2026-09-19T15:09:48 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 12 (5000 permutations).
+2026-09-19T15:09:48 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 11 (5000 permutations).
+2026-09-19T15:09:48 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 10 (5000 permutations).
+2026-09-19T15:09:48 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 9 (5000 permutations).
+2026-09-19T15:09:48 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 8 (5000 permutations).
+2026-09-19T15:09:48 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 7 (5000 permutations).
+2026-09-19T15:09:48 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 6 (5000 permutations).
+2026-09-19T15:09:48 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 5 (5000 permutations).
+2026-09-19T15:15:56 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 12 (5000 permutations).
+2026-09-19T15:15:56 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 11 (5000 permutations).
+2026-09-19T15:15:56 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 10 (5000 permutations).
+2026-09-19T15:15:57 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 9 (5000 permutations).
+2026-09-19T15:20:34 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 12 (5000 permutations).
+2026-09-19T15:20:34 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 11 (5000 permutations).
+2026-09-19T15:20:35 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 10 (5000 permutations).
+2026-09-19T15:20:35 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 9 (5000 permutations).
+2026-09-19T15:20:36 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 8 (5000 permutations).
+2026-09-19T15:20:36 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 7 (5000 permutations).
+2026-09-19T15:20:37 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 6 (5000 permutations).
+2026-09-19T15:20:38 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 12 (5000 permutations).
+2026-09-19T15:20:39 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 11 (5000 permutations).
+2026-09-19T15:20:40 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 10 (5000 permutations).
+2026-09-19T15:20:41 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 9 (5000 permutations).
+2026-09-19T15:20:42 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 12 (5000 permutations).
+2026-09-19T15:20:42 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 11 (5000 permutations).
+2026-09-19T15:20:43 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 10 (5000 permutations).
+2026-09-19T15:20:44 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 9 (5000 permutations).
+2026-09-19T15:20:45 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 8 (5000 permutations).
+2026-09-19T15:20:46 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 7 (5000 permutations).
+2026-09-19T15:20:47 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 6 (5000 permutations).
+2026-09-19T15:20:47 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 12 (5000 permutations).
+2026-09-19T15:20:47 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 11 (5000 permutations).
+2026-09-19T15:20:47 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 10 (5000 permutations).
+2026-09-19T15:20:47 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 9 (5000 permutations).
+2026-09-19T15:20:47 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 8 (5000 permutations).
+2026-09-19T15:20:47 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 7 (5000 permutations).
+2026-09-19T15:20:47 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 6 (5000 permutations).
+2026-09-19T15:20:47 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 5 (5000 permutations).
+2026-09-19T15:25:28 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 12 (5000 permutations).
+2026-09-19T15:25:28 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 11 (5000 permutations).
+2026-09-19T15:25:29 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 10 (5000 permutations).
+2026-09-19T15:25:30 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 9 (5000 permutations).
+2026-09-19T15:25:31 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 8 (5000 permutations).
+2026-09-19T15:25:31 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 7 (5000 permutations).
+2026-09-19T15:25:32 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 6 (5000 permutations).
+2026-09-19T15:25:33 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 12 (5000 permutations).
+2026-09-19T15:25:34 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 11 (5000 permutations).
+2026-09-19T15:25:35 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 10 (5000 permutations).
+2026-09-19T15:25:35 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 9 (5000 permutations).
+2026-09-19T15:25:36 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 12 (5000 permutations).
+2026-09-19T15:25:36 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 11 (5000 permutations).
+2026-09-19T15:25:36 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 10 (5000 permutations).
+2026-09-19T15:25:36 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 9 (5000 permutations).
+2026-09-19T15:25:37 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 8 (5000 permutations).
+2026-09-19T15:25:37 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 7 (5000 permutations).
+2026-09-19T15:25:38 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 6 (5000 permutations).
+2026-09-19T15:25:38 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 12 (5000 permutations).
+2026-09-19T15:25:38 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 11 (5000 permutations).
+2026-09-19T15:25:38 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 10 (5000 permutations).
+2026-09-19T15:25:38 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 9 (5000 permutations).
+2026-09-19T15:25:38 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 8 (5000 permutations).
+2026-09-19T15:25:38 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 7 (5000 permutations).
+2026-09-19T15:25:38 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 6 (5000 permutations).
+2026-09-19T15:25:38 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 5 (5000 permutations).
+2026-09-19T15:28:02 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 12 (5000 permutations).
+2026-09-19T15:28:03 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 11 (5000 permutations).
+2026-09-19T15:28:04 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 10 (5000 permutations).
+2026-09-19T15:28:04 | SECURITY | v_ai.a1.planner | WARNING | L3: Search limit reached for plan length 9 (5000 permutations).

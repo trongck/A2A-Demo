@@ -31,3 +31,41 @@ def test_a0_hides_internal_runtime(monkeypatch):
         assert "người bạn đồng hành du lịch" in instruction
         assert "Không lặp lại lời chào" in instruction
         assert client.get_llm_config()["model"] not in instruction
+
+
+def test_hitl_safe_range_option_is_immediately_selectable(monkeypatch):
+    monkeypatch.setattr(client, "is_llm_available", lambda: True)
+    monkeypatch.setattr(client, "call_llm", lambda *_: '''{
+        "message": "Cho mình xin thêm thông tin nhé.",
+        "questions": [{
+            "criteria_key": "thong_tin_thanh_vien",
+            "question": "Đoàn mình gồm những ai?",
+            "options": ["2 người lớn", "Khác/tự nhập"]
+        }]
+    }''')
+
+    result = client.generate_hitl_questions_with_llm(
+        "Lên lịch giúp mình", {}, ["thông_tin_thành_viên"]
+    )
+
+    assert result["questions"][0]["options"][0] == "2 người lớn"
+
+
+def test_hitl_keeps_only_missing_criteria_and_accepts_merged_question(monkeypatch):
+    monkeypatch.setattr(client, "call_llm", lambda *_: '''{
+        "message": "Mình hỏi thêm nhé.",
+        "questions": [
+            {"criteria_key":"thong_tin_thanh_vien","question":"Đoàn gồm ai?","options":["2 người lớn","Khác/tự nhập"]},
+            {"criteria_key":"thong_tin_thanh_vien","question":"Hỏi trùng","options":["Khác/tự nhập"]},
+            {"criteria_key":"khung_gio_va_so_diem","question":"Đi lúc nào và bao nhiêu điểm?","options":["09:00 - 13:00 · 3 điểm","Khác/tự nhập"]},
+            {"criteria_key":"noi_bo","question":"Không được hỏi","options":["Có"]}
+        ]
+    }''')
+
+    result = client.generate_hitl_questions_with_llm(
+        "Lên lịch", {}, ["thông_tin_thành_viên", "khung_giờ_tham_quan", "số_điểm_mong_muốn"]
+    )
+
+    assert [q["criteria_key"] for q in result["questions"]] == [
+        "thong_tin_thanh_vien", "khung_gio_va_so_diem"
+    ]

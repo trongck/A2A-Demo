@@ -8,9 +8,9 @@ Dự án triển khai hệ thống Multi-Agent cục bộ (local) phục vụ g�
 
 | Thành phần | Vai trò | Cổng / Đường dẫn | Công nghệ |
 |---|---|---|---|
-| **Chat UI + Backend A0** | Quản lý phiên, giao diện chat, điều phối state machine, tổng hợp câu trả lời | `http://127.0.0.1:8000` | FastAPI, HTML5 Semantic, Vanilla CSS |
+| **Chat UI + Backend A0** | Quản lý phiên, giao diện chat, điều phối state machine, tổng hợp câu trả lời | `http://127.0.0.1:8000` | FastAPI, Next.js, Tailwind CSS |
 | **Agent A1 (Planner)** | Lập lịch trình, thuật toán tìm kiếm cắt nhánh, bộ Validator xác định | `http://127.0.0.1:8001` | A2A Protocol (`a2a-sdk`), Dijkstra Graph |
-| **Agent A2 (Crowd Specialist)** | Phân tích trạng thái vận hành; giữ crowd ở `unknown` khi nguồn không cung cấp | `http://127.0.0.1:8002` | A2A Protocol (`a2a-sdk`), Analytics |
+| **Agent A2 (Crowd Specialist)** | Phân tích trạng thái vận hành và mật độ mock ổn định theo từng POI | `http://127.0.0.1:8002` | A2A Protocol (`a2a-sdk`), Analytics |
 | **MCP Server** | Chuẩn hóa Google Places V2, cung cấp catalog, trạng thái, đường đi và thời tiết | `http://127.0.0.1:8003` | Model Context Protocol (`mcp` SDK) |
 | **Shared Memory** | SQLite lưu trữ tập trung dữ liệu phiên, hội thoại, kết quả, sự kiện | `data/memory.sqlite` | SQLite WAL Mode, Transactional |
 
@@ -32,14 +32,14 @@ Nhấn `Ctrl + C` tại cửa sổ dòng lệnh để tắt đồng thời cả 
 
 ## 3. Dữ liệu và kiểm thử
 
-Nguồn runtime duy nhất là `data/V-AI-Mock-Data-V2.json` (267 Google Places). MCP chuẩn hóa `placeId`, tọa độ, loại hình, giờ mở cửa, rating/reviews và trạng thái đóng cửa. Các trường không có trong nguồn như live crowd, hàng chờ, sức chứa, giá vé VND và điều kiện chiều cao được giữ ở `null`/`unavailable`, không tự suy diễn.
+Nguồn runtime duy nhất là `data/V-AI-Mock-Data-V2.json` (267 Google Places). MCP chuẩn hóa `placeId`, tọa độ, loại hình, giờ mở cửa, rating/reviews và trạng thái đóng cửa. Mỗi POI có thêm `mockCrowd` ổn định để demo mật độ, hàng chờ và sức chứa; có thể tái tạo bằng `python scripts/seed_mock_crowd.py`. Giá vé dùng chính sách riêng, còn điều kiện từng trò chơi vẫn được giữ `null`/`unavailable` khi nguồn không cung cấp.
 
 Chạy kiểm thử contract V2 xuyên suốt MCP → A2 → A1:
 ```bash
 python -m pytest tests/test_all_criteria.py -v
 ```
 
-Các ca kiểm tra bao gồm nguồn V2, chuẩn hóa MCP, lọc category, routing từ tọa độ, bảo toàn crowd thiếu, lập lịch A1, khung giờ bất khả thi, HITL và cô lập session.
+Các ca kiểm tra bao gồm nguồn V2, chuẩn hóa MCP, lọc category, routing từ tọa độ, mật độ mock, lập lịch A1, khung giờ bất khả thi, HITL và cô lập session.
 
 ---
 

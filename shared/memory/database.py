@@ -4,6 +4,7 @@ Bám sát mục 6 của V-AI-Implementation-Plan.md.
 """
 
 import json
+import os
 import sqlite3
 import uuid
 from datetime import datetime, timezone
@@ -41,7 +42,6 @@ def init_db() -> None:
             session_id TEXT PRIMARY KEY,
             scenario_id TEXT NOT NULL DEFAULT 'base',
             profile_json TEXT NOT NULL DEFAULT '{}',
-            demo_clock TEXT NOT NULL DEFAULT '2026-09-18T14:00:00+07:00',
             memory_version INTEGER NOT NULL DEFAULT 1,
             created_at TEXT NOT NULL,
             updated_at TEXT NOT NULL
@@ -146,7 +146,12 @@ def _ensure_column(conn: sqlite3.Connection, table: str, column: str, col_def: s
 
 
 def seed_admin_users() -> None:
-    """Tạo tài khoản admin mặc định nếu chưa có. Chỉ seed khi bảng trống."""
+    """Seed tài khoản admin từ biến môi trường khi bảng còn trống."""
+    username = os.environ.get("ADMIN_USERNAME", "").strip()
+    password = os.environ.get("ADMIN_PASSWORD", "")
+    if not username or not password:
+        return
+
     try:
         from shared.admin_auth.auth import hash_password as _hash
     except Exception:
@@ -156,13 +161,20 @@ def seed_admin_users() -> None:
     with get_connection() as conn:
         count = conn.execute("SELECT COUNT(*) as c FROM admin_users").fetchone()["c"]
         if count == 0:
-            pw_hash = _hash("123456")
+            pw_hash = _hash(password)
             conn.execute(
                 """
                 INSERT INTO admin_users (username, password_hash, display_name, role, is_active, created_at, updated_at)
                 VALUES (?, ?, ?, ?, 1, ?, ?)
                 """,
-                ("ai20k", pw_hash, "Điều phối viên V-AI", "coordinator", now, now),
+                (
+                    username,
+                    pw_hash,
+                    os.environ.get("ADMIN_DISPLAY_NAME", "Điều phối viên V-AI"),
+                    "coordinator",
+                    now,
+                    now,
+                ),
             )
             conn.commit()
 
@@ -179,7 +191,6 @@ def get_or_create_session(session_id: str, scenario_id: str = "base") -> dict[st
                 "session_id": row["session_id"],
                 "scenario_id": row["scenario_id"],
                 "profile": json.loads(row["profile_json"]),
-                "demo_clock": row["demo_clock"],
                 "memory_version": row["memory_version"],
                 "created_at": row["created_at"],
                 "updated_at": row["updated_at"],
@@ -187,17 +198,16 @@ def get_or_create_session(session_id: str, scenario_id: str = "base") -> dict[st
         # Tạo mới
         conn.execute(
             """
-            INSERT INTO sessions (session_id, scenario_id, profile_json, demo_clock, memory_version, created_at, updated_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO sessions (session_id, scenario_id, profile_json, memory_version, created_at, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?)
             """,
-            (session_id, scenario_id, "{}", "2026-09-18T14:00:00+07:00", 1, now, now),
+            (session_id, scenario_id, "{}", 1, now, now),
         )
         conn.commit()
         return {
             "session_id": session_id,
             "scenario_id": scenario_id,
             "profile": {},
-            "demo_clock": "2026-09-18T14:00:00+07:00",
             "memory_version": 1,
             "created_at": now,
             "updated_at": now,
@@ -342,21 +352,6 @@ def save_agent_result(
     return result_id
 
 
-def get_latest_agent_result(session_id: str, agent_name: str) -> dict[str, Any] | None:
-    with get_connection() as conn:
-        row = conn.execute(
-            """
-            SELECT * FROM agent_results
-            WHERE session_id = ? AND agent_name = ?
-            ORDER BY created_at DESC LIMIT 1
-            """,
-            (session_id, agent_name),
-        ).fetchone()
-        if row:
-            return json.loads(row["result_json"])
-        return None
-
-
 # --- Plans Operations ---
 
 def save_plans(session_id: str, turn_id: str, plan_data: dict[str, Any]) -> str:
@@ -372,21 +367,6 @@ def save_plans(session_id: str, turn_id: str, plan_data: dict[str, Any]) -> str:
         )
         conn.commit()
     return plan_id
-
-
-def get_latest_plans(session_id: str) -> dict[str, Any] | None:
-    with get_connection() as conn:
-        row = conn.execute(
-            """
-            SELECT * FROM plans
-            WHERE session_id = ?
-            ORDER BY created_at DESC LIMIT 1
-            """,
-            (session_id,),
-        ).fetchone()
-        if row:
-            return json.loads(row["plan_json"])
-        return None
 
 
 def get_all_plans_for_session(session_id: str) -> list[dict[str, Any]]:

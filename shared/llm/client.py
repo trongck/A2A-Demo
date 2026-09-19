@@ -222,16 +222,20 @@ def classify_and_extract_intent_with_llm(
         "- plan_itinerary: muốn gợi ý điểm chơi hoặc lập lịch tại VinWonders Nha Trang.\n"
         "- adjust_plan: muốn sửa lịch trình hiện có.\n"
         "- out_of_scope: không liên quan du lịch/VinWonders.\n"
-        "- too_ambiguous: quá mơ hồ để xác định intent sau khi xét hồ sơ.\n"
+        "- too_ambiguous: không có hành động hay nhu cầu nào có thể nhận biết sau khi xét hồ sơ.\n"
+        "Chấp nhận lỗi gõ, câu cụt và ký tự thừa ở cuối; suy luận theo ý nghĩa chính thay vì đòi câu hoàn chỉnh. "
+        "Nếu khách nói muốn tạo/lên kế hoạch, đi du lịch, đi chơi hoặc tham quan thì luôn là plan_itinerary, kể cả chưa nêu địa điểm; trong ứng dụng này mặc định là VinWonders Nha Trang. "
+        "Không dùng too_ambiguous khi đã nhận ra mong muốn lập kế hoạch; thông tin lịch trình còn thiếu sẽ do HITL hỏi ở bước sau. "
         "Với plan_itinerary/adjust_plan, hai nhóm tiêu chí bắt buộc theo thứ tự là group_members và time_window; điểm đến mặc định là VinWonders Nha Trang. "
-        "group_members không yêu cầu người dùng khai từng người. Hãy phân loại số lượng khách trực tiếp vào ticket_groups theo chính sách vé. "
+        "group_members có thể dùng cận dưới của khoảng tuổi/chiều cao an toàn mà khách chọn; không bắt khách khai chính xác từng người. "
+        "Hãy phân loại ticket_groups theo chính sách vé và dùng giá trị đại diện bảo thủ của từng nhóm để lập lịch. "
         "Không bịa giá trị còn thiếu. Tiêu chí tùy chọn không làm giảm completeness.\n"
         "Trích xuất entities:\n"
         "   - height_cm: Chiều cao thấp nhất hoặc cận dưới khoảng an toàn của nhóm (số nguyên, ví dụ 130, hoặc null)\n"
         "   - age_years: Tuổi thấp nhất hoặc cận dưới nhóm tuổi của nhóm (số nguyên hoặc null)\n"
         "   - group_size: Số người trong đoàn (số nguyên hoặc null)\n"
         "   - ticket_groups: số khách theo đúng bốn mã nhóm vé free_under_100cm, senior_60_plus, child_100_to_under_140cm, adult_140cm_plus; dùng {} nếu chưa đủ dữ liệu\n"
-        "   - group_members: danh sách thành viên nếu đã có sẵn; không yêu cầu người dùng cung cấp tuổi/chiều cao từng người\n"
+        "   - group_members: danh sách thành viên nếu khách cung cấp; có thể dùng cận dưới age_years và height_cm của khoảng an toàn đã chọn\n"
         "   - indoor_only: true nếu chỉ muốn chơi trong nhà, false nếu ngoài trời, null nếu không nói\n"
         "   - min_activity_count: số điểm chơi tối thiểu mong muốn (số nguyên hoặc null)\n"
         "   - wants_multiple_places: true nếu khách muốn đi nhiều điểm nhưng chưa nói số lượng, false nếu không\n"
@@ -450,8 +454,8 @@ def generate_plan_rationale_with_llm(
     )
 
     legs_summary = [
-        f"Chặng {l['step']}: {l['service_name']} (đến lúc {l['arrival_time']}, chơi {l['activity_duration_minutes']}p, chờ {l['wait_minutes']}p, đi bộ {l['walk_from_prev_minutes']}p)"
-        for l in legs
+        f"Chặng {leg['step']}: {leg['service_name']} (đến lúc {leg['arrival_time']}, chơi {leg['activity_duration_minutes']}p, chờ {leg['wait_minutes']}p, đi bộ {leg['walk_from_prev_minutes']}p)"
+        for leg in legs
     ]
 
     prompt = (
@@ -479,26 +483,37 @@ def generate_hitl_questions_with_llm(
 
     ticket_policy = load_ticket_policy()
     system_instruction = (
-        "Bạn là V-AI - hướng dẫn viên thông minh tại VinWonders Nha Trang. "
-        "Hãy tự tạo các câu hỏi làm rõ phù hợp riêng với ngữ cảnh của khách; không dùng bộ câu hỏi mẫu cố định. "
-        "Chỉ hỏi thông tin thực sự còn thiếu, không hỏi lại dữ liệu đã có. "
-        "Các câu hỏi phải cùng nhau bao phủ mọi nhóm thông tin còn thiếu được cung cấp. "
-        "Với thông_tin_thành_viên, tuyệt đối không hỏi tuổi hoặc chiều cao của từng người. "
-        "Hãy gộp thành một câu hỏi về số lượng khách theo các nhóm vé trong chính sách được cung cấp. "
-        "Nếu đã biết tổng số người, mỗi lựa chọn nhanh phải mô tả trọn cơ cấu và có tổng đúng bằng số người đó. "
-        "Chuỗi lựa chọn tuyệt đối không được chứa số lượng 0 hoặc cụm '0 khách'; chỉ nhắc các nhóm có người, và luôn có một lựa chọn toàn bộ khách thuộc nhóm adult_140cm_plus để thao tác nhanh. "
-        "Nếu cùng thiếu số_điểm_mong_muốn và khung_giờ_tham_quan, bắt buộc gộp cả hai vào đúng một câu hỏi. "
-        "Mỗi lựa chọn của câu gộp phải chứa một khoảng giờ bắt đầu-kết thúc và một số điểm dạng số nguyên, ví dụ cấu trúc '09:00-12:00 · 3 điểm'; không dùng tên khu thay cho số điểm và không được tách hai câu. "
-        "Các lựa chọn số điểm phải thực tế với độ dài khung giờ và cho phép khách nhập số khác. "
-        "khung_giờ_tham_quan chỉ đủ khi có cả giờ bắt đầu và giờ kết thúc. "
-        "Nếu hồ sơ đã có một phần của nhóm thông tin (ví dụ giờ bắt đầu), chỉ hỏi phần còn lại. "
-        "Ưu tiên câu hỏi ngắn, tự nhiên, các lựa chọn thiết thực và an toàn cho việc lập lịch. "
-        "Toàn bộ payload không được vượt quá 4 câu hỏi; riêng khi thiếu thông_tin_thành_viên, số_điểm_mong_muốn và khung_giờ_tham_quan thì phải trả đúng 2 câu hỏi. "
-        "Mỗi câu hỏi phải có criteria_key duy nhất bằng snake_case để định danh câu trả lời. "
-        "Trả đúng JSON thuần túy theo cấu trúc: "
-        '{"message":"...","questions":[{"criteria_key":"...","question":"...",'
-        '"options":["...","Khác/tự nhập"]}]}. '
-        "Mỗi câu có 2-5 lựa chọn và lựa chọn cuối là 'Khác/tự nhập'."
+        "Bạn là V-AI - Hướng dẫn viên ảo thông minh, thân thiện và nhiệt tình tại VinWonders Nha Trang. "
+        "Nhiệm vụ của bạn là lắng nghe nhu cầu của khách và hỏi thêm các thông tin còn thiếu một cách tự nhiên, lịch thiệp và gần gũi như một người bạn đồng hành thực thụ. "
+        "Tuyệt đối không dùng văn phong hành chính, không dùng câu chữ khô cứng như 'nhóm vé', 'nhóm đối tượng', 'thuộc từng nhóm vé sau'. "
+        "Hãy đặt câu hỏi ấm áp, chân thành dựa trên ngữ cảnh mà khách vừa chia sẻ. "
+        "Quy tắc khi tạo câu hỏi:\n"
+        "Tự tạo câu hỏi dựa trên ngữ cảnh, chỉ hỏi các nhóm còn thiếu và tối đa 4 câu. "
+        "Nếu khung_giờ_tham_quan và số_điểm_mong_muốn cùng thiếu, PHẢI gộp thành một câu có criteria_key 'khung_gio_va_so_diem'; "
+        "mỗi lựa chọn phải chứa cả khoảng giờ và số điểm, ví dụ '09:00 - 13:00 · 3 điểm'. Không gộp các nhóm không liên quan.\n"
+        "1. Với thông_tin_thành_viên: Hỏi số lượng chính xác theo cơ cấu đoàn. "
+        "Mỗi lựa chọn nhanh phải có số lượng cụ thể, không dùng khoảng số lượng hay nhãn mơ hồ. "
+        "Dùng đúng các cụm để hệ thống tính vé: 'người lớn', 'trẻ em (100-140cm)', "
+        "'bé dưới 100cm', 'người cao tuổi (từ 60 tuổi)'. Ví dụ: '2 người lớn', "
+        "'2 người lớn + 1 trẻ em (100-140cm)', '2 người lớn + 1 người cao tuổi (từ 60 tuổi) + 1 bé dưới 100cm'. "
+        "Các lựa chọn phải là khoảng an toàn có thể chọn ngay, không bắt nhập tuổi/chiều cao từng người. "
+        "Ví dụ: '2 người lớn (từ 140cm)', '2 người lớn + 1 trẻ em (100 đến dưới 140cm)', "
+        "'2 người lớn + 1 bé dưới 100cm'. Chỉ lựa chọn cuối là 'Khác/tự nhập'.\n"
+        "2. Với khung_giờ_tham_quan: mỗi lựa chọn phải có đủ giờ bắt đầu và kết thúc, ví dụ '09:00 - 18:00'.\n"
+        "3. Với số_điểm_mong_muốn: mỗi lựa chọn phải có số nguyên rõ ràng, ví dụ '3 điểm', '5 điểm'.\n"
+        "3. Không hỏi lại những gì khách đã nói. Chỉ hỏi đúng những nhóm thông tin còn thiếu được yêu cầu.\n"
+        "4. Mỗi câu hỏi PHẢI có 'criteria_key' bằng snake_case ('thong_tin_thanh_vien', 'khung_gio_tham_quan'...) và lựa chọn cuối cùng luôn là 'Khác/tự nhập'.\n"
+        "Định dạng đầu ra CHỈ là JSON thuần túy (không bọc trong ```):\n"
+        "{\n"
+        '  "message": "Lời mở đầu ngắn gọn, ấm áp và hào hứng hỗ trợ khách...",\n'
+        '  "questions": [\n'
+        "    {\n"
+        '      "criteria_key": "thong_tin_thanh_vien",\n'
+        '      "question": "Câu hỏi tự nhiên, lịch sự...",\n'
+        '      "options": ["Lựa chọn 1", "Lựa chọn 2", "Lựa chọn 3", "Khác/tự nhập"]\n'
+        "    }\n"
+        "  ]\n"
+        "}"
         + PUBLIC_RESPONSE_POLICY
     )
     prompt = (
@@ -529,7 +544,23 @@ def generate_hitl_questions_with_llm(
             for question in questions
         ):
             return None
-        return {"message": data["message"], "questions": questions[:4]}
+        coverage = {
+            "thong_tin_thanh_vien": {"thông_tin_thành_viên"},
+            "khung_gio_tham_quan": {"khung_giờ_tham_quan"},
+            "so_diem_mong_muon": {"số_điểm_mong_muốn"},
+            "khung_gio_va_so_diem": {"khung_giờ_tham_quan", "số_điểm_mong_muốn"},
+        }
+        expected = set(missing_fields)
+        filtered = []
+        covered = set()
+        for question in questions:
+            key = question["criteria_key"]
+            fields = coverage.get(key, set())
+            if not fields or not fields <= expected or fields & covered:
+                continue
+            covered.update(fields)
+            filtered.append(question)
+        return {"message": data["message"], "questions": filtered[:4]} if filtered else None
     except (AttributeError, IndexError, TypeError, ValueError, json.JSONDecodeError):
         return None
 

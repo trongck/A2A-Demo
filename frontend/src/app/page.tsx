@@ -4,8 +4,9 @@ import React, { useState, useEffect, useRef } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import ChatMapboxMessage from "./components/ChatMapboxMessage";
+import { getApiBase } from "./admin/config";
 
-const API_BASE = "http://127.0.0.1:8000";
+const API_BASE = getApiBase();
 
 interface PlanStop {
   name: string;
@@ -85,6 +86,13 @@ interface Clarification {
   questions: ClarificationQuestion[];
 }
 
+const CRITERIA_LABELS: Record<string, string> = {
+  thong_tin_thanh_vien: "Thành viên trong đoàn",
+  khung_gio_tham_quan: "Khung giờ tham quan",
+  so_diem_mong_muon: "Số điểm muốn trải nghiệm",
+  khung_gio_va_so_diem: "Thời gian và số điểm muốn trải nghiệm",
+};
+
 interface Message {
   role: "user" | "assistant";
   content: string;
@@ -96,10 +104,12 @@ function ClarificationWizard({
   clarification,
   disabled,
   onSubmit,
+  onDismiss,
 }: {
   clarification: Clarification;
   disabled: boolean;
   onSubmit: (message: string) => Promise<void>;
+  onDismiss?: () => void;
 }) {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
@@ -117,7 +127,9 @@ function ClarificationWizard({
     if (step === questions.length - 1) {
       const summary = [
         "Thông tin bổ sung đã xác nhận:",
-        ...questions.map((question) => `- ${question.question}: ${nextAnswers[question.criteria_key]}`),
+        ...questions.map((question) =>
+          `- ${CRITERIA_LABELS[question.criteria_key] || "Thông tin bổ sung"}: ${nextAnswers[question.criteria_key]}`
+        ),
       ].join("\n");
       setSubmitted(true);
       void onSubmit(summary);
@@ -138,7 +150,7 @@ function ClarificationWizard({
   function saveDetail() {
     const value = detail.trim();
     if (!value || !detailOption) return;
-    const prefix = detailOption === "Khác/tự nhập" || detailOption.includes("nhập số lượng")
+    const prefix = detailOption === "Khác/tự nhập" || detailOption.includes("nhập")
       ? ""
       : `${detailOption.split("–")[0].trim()}: `;
     saveAnswer(`${prefix}${value}`);
@@ -147,88 +159,138 @@ function ClarificationWizard({
   function previousStep() {
     setDetailOption(null);
     setDetail("");
-    setStep((value) => value - 1);
+    setStep((value) => Math.max(0, value - 1));
   }
 
   function nextStep() {
     if (!answers[current.criteria_key]) return;
-    setStep((value) => value + 1);
+    setStep((value) => Math.min(questions.length - 1, value + 1));
   }
 
   if (submitted) {
     return (
-      <div className="rounded-xl border border-[#d4d0c5] bg-[#faf9f6] p-4 text-xs text-[#71717a]">
-        Đang gửi thông tin đã chọn…
+      <div className="rounded-2xl border border-emerald-900/15 bg-emerald-50/50 p-3.5 text-xs text-emerald-800 flex items-center gap-2 shadow-sm animate-pulse">
+        <span>✨</span>
+        <span>Đang áp dụng thông tin lựa chọn của bạn để hoàn thiện kế hoạch...</span>
       </div>
     );
   }
 
   return (
-    <div className="rounded-xl border border-[#d4d0c5] bg-[#faf9f6] p-4 shadow-sm">
-      <div className="mb-3 flex items-center justify-between gap-3">
-        <p className="text-xs font-semibold text-[#18181b]">{current.question}</p>
-        <div className="flex shrink-0 items-center gap-2 text-[11px] text-[#71717a]">
-          <button
-            type="button"
-            disabled={step === 0 || disabled}
-            onClick={previousStep}
-            className="px-1 disabled:opacity-30"
-            aria-label="Câu hỏi trước"
-          >
-            ‹
-          </button>
-          <span>{step + 1} trong {questions.length}</span>
-          <button
-            type="button"
-            disabled={!answers[current.criteria_key] || disabled}
-            onClick={nextStep}
-            className="px-1 disabled:opacity-30"
-            aria-label="Câu hỏi tiếp theo"
-          >
-            ›
-          </button>
+    <div className="rounded-2xl border border-emerald-900/15 bg-white/95 backdrop-blur-md p-4 shadow-md transition-all">
+      {/* Header */}
+      <div className="mb-2.5 flex items-center justify-between gap-3 border-b border-slate-100 pb-2.5">
+        <div className="flex items-center gap-2">
+          <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-emerald-800 text-white text-xs">
+            ✨
+          </span>
+          <div>
+            <p className="text-xs font-bold text-slate-900 tracking-tight">{current.question}</p>
+            {clarification.message && (
+              <p className="text-[11px] text-slate-500 line-clamp-1 mt-0.5">{clarification.message}</p>
+            )}
+          </div>
+        </div>
+
+        <div className="flex shrink-0 items-center gap-1.5 text-xs text-slate-500">
+          {questions.length > 1 && (
+            <div className="flex items-center gap-1 bg-slate-100 px-2 py-0.5 rounded-full text-[10px] font-medium mr-1">
+              <button
+                type="button"
+                disabled={step === 0 || disabled}
+                onClick={previousStep}
+                className="px-0.5 hover:text-slate-900 disabled:opacity-30 cursor-pointer"
+                aria-label="Câu hỏi trước"
+              >
+                &lt;
+              </button>
+              <span>{step + 1}/{questions.length}</span>
+              <button
+                type="button"
+                disabled={!answers[current.criteria_key] || disabled}
+                onClick={nextStep}
+                className="px-0.5 hover:text-slate-900 disabled:opacity-30 cursor-pointer"
+                aria-label="Câu hỏi tiếp theo"
+              >
+                &gt;
+              </button>
+            </div>
+          )}
+          {onDismiss && (
+            <button
+              type="button"
+              onClick={onDismiss}
+              className="p-1 rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+              title="Đóng gợi ý để tự gõ tin nhắn"
+            >
+              ✕
+            </button>
+          )}
         </div>
       </div>
 
+      {/* Tùy chọn */}
       {detailOption ? (
-        <div className="flex gap-2">
+        <div className="flex gap-2 pt-1">
           <input
             autoFocus
             value={detail}
             onChange={(event) => setDetail(event.target.value)}
             onKeyDown={(event) => event.key === "Enter" && saveDetail()}
-            placeholder={current.criteria_key === "group_composition"
-              ? "Ví dụ: 2 người lớn, 2 trẻ em"
-              : "Nhập câu trả lời của bạn"}
-            className="min-w-0 flex-1 rounded-lg border border-[#d4d0c5] px-3 py-2 text-xs outline-none focus:border-[#2563eb]"
+            placeholder="Ví dụ: 2 người lớn + 1 trẻ em cao khoảng 120–139cm"
+            className="min-w-0 flex-1 rounded-xl border border-slate-200 bg-slate-50/50 px-3 py-2 text-xs outline-none focus:border-emerald-700 focus:bg-white transition-all"
           />
           <button
             type="button"
             disabled={!detail.trim() || disabled}
             onClick={saveDetail}
-            className="rounded-lg bg-[#18181b] px-3 py-2 text-xs text-white disabled:opacity-30"
+            className="rounded-xl bg-emerald-800 hover:bg-emerald-700 px-3.5 py-2 text-xs font-semibold text-white disabled:opacity-30 transition-colors cursor-pointer"
           >
-            Tiếp
+            Xác nhận
+          </button>
+          <button
+            type="button"
+            onClick={() => setDetailOption(null)}
+            className="rounded-xl border border-slate-200 hover:bg-slate-50 px-3 py-2 text-xs text-slate-600 transition-colors cursor-pointer"
+          >
+            Quay lại
           </button>
         </div>
       ) : (
-        <div className="max-h-64 divide-y divide-[#e6e3da] overflow-y-auto border-y border-[#e6e3da]">
-          {current.options.map((option, index) => (
-            <button
-              key={option}
-              type="button"
-              disabled={disabled}
-              onClick={() => selectOption(option)}
-              className="flex w-full items-center gap-3 px-1 py-2.5 text-left text-xs text-[#27272a] transition hover:bg-[#faf9f6] disabled:cursor-not-allowed"
-            >
-              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-[#f4f2eb] text-[11px] text-[#71717a]">
-                {option === "Khác/tự nhập" ? "✎" : index + 1}
-              </span>
-              {option}
-            </button>
-          ))}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+          {current.options.map((option, index) => {
+            const isCustom = option === "Khác/tự nhập" || option.includes("nhập");
+            return (
+              <button
+                key={option}
+                type="button"
+                disabled={disabled}
+                onClick={() => selectOption(option)}
+                className={`group flex items-center justify-between gap-2.5 p-2.5 rounded-xl border text-left text-xs transition-all cursor-pointer ${
+                  isCustom
+                    ? "border-dashed border-slate-300 hover:border-emerald-700 bg-slate-50/50 hover:bg-emerald-50/30 text-slate-700"
+                    : "border-slate-200/80 hover:border-emerald-700/60 bg-white hover:bg-emerald-50/40 text-slate-800 shadow-2xs hover:shadow-xs"
+                } disabled:cursor-not-allowed disabled:opacity-50`}
+              >
+                <div className="flex items-center gap-2">
+                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-lg bg-emerald-100/70 text-[10px] font-bold text-emerald-900 group-hover:bg-emerald-800 group-hover:text-white transition-colors">
+                    {isCustom ? "✎" : index + 1}
+                  </span>
+                  <span className="font-medium leading-relaxed">{option}</span>
+                </div>
+                <span className="text-slate-400 group-hover:text-emerald-700 transition-colors text-xs">
+                  →
+                </span>
+              </button>
+            );
+          })}
         </div>
       )}
+
+      {/* Ghi chú gợi ý */}
+      <div className="mt-2.5 flex items-center justify-between text-[11px] text-slate-600 pt-2 border-t border-slate-100">
+        <span>💡 Bạn có thể bấm chọn nhanh ở trên hoặc tự gõ câu trả lời vào ô chat bên dưới.</span>
+      </div>
     </div>
   );
 }
@@ -254,10 +316,10 @@ export default function Home() {
     if (!textarea) return;
     textarea.style.height = "auto";
     const scrollH = textarea.scrollHeight;
-    // Tự động mở rộng từ chiều cao tối thiểu 48px lên tối đa 240px
-    const newHeight = Math.min(Math.max(scrollH, 48), 240);
+    // Tự động mở rộng từ chiều cao tối thiểu 68px lên tối đa 280px
+    const newHeight = Math.min(Math.max(scrollH, 68), 280);
     textarea.style.height = `${newHeight}px`;
-    textarea.style.overflowY = scrollH > 240 ? "auto" : "hidden";
+    textarea.style.overflowY = scrollH > 280 ? "auto" : "hidden";
   };
 
   useEffect(() => {
@@ -612,7 +674,7 @@ export default function Home() {
         <main className="flex-1 flex flex-col bg-[#faf9f6] overflow-hidden">
           {/* Chat Messages Feed */}
           <div className="flex-1 overflow-y-auto p-4 md:p-8 space-y-6">
-            <div className="max-w-3xl mx-auto space-y-6">
+            <div className="max-w-4xl xl:max-w-5xl mx-auto space-y-6">
               {messages.map((m, idx) => (
                 <div key={idx} className="flex flex-col gap-2">
                   {m.role === "user" ? (
@@ -772,14 +834,29 @@ export default function Home() {
                                 Tổng thời gian
                               </span>
                             </div>
-                            <div>
-                              <span className="block font-bold text-emerald-600">
-                                +{p.end_buffer_minutes}p
-                              </span>
-                              <span className="text-[10px] text-[#71717a]">
-                                Dự phòng (≥10p)
-                              </span>
-                            </div>
+                            {p.end_buffer_minutes < 30 ? (
+                              <div>
+                                <span className="block font-bold text-amber-600">
+                                  ⚠️ Sát giờ (+{p.end_buffer_minutes}p)
+                                </span>
+                                <span className="text-[10px] text-amber-700/80 font-medium">
+                                  {p.legs && p.legs.length > 0 && p.legs[0].arrival_time
+                                    ? `${p.legs[0].arrival_time} – ${p.return_arrival_time}`
+                                    : "Cần chú ý giờ về"}
+                                </span>
+                              </div>
+                            ) : (
+                              <div>
+                                <span className="block font-bold text-emerald-600">
+                                  Thoải mái thời gian
+                                </span>
+                                <span className="text-[10px] text-[#71717a]">
+                                  {p.legs && p.legs.length > 0 && p.legs[0].arrival_time
+                                    ? `${p.legs[0].arrival_time} – ${p.return_arrival_time} (dư ${p.end_buffer_minutes}p)`
+                                    : `Dư ${p.end_buffer_minutes}p tự do`}
+                                </span>
+                              </div>
+                            )}
                             <div>
                               <span className="block font-bold text-[#18181b]">
                                 {p.total_cost_vnd
@@ -871,13 +948,21 @@ export default function Home() {
                             ))}
 
                             <div className="flex items-center gap-3 pt-1 border-t border-dashed border-[#e6e3da]">
-                              <span className="font-mono font-bold text-emerald-600 w-12 text-right">
+                              <span className={`font-mono font-bold w-12 text-right ${
+                                p.end_buffer_minutes < 30 ? "text-amber-600" : "text-emerald-600"
+                              }`}>
                                 {p.return_arrival_time}
                               </span>
-                              <div className="flex-1 bg-emerald-50 border border-emerald-200 p-2 rounded text-emerald-800 flex justify-between items-center text-[11px]">
-                                <span>✓ Về lại Sea World Hub an toàn</span>
+                              <div className={`flex-1 border p-2 rounded flex justify-between items-center text-[11px] ${
+                                p.end_buffer_minutes < 30
+                                  ? "bg-amber-50/90 border-amber-300 text-amber-900"
+                                  : "bg-emerald-50 border-emerald-200 text-emerald-800"
+                              }`}>
+                                <span>✓ Kết thúc & về lại điểm xuất phát an toàn</span>
                                 <span className="font-bold font-mono">
-                                  Dư {p.end_buffer_minutes}p dự phòng
+                                  {p.end_buffer_minutes < 30
+                                    ? `⚠️ Cận giờ (dư ${p.end_buffer_minutes}p)`
+                                    : `Thoải mái (dư ${p.end_buffer_minutes}p)`}
                                 </span>
                               </div>
                             </div>
@@ -898,66 +983,71 @@ export default function Home() {
 
           {/* Chat Input Bar */}
           <div className="bg-[#faf9f6] px-4 pb-4 pt-2">
-            <div className="max-w-3xl mx-auto space-y-2">
+            <div className="max-w-4xl xl:max-w-5xl mx-auto space-y-2">
               {activeClarification && (
                 <ClarificationWizard
                   clarification={activeClarification}
                   disabled={isStreaming}
                   onSubmit={sendMessage}
+                  onDismiss={() => setActiveClarification(null)}
                 />
               )}
-              <div className="relative flex items-end">
-              <textarea
-                ref={textareaRef}
-                value={inputMessage}
-                onChange={(e) => setInputMessage(e.target.value)}
-                onInput={adjustTextareaHeight}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && !e.shiftKey) {
-                    e.preventDefault();
-                    handleSend();
+              <div className="relative flex items-end bg-white border-2 border-[#e6e3da] focus-within:border-[#18181b] rounded-3xl shadow-sm focus-within:shadow-md transition-all">
+                <textarea
+                  ref={textareaRef}
+                  value={inputMessage}
+                  onChange={(e) => setInputMessage(e.target.value)}
+                  onInput={adjustTextareaHeight}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && !e.shiftKey) {
+                      e.preventDefault();
+                      handleSend();
+                    }
+                  }}
+                  placeholder={
+                    isStreaming
+                      ? "V-AI đang trả lời, bạn có thể nhấn Dừng tạo..."
+                      : "Cùng lập kế hoạch chuyến du lịch nào! (Nhập yêu cầu: số người, thời gian, sở thích...)"
                   }
-                }}
-                placeholder={
-                  isStreaming
-                    ? "V-AI đang trả lời, bạn có thể nhấn Dừng tạo..."
-                    : "Cùng lập kế hoạch cho chuyến du lịch nào! (Enter để gửi, Shift+Enter xuống dòng)"
-                }
-                rows={1}
-                disabled={isStreaming}
-                style={{ minHeight: "48px", maxHeight: "240px" }}
-                className="w-full bg-[#faf9f6] border border-[#e6e3da] focus:border-[#18181b] rounded-2xl pl-4 pr-24 py-3 text-sm text-[#18181b] placeholder-[#a1a1aa] focus:outline-none transition-colors resize-none leading-relaxed disabled:opacity-75"
-              />
+                  rows={2}
+                  disabled={isStreaming}
+                  style={{ minHeight: "68px", maxHeight: "280px" }}
+                  className="w-full bg-transparent pl-6 pr-24 py-4 text-[15px] md:text-base text-[#18181b] placeholder-[#9ca3af] focus:outline-none resize-none leading-relaxed disabled:opacity-75"
+                />
 
-              {/* Nút Dừng tạo hoặc Nút Gửi - neo ở góc dưới bên phải */}
-              {isStreaming ? (
-                <button
-                  type="button"
-                  onClick={handleStopGenerating}
-                  className="absolute right-3 bottom-2 px-3 py-1.5 rounded-full bg-[#18181b] hover:bg-red-600 text-white flex items-center gap-1.5 text-xs font-medium transition cursor-pointer shadow-xs group"
-                  title="Dừng tạo phản hồi"
-                >
-                  <div className="w-2.5 h-2.5 bg-red-400 group-hover:bg-white rounded-xs transition" />
-                  <span className="text-[11px]">Dừng tạo</span>
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  onClick={handleSend}
-                  disabled={!inputMessage.trim()}
-                  className="absolute right-3 bottom-1.5 w-9 h-9 rounded-full bg-[#18181b] hover:bg-[#27272a] disabled:opacity-25 text-white flex items-center justify-center transition cursor-pointer disabled:cursor-not-allowed shadow-xs"
-                  title="Gửi"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                    className="w-4 h-4 ml-0.5"
+                {/* Nút Dừng tạo hoặc Nút Gửi - neo ở góc dưới bên phải */}
+                {isStreaming ? (
+                  <button
+                    type="button"
+                    onClick={handleStopGenerating}
+                    className="absolute right-3.5 bottom-3.5 px-4 py-2 rounded-full bg-[#18181b] hover:bg-red-600 text-white flex items-center gap-2 text-xs font-semibold transition cursor-pointer shadow-sm group"
+                    title="Dừng tạo phản hồi"
                   >
-                    <path d="M3.105 2.288a.75.75 0 0 0-.826.95l1.414 4.926A1.5 1.5 0 0 0 5.135 9.25h6.115a.75.75 0 0 1 0 1.5H5.135a1.5 1.5 0 0 0-1.442 1.086l-1.414 4.926a.75.75 0 0 0 .826.95 28.897 28.897 0 0 0 15.293-7.155.75.75 0 0 0 0-1.114A28.897 28.897 0 0 0 3.105 2.288Z" />
-                  </svg>
-                </button>
-              )}
+                    <div className="w-2.5 h-2.5 bg-red-400 group-hover:bg-white rounded-xs transition" />
+                    <span>Dừng</span>
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={handleSend}
+                    disabled={!inputMessage.trim()}
+                    className="absolute right-3.5 bottom-3.5 w-11 h-11 rounded-full bg-[#18181b] hover:bg-[#27272a] disabled:opacity-25 text-white flex items-center justify-center transition cursor-pointer disabled:cursor-not-allowed shadow-sm hover:scale-105 active:scale-95"
+                    title="Gửi tin nhắn (Enter)"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                      className="w-5 h-5 ml-0.5"
+                    >
+                      <path d="M3.105 2.288a.75.75 0 0 0-.826.95l1.414 4.926A1.5 1.5 0 0 0 5.135 9.25h6.115a.75.75 0 0 1 0 1.5H5.135a1.5 1.5 0 0 0-1.442 1.086l-1.414 4.926a.75.75 0 0 0 .826.95 28.897 28.897 0 0 0 15.293-7.155.75.75 0 0 0 0-1.114A28.897 28.897 0 0 0 3.105 2.288Z" />
+                    </svg>
+                  </button>
+                )}
+              </div>
+              <div className="flex items-center justify-between px-3 text-[11px] text-[#a1a1aa]">
+                <span>Nhấn <b>Enter</b> để gửi · <b>Shift + Enter</b> để xuống dòng</span>
+                <span>V-AI VinWonders Assistant</span>
               </div>
             </div>
           </div>

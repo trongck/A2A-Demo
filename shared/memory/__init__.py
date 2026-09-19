@@ -7,9 +7,7 @@ from shared.memory.database import (
     record_event,
     get_events,
     save_agent_result,
-    get_latest_agent_result,
     save_plans,
-    get_latest_plans,
 )
 
 __all__ = [
@@ -21,7 +19,5 @@ __all__ = [
     "record_event",
     "get_events",
     "save_agent_result",
-    "get_latest_agent_result",
     "save_plans",
-    "get_latest_plans",
 ]

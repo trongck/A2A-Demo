@@ -16,6 +16,7 @@ TICKET_POLICY_PATH = Path(__file__).resolve().parent.parent / "data" / "vinwonde
 DATA_REVISION = "google_places_v2"
 START_NODE_ID = "start_vinwonders"
 PARK_RADIUS_KM = 0.75
+WALKING_SPEED_MPM = 75  # mét/phút — tốc độ đi bộ chuẩn cho route matrix
 
 _DAY_INDEX = {
     "Thứ Hai": 0,
@@ -186,8 +187,10 @@ def load_v2_data(scope: str = "vinwonders") -> dict[str, Any]:
         temporarily_closed = bool(place.get("temporarilyClosed"))
         status = "permanently_closed" if permanently_closed else "temporarily_closed" if temporarily_closed else "unknown"
         scraped_at = place.get("scrapedAt")
-        if scraped_at:
-            observed_times.append(scraped_at)
+        mock_crowd = place.get("mockCrowd") or {}
+        observed_at = mock_crowd.get("observedAt") or scraped_at
+        if observed_at:
+            observed_times.append(observed_at)
 
         attractions.append({
             "data_revision": DATA_REVISION,
@@ -221,9 +224,9 @@ def load_v2_data(scope: str = "vinwonders") -> dict[str, Any]:
                 "data_quality": "unavailable",
             },
             "crowd_reference": {
-                "area_m2": None,
-                "comfort_capacity_people": None,
-                "data_quality": "unavailable",
+                "area_m2": mock_crowd.get("areaM2"),
+                "comfort_capacity_people": mock_crowd.get("comfortCapacityPeople"),
+                "data_quality": "mock" if mock_crowd else "unavailable",
             },
             "thrill_level": "none",
             "pricing": {
@@ -246,15 +249,15 @@ def load_v2_data(scope: str = "vinwonders") -> dict[str, Any]:
             "data_revision": DATA_REVISION,
             "snapshot_id": f"snapshot_{service_id}",
             "service_id": service_id,
-            "operating_status": status,
+            "operating_status": "open" if status == "unknown" and mock_crowd else status,
             "status_reason": "Google Places đánh dấu đóng cửa" if status != "unknown" else None,
-            "observed_at": scraped_at,
-            "source": "google_places_v2",
-            "data_quality": "unavailable",
-            "current_people": None,
-            "queue_people": None,
-            "wait_minutes": None,
-            "wait_basis": "not_provided",
+            "observed_at": observed_at,
+            "source": "mock_dataset" if mock_crowd else "google_places_v2",
+            "data_quality": "mock" if mock_crowd else "unavailable",
+            "current_people": mock_crowd.get("currentPeople"),
+            "queue_people": mock_crowd.get("queuePeople"),
+            "wait_minutes": mock_crowd.get("waitMinutes"),
+            "wait_basis": "mock_dataset" if mock_crowd else "not_provided",
         })
         nodes.append({
             "node_id": service_id,
@@ -291,7 +294,7 @@ def load_v2_data(scope: str = "vinwonders") -> dict[str, Any]:
         "from_node_id": left["node_id"],
         "to_node_id": right["node_id"],
         "distance_m": distance_m,
-        "walking_minutes": max(1, math.ceil(distance_m / 75)),
+        "walking_minutes": max(1, math.ceil(distance_m / WALKING_SPEED_MPM)),
         "bidirectional": True,
         "is_open": True,
         "source": "nearest_neighbor_estimate",
@@ -301,7 +304,7 @@ def load_v2_data(scope: str = "vinwonders") -> dict[str, Any]:
     return {
         "schema_version": "2.0",
         "data_revision": DATA_REVISION,
-        "data_mode": "google_places",
+        "data_mode": "google_places_with_mock_crowd",
         "timezone": "Asia/Ho_Chi_Minh",
         "simulation_now": simulation_now,
         "config": {

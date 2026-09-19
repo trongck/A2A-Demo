@@ -37,6 +37,7 @@ SERVICES = [
             "127.0.0.1",
             "--port",
             "8003",
+            "--reload",
             "--log-level",
             "warning",
         ],
@@ -55,6 +56,7 @@ SERVICES = [
             "127.0.0.1",
             "--port",
             "8002",
+            "--reload",
             "--log-level",
             "warning",
         ],
@@ -73,6 +75,7 @@ SERVICES = [
             "127.0.0.1",
             "--port",
             "8001",
+            "--reload",
             "--log-level",
             "warning",
         ],
@@ -91,6 +94,7 @@ SERVICES = [
             "127.0.0.1",
             "--port",
             "8000",
+            "--reload",
             "--log-level",
             "warning",
         ],
@@ -175,12 +179,13 @@ def main() -> None:
     api_url = "http://127.0.0.1:8000"
 
     print("\n" + "=" * 75)
-    print(f"   HỆ THỐNG ĐÃ SẴN SÀNG ĐỂ BẠN TỰ KIỂM CHỨNG TRỰC TIẾP!")
+    status_text = "HỆ THỐNG ĐÃ SẴN SÀNG" if all_healthy else "MỘT SỐ DỊCH VỤ CHƯA SẴN SÀNG"
+    print(f"   {status_text} ĐỂ BẠN TỰ KIỂM CHỨNG TRỰC TIẾP!")
     print(f"   Giao diện Next.js + Tailwind CSS : {frontend_url}")
     print(f"   Backend API Tác tử A0             : {api_url}")
-    print(f"   Agent A1 (Lập lịch)               : http://127.0.0.1:8001/health")
-    print(f"   Agent A2 (Mật độ)                 : http://127.0.0.1:8002/health")
-    print(f"   MCP Server (Tools)                : http://127.0.0.1:8003/health")
+    print("   Agent A1 (Lập lịch)               : http://127.0.0.1:8001/health")
+    print("   Agent A2 (Mật độ)                 : http://127.0.0.1:8002/health")
+    print("   MCP Server (Tools)                : http://127.0.0.1:8003/health")
     print("=" * 75)
     print("Nhấn Ctrl + C để dừng toàn bộ 5 tiến trình bất kỳ lúc nào.\n")
 

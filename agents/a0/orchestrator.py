@@ -38,7 +38,13 @@ from shared.memory.database import (
     save_plans,
     update_session,
 )
-from shared.data_adapter import DATA_REVISION, START_NODE_ID, load_ticket_policy, ticket_groups_to_members
+from shared.data_adapter import (
+    DATA_REVISION,
+    START_NODE_ID,
+    load_ticket_policy,
+    members_to_ticket_groups,
+    ticket_groups_to_members,
+)
 
 
 import os
@@ -54,7 +60,12 @@ def call_a2a_agent(agent_url: str, request_payload: dict[str, Any]) -> dict[str,
     """Gọi Specialist Agent qua giao thức A2A JSON-RPC / HTTP."""
     # Gọi qua endpoint trực tiếp nếu có hoặc qua JSON-RPC message
     target_action = request_payload.get("action")
-    endpoint = f"{agent_url}/api/analyze" if target_action == "analyze_crowd" else f"{agent_url}/api/plan"
+    _action_endpoints = {
+        "analyze_crowd": f"{agent_url}/api/analyze",
+        "plan": f"{agent_url}/api/plan",
+        "create_plans": f"{agent_url}/api/plan",
+    }
+    endpoint = _action_endpoints.get(target_action, f"{agent_url}/api/{target_action}")
 
     # H5: Thêm internal secret header cho inter-agent auth
     headers: dict[str, str] = {}
@@ -92,6 +103,9 @@ def call_a2a_agent(agent_url: str, request_payload: dict[str, Any]) -> dict[str,
                     "status": "completed",
                     "result": result,
                 }
+            else:
+                logger.warning("A2A call returned status %s from %s: %s", resp.status_code, endpoint, resp.text)
+                raise RuntimeError(f"A2A agent returned status {resp.status_code}")
     except Exception as e:
         # M6: Log chi tiết nội bộ, không lộ cho client
         logger.warning("A2A call failed to %s: %s", agent_url, e)
@@ -120,10 +134,51 @@ def call_a2a_agent(agent_url: str, request_payload: dict[str, Any]) -> dict[str,
     return {"status": "failed", "error": "Không thể kết nối đến dịch vụ agent nội bộ."}
 
 
+def parse_time_window(text: str) -> tuple[int, int, int, int] | None:
+    """Trích xuất (start_h, start_m, end_h, end_m) an toàn, tuyệt đối không bắt nhầm dải chiều cao (ví dụ: 100-140cm)."""
+    text_lower = text.lower()
+    # 1. Khớp sau nhãn "khung giờ" hoặc "thời gian"
+    m = re.search(
+        r"(?:khung\s+giờ(?:\s+tham\s+quan)?|thời\s+gian)\s*:\s*(?:từ\s*)?\b(\d{1,2})(?:[h:](\d{2})|\s*h|\s*giờ)?\s*(?:đến|tới|-|–)\s*(\d{1,2})(?:[h:](\d{2})|\s*h|\s*giờ)?\b",
+        text_lower,
+    )
+    if m:
+        sh, sm, eh, em = m.groups()
+        return int(sh), int(sm or 0), int(eh), int(em or 0)
+
+    # 2. Khớp dạng 'từ Xh đến Yh', 'Xh - Yh', 'X giờ - Y giờ'
+    m = re.search(
+        r"(?:từ\s+)?\b([0-2]?\d)(?:[h:](\d{2})|\s*(?:h|giờ))\s*(?:đến|tới|-|–)\s*([0-2]?\d)(?:[h:](\d{2})|\s*(?:h|giờ))?\b",
+        text_lower,
+    )
+    if m:
+        sh, sm, eh, em = m.groups()
+        return int(sh), int(sm or 0), int(eh), int(em or 0)
+
+    # 3. Khớp dạng 'từ X:XX - Y:XX' hoặc 'từ X - Y'
+    m = re.search(
+        r"(?:từ\s+)\b([0-2]?\d)(?::(\d{2}))?\s*(?:đến|tới|-|–)\s*([0-2]?\d)(?::(\d{2}))?\b",
+        text_lower,
+    )
+    if m:
+        sh, sm, eh, em = m.groups()
+        return int(sh), int(sm or 0), int(eh), int(em or 0)
+
+    # 4. Khớp dạng 'XX:XX - YY:YY' (chuẩn giờ:phút)
+    m = re.search(
+        r"\b([0-2]?\d):(\d{2})\s*(?:đến|tới|-|–)\s*([0-2]?\d):(\d{2})\b",
+        text_lower,
+    )
+    if m:
+        sh, sm, eh, em = m.groups()
+        return int(sh), int(sm), int(eh), int(em)
+
+    return None
+
+
 def extract_or_update_request(
     user_message: str,
     current_session: dict[str, Any],
-    preset_data: dict[str, Any] | None = None,
 ) -> tuple[dict[str, Any], bool, list[str], str, dict[str, Any]]:
     """Trích xuất và chuẩn hóa yêu cầu của người dùng kết hợp LLM và quy tắc logic."""
     profile = copy.deepcopy(current_session.get("profile", {}))
@@ -131,10 +186,10 @@ def extract_or_update_request(
     visit_date = datetime.now(ZoneInfo("Asia/Ho_Chi_Minh")).date()
     if "ngày mai" in user_message.lower():
         visit_date += timedelta(days=1)
-
-    # Nếu người dùng nạp từ preset (ví dụ preset gia đình)
-    if preset_data:
-        profile.update(preset_data)
+    msg_lower = user_message.lower()
+    is_hitl_summary = "thông tin bổ sung đã xác nhận:" in msg_lower
+    llm_enabled = is_llm_available()
+    used_llm = False
 
     intent_type = "plan_itinerary"
     routing: dict[str, Any] = {
@@ -148,9 +203,12 @@ def extract_or_update_request(
     }
 
     # 1. Thử phân loại intent và trích xuất thực thể qua LLM
-    if is_llm_available():
+    # Câu trả lời từ wizard đã có cấu trúc; để rule parser đọc trực tiếp, tránh
+    # LLM suy diễn số lượng người từ các nhãn chung như "gia đình có trẻ nhỏ".
+    if llm_enabled and not is_hitl_summary:
         try:
             llm_result = classify_and_extract_intent_with_llm(user_message, profile)
+            used_llm = True
             routing.update(llm_result)
             llm_status = llm_result.get("status")
             if llm_status in {"out_of_scope", "too_ambiguous"}:
@@ -207,39 +265,48 @@ def extract_or_update_request(
                         "age_years": int(member["age_years"]),
                         "height_cm": int(member["height_cm"]),
                     })
-                if complete_members:
+                declared_size = entities.get("group_size")
+                if complete_members and (declared_size is None or len(complete_members) == int(declared_size)):
                     profile["group_members"] = complete_members
+                    profile["ticket_groups"] = members_to_ticket_groups(complete_members)
 
             if entities.get("time_hours") is not None:
                 profile["pending_duration_hours"] = float(entities["time_hours"])
 
             if entities.get("start_time"):
                 st = str(entities["start_time"]).strip()
-                if len(st) == 5 and ":" in st:
-                    profile["start_at"] = f"{visit_date.isoformat()}T{st}:00+07:00"
+                parts = st.split(":")
+                if len(parts) == 2 and parts[0].isdigit() and parts[1].isdigit():
+                    profile["start_at"] = f"{visit_date.isoformat()}T{int(parts[0]):02d}:{int(parts[1]):02d}:00+07:00"
+                elif st.isdigit() and 0 <= int(st) <= 24:
+                    profile["start_at"] = f"{visit_date.isoformat()}T{int(st):02d}:00:00+07:00"
 
             if entities.get("end_time"):
                 et = str(entities["end_time"]).strip()
-                if len(et) == 5 and ":" in et:
-                    profile["end_by"] = f"{visit_date.isoformat()}T{et}:00+07:00"
+                parts = et.split(":")
+                if len(parts) == 2 and parts[0].isdigit() and parts[1].isdigit():
+                    profile["end_by"] = f"{visit_date.isoformat()}T{int(parts[0]):02d}:{int(parts[1]):02d}:00+07:00"
+                elif et.isdigit() and 0 <= int(et) <= 24:
+                    profile["end_by"] = f"{visit_date.isoformat()}T{int(et):02d}:00:00+07:00"
 
         except Exception as e:
             logger.warning("LLM intent extraction error: %s", e)
 
-    # 2. Xử lý logic quy tắc bổ trợ
-    msg_lower = user_message.lower()
-
-    planning_keywords = [
-        "gợi ý", "lập lịch", "lên lịch", "lịch trình", "kế hoạch", "chơi gì",
-        "trò chơi", "điểm chơi", "tham quan", "tư vấn", "lộ trình",
-    ]
-    is_hitl_summary = "thông tin bổ sung đã xác nhận:" in msg_lower
+    # 2. Xử lý logic quy tắc bổ trợ (fallback hoặc bổ sung cho LLM)
+    # HITL confirmation luôn được xử lý bất kể LLM
     if is_hitl_summary:
         intent_type = "plan_itinerary"
-    elif intent_type not in {"out_of_scope", "too_ambiguous"} and any(k in msg_lower for k in planning_keywords):
-        intent_type = "plan_itinerary"
 
-    if not is_llm_available():
+    use_rule_parser = is_hitl_summary or not used_llm
+    if not used_llm:
+        # Fallback phân loại intent khi LLM không khả dụng
+        planning_keywords = [
+            "gợi ý", "lập lịch", "lên lịch", "lịch trình", "kế hoạch", "chơi gì",
+            "trò chơi", "điểm chơi", "tham quan", "tư vấn", "lộ trình",
+        ]
+        if intent_type not in {"out_of_scope", "too_ambiguous"} and any(k in msg_lower for k in planning_keywords):
+            intent_type = "plan_itinerary"
+
         normalized = re.sub(r"[^a-z0-9à-ỹ]+", " ", msg_lower).strip()
         if normalized in {"hi", "hello", "xin chào", "chào", "chào bạn"}:
             intent_type = "general_chat"
@@ -248,33 +315,94 @@ def extract_or_update_request(
         elif normalized in {"giúp tôi", "tư vấn", "hỗ trợ tôi", "tôi cần giúp"}:
             intent_type = "too_ambiguous"
 
-    if "chỉ trong nhà" in msg_lower or "chỉ đi trong nhà" in msg_lower or "indoor" in msg_lower:
-        hard = profile.setdefault("hard_constraints", {})
-        hard["indoor_only"] = True
+        # Regex entity extraction chỉ khi LLM không khả dụng
+        if "chỉ trong nhà" in msg_lower or "chỉ đi trong nhà" in msg_lower or "indoor" in msg_lower:
+            hard = profile.setdefault("hard_constraints", {})
+            hard["indoor_only"] = True
 
-    if "ngoài trời" in msg_lower:
-        hard = profile.setdefault("hard_constraints", {})
-        hard["indoor_only"] = False
+        if "ngoài trời" in msg_lower:
+            hard = profile.setdefault("hard_constraints", {})
+            hard["indoor_only"] = False
 
-    match_min_act = re.search(r"tối thiểu\s+(\d+)\s+điểm", msg_lower)
-    if match_min_act:
-        hard = profile.setdefault("hard_constraints", {})
-        hard["min_activity_count"] = int(match_min_act.group(1))
+        match_min_act = re.search(r"tối thiểu\s+(\d+)\s+điểm", msg_lower)
+        if match_min_act:
+            hard = profile.setdefault("hard_constraints", {})
+            hard["min_activity_count"] = int(match_min_act.group(1))
 
-    match_duration = re.search(r"(\d+(?:[.,]\d+)?)\s*(?:tiếng|giờ)", msg_lower)
-    if match_duration:
-        profile["pending_duration_hours"] = float(match_duration.group(1).replace(",", "."))
-
-    # Nếu chưa có thông tin thành viên
-    if not profile.get("group_members"):
-        match_height = re.search(r"cao\s+(\d+)\s*cm", msg_lower)
-        if match_height:
-            profile.setdefault("pending_group_details", {})["height_cm"] = int(match_height.group(1))
-        match_age = re.search(r"(\d{1,2})\s*tuổi", msg_lower)
-        if match_age:
-            profile.setdefault("pending_group_details", {})["age_years"] = int(match_age.group(1))
+        match_duration = re.search(r"(\d+(?:[.,]\d+)?)\s*(?:tiếng|giờ)", msg_lower)
+        if match_duration:
+            profile["pending_duration_hours"] = float(match_duration.group(1).replace(",", "."))
 
         # Chỉ cần hồ sơ an toàn đại diện, không bắt khách khai từng thành viên.
+        if not profile.get("group_members"):
+            match_height = re.search(r"cao\s+(\d+)\s*cm", msg_lower)
+            if match_height:
+                profile.setdefault("pending_group_details", {})["height_cm"] = int(match_height.group(1))
+            match_age = re.search(r"(\d{1,2})\s*tuổi", msg_lower)
+            if match_age:
+                profile.setdefault("pending_group_details", {})["age_years"] = int(match_age.group(1))
+
+
+    # Hồ sơ tuổi/chiều cao thực được ưu tiên cho cả tính vé và kiểm tra an toàn.
+    explicit_members = re.findall(
+        r"(\d{1,3})\s*tuổi\s*[,;/-]?\s*(?:cao\s*)?(\d{2,3})\s*cm",
+        msg_lower,
+    )
+    explicit_members += [
+        (age, height)
+        for height, age in re.findall(
+            r"(?:cao\s*)?(\d{2,3})\s*cm\s*[,;/-]?\s*(\d{1,3})\s*tuổi",
+            msg_lower,
+        )
+    ]
+    declared_counts = re.findall(
+        r"(\d+)\s*(?:người lớn|trẻ em|bé dưới 100|bé nhỏ|người cao tuổi|người già)",
+        msg_lower,
+    )
+    declared_size = sum(map(int, declared_counts))
+    if is_hitl_summary and explicit_members and (not declared_size or len(explicit_members) == declared_size):
+        profile["group_members"] = [
+            {"member_id": f"member_{index}", "age_years": int(age), "height_cm": int(height)}
+            for index, (age, height) in enumerate(explicit_members, 1)
+        ]
+        profile["ticket_groups"] = members_to_ticket_groups(profile["group_members"])
+
+    # Bổ trợ trích xuất ticket_groups theo chính sách vé VinWonders (đặc biệt khi user chọn từ ClarificationWizard hoặc trả lời HITL)
+    if use_rule_parser and not profile.get("group_members"):
+        parsed_groups: dict[str, int] = {}
+        # Parse người lớn (cao từ 140cm trở lên)
+        m_adult = re.search(r"(\d+)\s*(?:người lớn|khách cao từ 140|nguoi lon|adult)", msg_lower)
+        if m_adult:
+            parsed_groups["adult_140cm_plus"] = int(m_adult.group(1))
+
+        # Parse trẻ em (cao từ 100cm đến dưới 140cm)
+        m_child = re.search(
+            r"(\d+)\s*(?:trẻ em|tre em|child)(?![^,+\n]*(?:dưới 100|dưới 1m))",
+            msg_lower,
+        )
+        if m_child:
+            parsed_groups["child_100_to_under_140cm"] = int(m_child.group(1))
+
+        # Parse bé dưới 100cm (miễn phí vé theo quy định)
+        m_free = re.search(
+            r"(\d+)\s*(?:bé nhỏ|bé dưới 100|trẻ em dưới 100|dưới 100\s*cm|dưới 1m|tre nho)",
+            msg_lower,
+        )
+        if m_free:
+            parsed_groups["free_under_100cm"] = int(m_free.group(1))
+
+        # Parse người cao tuổi (từ 60 tuổi trở lên)
+        m_senior = re.search(r"(\d+)\s*(?:người cao tuổi|người già|từ 60 tuổi|trên 60 tuổi|cao tuoi|senior)", msg_lower)
+        if m_senior:
+            parsed_groups["senior_60_plus"] = int(m_senior.group(1))
+
+        if parsed_groups:
+            profile["ticket_groups"] = parsed_groups
+            profile["group_members"] = ticket_groups_to_members(parsed_groups)
+            profile.setdefault("pending_group_details", {})["group_size"] = sum(parsed_groups.values())
+
+    # Khi không có cơ cấu vé, dùng cận dưới mà khách đã chọn làm ước lượng an toàn cho cả đoàn.
+    if not profile.get("group_members"):
         pending = profile.get("pending_group_details", {})
         group_size = pending.get("group_size")
         min_age = pending.get("age_years")
@@ -292,28 +420,43 @@ def extract_or_update_request(
                 "group_size": int(group_size),
                 "minimum_age_years": int(min_age),
                 "minimum_height_cm": int(min_height),
+                "is_safe_estimate": True,
             }
-        if intent_type not in {"general_chat", "out_of_scope", "too_ambiguous"}:
-            if not profile.get("group_members"):
-                missing_fields.append("thông_tin_thành_viên")
+
+    if is_hitl_summary:
+        activity_count = re.search(r"(\d+)\s*(?:điểm|trò(?:\s+chơi)?)", msg_lower)
+        if activity_count:
+            profile.setdefault("hard_constraints", {})["min_activity_count"] = int(activity_count.group(1))
+            profile.pop("needs_activity_count", None)
+    if intent_type not in {"general_chat", "out_of_scope", "too_ambiguous"}:
+        if not profile.get("group_members"):
+            missing_fields.append("thông_tin_thành_viên")
 
     if profile.get("needs_activity_count"):
         missing_fields.append("số_điểm_mong_muốn")
 
-    if not profile.get("start_at") or not profile.get("end_by"):
-        explicit_window = re.search(
-            r"(?:từ\s*)?(\d{1,2})(?::(\d{2}))?\s*h?\s*(?:đến|tới|-|–)\s*(\d{1,2})(?::(\d{2}))?\s*h?",
-            msg_lower,
-        )
-        if explicit_window:
-            start_hour, start_minute, end_hour, end_minute = explicit_window.groups()
-            profile["start_at"] = f"{visit_date.isoformat()}T{int(start_hour):02d}:{int(start_minute or 0):02d}:00+07:00"
-            profile["end_by"] = f"{visit_date.isoformat()}T{int(end_hour):02d}:{int(end_minute or 0):02d}:00+07:00"
-        elif "cả ngày" in msg_lower:
+    if use_rule_parser and (not profile.get("start_at") or not profile.get("end_by")):
+        tw = parse_time_window(msg_lower)
+        if tw:
+            sh, sm, eh, em = tw
+            profile["start_at"] = f"{visit_date.isoformat()}T{sh:02d}:{sm:02d}:00+07:00"
+            profile["end_by"] = f"{visit_date.isoformat()}T{eh:02d}:{em:02d}:00+07:00"
+        elif "cả ngày" in msg_lower or "ca ngay" in msg_lower:
             profile["start_at"] = f"{visit_date.isoformat()}T09:00:00+07:00"
             profile["end_by"] = f"{visit_date.isoformat()}T20:00:00+07:00"
-        elif intent_type not in {"general_chat", "out_of_scope", "too_ambiguous"}:
-            missing_fields.append("khung_giờ_tham_quan")
+        elif "sau 16" in msg_lower or "sau 16:00" in msg_lower or "vé chiều" in msg_lower or "ve chieu" in msg_lower:
+            profile["start_at"] = f"{visit_date.isoformat()}T16:00:00+07:00"
+            profile["end_by"] = f"{visit_date.isoformat()}T20:00:00+07:00"
+        elif profile.get("pending_duration_hours") and profile.get("start_at") and not profile.get("end_by"):
+            st_dt = datetime.fromisoformat(profile["start_at"])
+            dur = profile["pending_duration_hours"]
+            profile["end_by"] = (st_dt + timedelta(hours=dur)).isoformat()
+
+    if (
+        intent_type not in {"general_chat", "out_of_scope", "too_ambiguous"}
+        and (not profile.get("start_at") or not profile.get("end_by"))
+    ):
+        missing_fields.append("khung_giờ_tham_quan")
 
     # Mặc định các thông số tiêu chuẩn nếu chưa có
     if profile.get("start_node_id") in {None, "start_sea_hub"}:
@@ -354,7 +497,7 @@ def extract_or_update_request(
         }
 
     clarification = None
-    if missing_fields and is_llm_available():
+    if missing_fields and llm_enabled:
         try:
             clarification = generate_hitl_questions_with_llm(user_message, profile, missing_fields)
         except Exception as e:
@@ -411,161 +554,12 @@ def extract_or_update_request(
     is_complete = len(missing_fields) == 0 and intent_type in {"plan_itinerary", "adjust_plan"}
     return profile, is_complete, missing_fields, intent_type, routing
 
-
-
-def check_general_trip_request(user_message: str) -> dict[str, Any] | None:
-    import unicodedata
-    msg_raw = user_message.lower()
-    # Chuẩn hóa không dấu để so khớp linh hoạt
-    nfkd = unicodedata.normalize('NFKD', msg_raw)
-    msg_norm = "".join([c for c in nfkd if not unicodedata.combining(c)]).replace('đ', 'd').replace('Đ', 'D').lower()
-
-    trip_keywords = [
-        "lich trinh", "ke hoach", "len lich", "chuyen di", "du lich", "lo trinh",
-        "goi y", "chi duong", "itinerary", "tour", "tham quan", "kham pha",
-    ]
-    has_keyword = any(k in msg_norm for k in trip_keywords)
-
-    dest_map = {
-        "da lat": "Đà Lạt",
-        "ha noi": "Hà Nội",
-        "da nang": "Đà Nẵng",
-        "phu quoc": "Phú Quốc",
-        "nha trang": "Nha Trang",
-        "sapa": "Sa Pa",
-        "ha long": "Hạ Long",
-        "hoi an": "Hội An",
-        "hue": "Huế",
-        "vung tau": "Vũng Tàu",
-        "quy nhon": "Quy Nhơn",
-        "sai gon": "Sài Gòn",
-        "ho chi minh": "Hồ Chí Minh",
-        "ninh binh": "Ninh Bình",
-    }
-    detected_dest = None
-    for d_key, d_name in dest_map.items():
-        if d_key in msg_norm:
-            detected_dest = d_name
-            break
-
-    if not detected_dest and has_keyword:
-        dest_match = re.search(r"(?:di|tai|o|kham pha|tham quan)\s+([a-z\s]+?)(?:\s+\d+\s+ngay|\s+bang|\s*$)", msg_norm)
-        if dest_match:
-            candidate = dest_match.group(1).strip()
-            if candidate and len(candidate.split()) <= 4 and candidate not in {"choi", "vui choi", "dau", "gi", "nghi ngoi"}:
-                detected_dest = candidate.title()
-
-    if not detected_dest:
-        return None
-
-    if not has_keyword and not any(w in msg_norm for w in ["may ngay", "ngay", "di dau", "choi gi", "tham quan"]):
-        return None
-
-    days = 1
-    days_match = re.search(r"(\d+)\s*ngay", msg_norm)
-    if days_match:
-        days = max(1, min(7, int(days_match.group(1))))
-
-    mode = "driving"
-    if any(w in msg_norm for w in ["di bo", "dao bo", "walking"]):
-        mode = "walking"
-    elif any(w in msg_norm for w in ["xe dap", "dap xe", "cycling"]):
-        mode = "cycling"
-
-    return {
-        "destination": detected_dest,
-        "days": days,
-        "travel_mode": mode,
-        "preferences": "tham quan, ẩm thực, trải nghiệm",
-    }
-
-
-def handle_a1_trip_planning(session_id: str, turn_id: str, trip_req: dict[str, Any]) -> tuple[str, list[dict[str, Any]]]:
-    t_a1 = time.time()
-    record_event(
-        session_id=session_id,
-        turn_id=turn_id,
-        event_type="a0_call_a1",
-        sender="A0",
-        receiver="A1",
-        summary=f"A0 điều phối Agent A1 (Planner Specialist) lập lịch trình du lịch '{trip_req['destination']}' ({trip_req['days']} ngày, {trip_req['travel_mode']}).",
-        payload=trip_req,
-        status="info",
-    )
-
-    from agents.a1.server import plan_trip_itinerary_logic
-    trip_result = plan_trip_itinerary_logic(trip_req)
-    a1_dur = int((time.time() - t_a1) * 1000)
-
-    trip_plans: list[dict[str, Any]] = []
-    for d_idx, day in enumerate(trip_result.get("days", []), 1):
-        day_stops = day.get("stops", [])
-        total_dur = sum(s.get("duration_minutes", 60) for s in day_stops)
-        legs = [
-            {
-                "step": s_idx + 1,
-                "service_id": f"stop_{d_idx}_{s_idx+1}",
-                "service_name": s["name"],
-                "node_id": f"node_{d_idx}_{s_idx+1}",
-                "lat": s.get("lat"),
-                "lng": s.get("lng"),
-                "arrival_time": s.get("time", "08:00"),
-                "start_time": s.get("time", "08:00"),
-                "end_time": s.get("time", "09:00"),
-                "walk_from_prev_minutes": 15,
-                "wait_minutes": 0,
-                "activity_duration_minutes": s.get("duration_minutes", 60),
-                "cost_vnd": 0,
-                "indoor": False,
-                "note": s.get("note", ""),
-            }
-            for s_idx, s in enumerate(day_stops)
-        ]
-        trip_plans.append({
-            "plan_id": f"trip_plan_{d_idx}",
-            "style": trip_result.get("travel_mode", "driving"),
-            "style_label": f"{day.get('day_label', f'Ngày {d_idx}')}: {trip_result.get('trip_title')}",
-            "total_duration_minutes": total_dur,
-            "end_buffer_minutes": 30,
-            "total_cost_vnd": 0,
-            "start_node_id": "start",
-            "end_node_id": "end",
-            "return_arrival_time": day_stops[-1].get("time", "19:00") if day_stops else "18:00",
-            "legs": legs,
-            "stops": day_stops,
-            "travel_mode": trip_result.get("travel_mode", "driving"),
-            "service_ids": [f"stop_{d_idx}_{s_idx+1}" for s_idx in range(len(day_stops))],
-            "rationale": f"Lịch trình {day.get('day_label')} với {len(day_stops)} điểm dừng tối ưu toạ độ GPS do Agent A1 lập.",
-        })
-
-    reply = (
-        f"Agent A1 (Planner Specialist) đã thiết kế lịch trình cho chuyến đi **{trip_result.get('trip_title')}** "
-        f"({trip_req['days']} ngày, phương tiện: {trip_result.get('travel_mode')}).\n\n"
-        f"Bản đồ tuyến đường và các điểm đến đã được định vị toạ độ GPS chính xác và hiển thị trực quan ngay bên dưới!"
-    )
-    add_message(session_id, turn_id, "assistant", reply)
-    save_plans(session_id, turn_id, trip_plans)
-    record_event(
-        session_id=session_id,
-        turn_id=turn_id,
-        event_type="a1_result",
-        sender="A1",
-        receiver="A0",
-        summary=f"A1 hoàn thành lịch trình du lịch '{trip_result.get('trip_title')}' với {len(trip_plans)} ngày.",
-        payload={"trip": trip_result, "plans_count": len(trip_plans)},
-        duration_ms=a1_dur,
-        status="success",
-    )
-    return reply, trip_plans
-
-
 # --- State Machine Điều phối chính ---
 
 def run_orchestration(
     session_id: str,
     user_message: str,
     scenario_override: str | None = None,
-    preset_data: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Hàm điều phối tuần tự của Agent A0:
     User Message -> Intent -> (Hỏi nếu thiếu) -> A2 (Crowd) -> Memory -> A1 (Planner) -> Validator -> User Reply.
@@ -592,25 +586,15 @@ def run_orchestration(
     # H3: Sanitize user input trước khi xử lý
     user_message = sanitize_user_input(user_message)
 
-    # 2. Kiểm tra nếu là yêu cầu lập lịch trình du lịch tổng quát cho Agent A1
-    trip_req = check_general_trip_request(user_message)
-    if trip_req:
-        reply, trip_plans = handle_a1_trip_planning(session_id, turn_id, trip_req)
-        return {
-            "session_id": session_id,
-            "turn_id": turn_id,
-            "status": "completed",
-            "reply": reply,
-            "plans": trip_plans,
-            "routing": {"intent": "plan_itinerary", "status": "ready"},
-        }
+    # Dọn dẹp pending state cũ nếu có
+    if session.get("profile"):
+        session["profile"].pop("_pending_trip", None)
 
     # 3. Phân loại yêu cầu & Chuẩn hóa dữ liệu
     t_start = time.time()
     updated_profile, is_complete, missing_fields, intent_type, routing = extract_or_update_request(
         user_message=user_message,
         current_session=session,
-        preset_data=preset_data,
     )
     extract_duration = int((time.time() - t_start) * 1000)
 
@@ -752,7 +736,7 @@ def run_orchestration(
     a2_duration = int((time.time() - t_a2) * 1000)
 
     if a2_resp.get("status") != "completed":
-        err_msg = f"Agent A2 gặp lỗi khi phân tích."
+        err_msg = "Agent A2 gặp lỗi khi phân tích."
         record_event(
             session_id=session_id,
             turn_id=turn_id,
@@ -942,7 +926,7 @@ def run_orchestration(
                 f"**{p['style_label']}**:\n"
                 f"• Lộ trình: {' ➔ '.join(leg['service_name'] for leg in p['legs'])}\n"
                 f"• Tổng thời gian dự kiến: **{p['total_duration_minutes']} phút** (kết thúc và về lại lúc {p['return_arrival_time']})\n"
-                f"• Thời gian dự phòng trước 16:00: **{p['end_buffer_minutes']} phút**\n"
+                f"• Thời gian dự phòng: **{p['end_buffer_minutes']} phút**\n"
                 f"• Tổng chi phí đoàn: **{p['total_cost_vnd']:,} VNĐ**\n"
                 f"• Lý do: {p['rationale']}\n"
             )
@@ -980,7 +964,6 @@ def run_orchestration_stream(
     session_id: str,
     user_message: str,
     scenario_override: str | None = None,
-    preset_data: dict[str, Any] | None = None,
 ) -> Any:
     """Hàm điều phối tuần tự của Agent A0 dưới dạng SSE Stream."""
     turn_id = f"turn_{uuid.uuid4().hex[:6]}"
@@ -1004,27 +987,9 @@ def run_orchestration_stream(
     # H3: Sanitize user input trước khi xử lý
     user_message = sanitize_user_input(user_message)
 
-    # Kiểm tra yêu cầu lập lịch trình du lịch tổng quát cho Agent A1
-    trip_req = check_general_trip_request(user_message)
-    if trip_req:
-        dest_name = trip_req.get("destination", "")
-        thinking_payload = {
-            "stage": "planner",
-            "message": f"Agent A0 đang điều phối Agent A1 (Planner Specialist) lập lịch trình du lịch {dest_name}...",
-        }
-        yield f"event: thinking\ndata: {json.dumps(thinking_payload, ensure_ascii=False)}\n\n"
-        reply, trip_plans = handle_a1_trip_planning(session_id, turn_id, trip_req)
-        yield f"event: token\ndata: {json.dumps({'token': reply}, ensure_ascii=False)}\n\n"
-        done_payload = {
-            "session_id": session_id,
-            "turn_id": turn_id,
-            "status": "completed",
-            "reply": reply,
-            "plans": trip_plans,
-            "events": get_events(session_id),
-        }
-        yield f"event: done\ndata: {json.dumps(done_payload, ensure_ascii=False)}\n\n"
-        return
+    # Dọn dẹp pending state cũ nếu có
+    if session.get("profile"):
+        session["profile"].pop("_pending_trip", None)
 
     yield f"event: thinking\ndata: {json.dumps({'stage': 'intent', 'message': 'Agent A0 đang phân tích nội dung và ràng buộc...'}, ensure_ascii=False)}\n\n"
 
@@ -1032,7 +997,6 @@ def run_orchestration_stream(
     updated_profile, is_complete, missing_fields, intent_type, routing = extract_or_update_request(
         user_message=user_message,
         current_session=session,
-        preset_data=preset_data,
     )
     extract_duration = int((time.time() - t_start) * 1000)
 
@@ -1359,7 +1323,7 @@ def run_orchestration_stream(
                 f"### {p['style_label']}\n"
                 f"- **Lộ trình:** {' ➔ '.join(leg['service_name'] for leg in p['legs'])}\n"
                 f"- **Tổng thời gian dự kiến:** **{p['total_duration_minutes']} phút** (kết thúc lúc {p['return_arrival_time']})\n"
-                f"- **Thời gian dự phòng trước 16:00:** **{p['end_buffer_minutes']} phút**\n"
+                f"- **Thời gian dự phòng:** **{p['end_buffer_minutes']} phút**\n"
                 f"- **Tổng chi phí đoàn:** **{p['total_cost_vnd']:,} VNĐ**\n"
                 f"- **Lý do:** {p['rationale']}\n"
             )

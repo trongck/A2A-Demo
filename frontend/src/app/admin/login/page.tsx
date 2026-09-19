@@ -1,10 +1,13 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { getApiBase } from "../config";
 
 export default function AdminLoginPage() {
-  const [username, setUsername] = useState("ai20k");
-  const [password, setPassword] = useState("123456");
+  const router = useRouter();
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [showPw, setShowPw] = useState(false);
@@ -14,10 +17,10 @@ export default function AdminLoginPage() {
     if (typeof window !== "undefined") {
       const token = localStorage.getItem("admin_token");
       if (token) {
-        window.location.href = "/admin/dashboard";
+        router.replace("/admin/dashboard");
       }
     }
-  }, []);
+  }, [router]);
 
   async function handleLogin(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -50,19 +53,13 @@ export default function AdminLoginPage() {
       localStorage.setItem("admin_token", data.access_token);
       localStorage.setItem("admin_user", JSON.stringify(data.user));
       // Điều hướng trực tiếp để tải mới trạng thái phiên
-      window.location.href = "/admin/dashboard";
-    } catch (err: any) {
+      router.replace("/admin/dashboard");
+    } catch (err: unknown) {
       console.error("Lỗi yêu cầu đăng nhập:", err);
       setError("Không thể kết nối đến máy chủ Backend (Cổng 8000). Vui lòng thử lại sau.");
     } finally {
       setLoading(false);
     }
-  }
-
-  function handleQuickFill() {
-    setUsername("ai20k");
-    setPassword("123456");
-    setError("");
   }
 
   return (
@@ -81,9 +78,11 @@ export default function AdminLoginPage() {
           {/* Logo & Tiêu đề được gom trọn vẹn vào bên trong Form */}
           <div className="text-center mb-7">
             <div className="flex justify-center mb-3">
-              <img
+              <Image
                 src="/logo.png"
                 alt="VinWonders Logo"
+                width={260}
+                height={64}
                 className="h-16 w-auto object-contain"
               />
             </div>
@@ -107,7 +106,7 @@ export default function AdminLoginPage() {
                 autoComplete="username"
                 value={username}
                 onChange={e => setUsername(e.target.value)}
-                placeholder="Nhập tên đăng nhập (ví dụ: ai20k)"
+                placeholder="Nhập tên đăng nhập"
                 className="w-full px-4 py-3 bg-white border border-slate-300 rounded-xl text-slate-900 text-sm placeholder-slate-400 outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 transition-all font-medium shadow-sm"
               />
             </div>
@@ -124,7 +123,7 @@ export default function AdminLoginPage() {
                   autoComplete="current-password"
                   value={password}
                   onChange={e => setPassword(e.target.value)}
-                  placeholder="Nhập mật khẩu (ví dụ: 123456)"
+                  placeholder="Nhập mật khẩu"
                   className="w-full px-4 py-3 bg-white border border-slate-300 rounded-xl text-slate-900 text-sm placeholder-slate-400 outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 transition-all pr-14 font-medium shadow-sm"
                 />
                 <button
@@ -154,17 +153,6 @@ export default function AdminLoginPage() {
               {loading ? "Đang xác thực..." : "Đăng nhập hệ thống"}
             </button>
           </form>
-
-          {/* Nút điền nhanh tài khoản mẫu (không dùng icon) */}
-          <div className="mt-4">
-            <button
-              type="button"
-              onClick={handleQuickFill}
-              className="w-full py-2.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl text-slate-700 text-xs font-semibold transition-all text-center cursor-pointer"
-            >
-              Điền sẵn tài khoản mẫu: ai20k / 123456
-            </button>
-          </div>
         </div>
       </div>
     </div>
