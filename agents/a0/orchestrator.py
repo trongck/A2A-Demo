@@ -336,8 +336,29 @@ def extract_or_update_request(
         match_age = re.search(r"(\d{1,2})\s*tuổi", msg_lower)
         if match_age:
             profile.setdefault("pending_group_details", {})["age_years"] = int(match_age.group(1))
+
+        # Chỉ cần hồ sơ an toàn đại diện, không bắt khách khai từng thành viên.
+        pending = profile.get("pending_group_details", {})
+        group_size = pending.get("group_size")
+        min_age = pending.get("age_years")
+        min_height = pending.get("height_cm")
+        if group_size and min_age is not None and min_height is not None:
+            profile["group_members"] = [
+                {
+                    "member_id": f"member_{index}",
+                    "age_years": int(min_age),
+                    "height_cm": int(min_height),
+                }
+                for index in range(1, int(group_size) + 1)
+            ]
+            profile["group_profile_ranges"] = {
+                "group_size": int(group_size),
+                "minimum_age_years": int(min_age),
+                "minimum_height_cm": int(min_height),
+            }
         if intent_type not in {"general_chat", "out_of_scope", "too_ambiguous"}:
-            missing_fields.append("thông_tin_thành_viên")
+            if not profile.get("group_members"):
+                missing_fields.append("thông_tin_thành_viên")
 
     if not profile.get("start_at") or not profile.get("end_by"):
         explicit_window = re.search(

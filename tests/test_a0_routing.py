@@ -108,6 +108,32 @@ def test_ready_request_keeps_a2_then_a1_handoff(monkeypatch):
     assert routing["forward_payload"] == profile
 
 
+def test_group_uses_one_representative_safety_range(monkeypatch):
+    monkeypatch.setattr(orchestrator, "is_llm_available", lambda: True)
+    monkeypatch.setattr(orchestrator, "classify_and_extract_intent_with_llm", lambda *_: {
+        "status": "ready",
+        "intent": "plan_itinerary",
+        "entities": {
+            "group_size": 4,
+            "age_years": 12,
+            "height_cm": 130,
+            "start_time": "14:00",
+            "end_time": "17:00",
+        },
+    })
+
+    profile, complete, missing, _, _ = orchestrator.extract_or_update_request(
+        "Nhóm 4 người đều thuộc khoảng an toàn từ 12 tuổi và 130 cm, đi 14:00-17:00",
+        {"profile": {}},
+    )
+
+    assert complete is True
+    assert missing == []
+    assert len(profile["group_members"]) == 4
+    assert all(member["age_years"] == 12 for member in profile["group_members"])
+    assert all(member["height_cm"] == 130 for member in profile["group_members"])
+
+
 def test_hitl_summary_is_parsed_without_llm(monkeypatch):
     monkeypatch.setattr(orchestrator, "is_llm_available", lambda: False)
 
