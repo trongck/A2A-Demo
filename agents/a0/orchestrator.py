@@ -41,10 +41,12 @@ from shared.memory.database import (
 from shared.data_adapter import DATA_REVISION, START_NODE_ID, load_ticket_policy, ticket_groups_to_members
 
 
+import os
+
 logger = get_logger("a0.orchestrator")
 
-A2_URL = "http://127.0.0.1:8002"
-A1_URL = "http://127.0.0.1:8001"
+A2_URL = os.environ.get("A2_URL", "http://127.0.0.1:8002")
+A1_URL = os.environ.get("A1_URL", "http://127.0.0.1:8001")
 
 
 
@@ -411,6 +413,152 @@ def extract_or_update_request(
 
 
 
+def check_general_trip_request(user_message: str) -> dict[str, Any] | None:
+    import unicodedata
+    msg_raw = user_message.lower()
+    # Chuẩn hóa không dấu để so khớp linh hoạt
+    nfkd = unicodedata.normalize('NFKD', msg_raw)
+    msg_norm = "".join([c for c in nfkd if not unicodedata.combining(c)]).replace('đ', 'd').replace('Đ', 'D').lower()
+
+    trip_keywords = [
+        "lich trinh", "ke hoach", "len lich", "chuyen di", "du lich", "lo trinh",
+        "goi y", "chi duong", "itinerary", "tour", "tham quan", "kham pha",
+    ]
+    has_keyword = any(k in msg_norm for k in trip_keywords)
+
+    dest_map = {
+        "da lat": "Đà Lạt",
+        "ha noi": "Hà Nội",
+        "da nang": "Đà Nẵng",
+        "phu quoc": "Phú Quốc",
+        "nha trang": "Nha Trang",
+        "sapa": "Sa Pa",
+        "ha long": "Hạ Long",
+        "hoi an": "Hội An",
+        "hue": "Huế",
+        "vung tau": "Vũng Tàu",
+        "quy nhon": "Quy Nhơn",
+        "sai gon": "Sài Gòn",
+        "ho chi minh": "Hồ Chí Minh",
+        "ninh binh": "Ninh Bình",
+    }
+    detected_dest = None
+    for d_key, d_name in dest_map.items():
+        if d_key in msg_norm:
+            detected_dest = d_name
+            break
+
+    if not detected_dest and has_keyword:
+        dest_match = re.search(r"(?:di|tai|o|kham pha|tham quan)\s+([a-z\s]+?)(?:\s+\d+\s+ngay|\s+bang|\s*$)", msg_norm)
+        if dest_match:
+            candidate = dest_match.group(1).strip()
+            if candidate and len(candidate.split()) <= 4 and candidate not in {"choi", "vui choi", "dau", "gi", "nghi ngoi"}:
+                detected_dest = candidate.title()
+
+    if not detected_dest:
+        return None
+
+    if not has_keyword and not any(w in msg_norm for w in ["may ngay", "ngay", "di dau", "choi gi", "tham quan"]):
+        return None
+
+    days = 1
+    days_match = re.search(r"(\d+)\s*ngay", msg_norm)
+    if days_match:
+        days = max(1, min(7, int(days_match.group(1))))
+
+    mode = "driving"
+    if any(w in msg_norm for w in ["di bo", "dao bo", "walking"]):
+        mode = "walking"
+    elif any(w in msg_norm for w in ["xe dap", "dap xe", "cycling"]):
+        mode = "cycling"
+
+    return {
+        "destination": detected_dest,
+        "days": days,
+        "travel_mode": mode,
+        "preferences": "tham quan, ẩm thực, trải nghiệm",
+    }
+
+
+def handle_a1_trip_planning(session_id: str, turn_id: str, trip_req: dict[str, Any]) -> tuple[str, list[dict[str, Any]]]:
+    t_a1 = time.time()
+    record_event(
+        session_id=session_id,
+        turn_id=turn_id,
+        event_type="a0_call_a1",
+        sender="A0",
+        receiver="A1",
+        summary=f"A0 điều phối Agent A1 (Planner Specialist) lập lịch trình du lịch '{trip_req['destination']}' ({trip_req['days']} ngày, {trip_req['travel_mode']}).",
+        payload=trip_req,
+        status="info",
+    )
+
+    from agents.a1.server import plan_trip_itinerary_logic
+    trip_result = plan_trip_itinerary_logic(trip_req)
+    a1_dur = int((time.time() - t_a1) * 1000)
+
+    trip_plans: list[dict[str, Any]] = []
+    for d_idx, day in enumerate(trip_result.get("days", []), 1):
+        day_stops = day.get("stops", [])
+        total_dur = sum(s.get("duration_minutes", 60) for s in day_stops)
+        legs = [
+            {
+                "step": s_idx + 1,
+                "service_id": f"stop_{d_idx}_{s_idx+1}",
+                "service_name": s["name"],
+                "node_id": f"node_{d_idx}_{s_idx+1}",
+                "lat": s.get("lat"),
+                "lng": s.get("lng"),
+                "arrival_time": s.get("time", "08:00"),
+                "start_time": s.get("time", "08:00"),
+                "end_time": s.get("time", "09:00"),
+                "walk_from_prev_minutes": 15,
+                "wait_minutes": 0,
+                "activity_duration_minutes": s.get("duration_minutes", 60),
+                "cost_vnd": 0,
+                "indoor": False,
+                "note": s.get("note", ""),
+            }
+            for s_idx, s in enumerate(day_stops)
+        ]
+        trip_plans.append({
+            "plan_id": f"trip_plan_{d_idx}",
+            "style": trip_result.get("travel_mode", "driving"),
+            "style_label": f"{day.get('day_label', f'Ngày {d_idx}')}: {trip_result.get('trip_title')}",
+            "total_duration_minutes": total_dur,
+            "end_buffer_minutes": 30,
+            "total_cost_vnd": 0,
+            "start_node_id": "start",
+            "end_node_id": "end",
+            "return_arrival_time": day_stops[-1].get("time", "19:00") if day_stops else "18:00",
+            "legs": legs,
+            "stops": day_stops,
+            "travel_mode": trip_result.get("travel_mode", "driving"),
+            "service_ids": [f"stop_{d_idx}_{s_idx+1}" for s_idx in range(len(day_stops))],
+            "rationale": f"Lịch trình {day.get('day_label')} với {len(day_stops)} điểm dừng tối ưu toạ độ GPS do Agent A1 lập.",
+        })
+
+    reply = (
+        f"Agent A1 (Planner Specialist) đã thiết kế lịch trình cho chuyến đi **{trip_result.get('trip_title')}** "
+        f"({trip_req['days']} ngày, phương tiện: {trip_result.get('travel_mode')}).\n\n"
+        f"Bản đồ tuyến đường và các điểm đến đã được định vị toạ độ GPS chính xác và hiển thị trực quan ngay bên dưới!"
+    )
+    add_message(session_id, turn_id, "assistant", reply)
+    save_plans(session_id, turn_id, trip_plans)
+    record_event(
+        session_id=session_id,
+        turn_id=turn_id,
+        event_type="a1_result",
+        sender="A1",
+        receiver="A0",
+        summary=f"A1 hoàn thành lịch trình du lịch '{trip_result.get('trip_title')}' với {len(trip_plans)} ngày.",
+        payload={"trip": trip_result, "plans_count": len(trip_plans)},
+        duration_ms=a1_dur,
+        status="success",
+    )
+    return reply, trip_plans
+
+
 # --- State Machine Điều phối chính ---
 
 def run_orchestration(
@@ -444,7 +592,20 @@ def run_orchestration(
     # H3: Sanitize user input trước khi xử lý
     user_message = sanitize_user_input(user_message)
 
-    # 2. Phân loại yêu cầu & Chuẩn hóa dữ liệu
+    # 2. Kiểm tra nếu là yêu cầu lập lịch trình du lịch tổng quát cho Agent A1
+    trip_req = check_general_trip_request(user_message)
+    if trip_req:
+        reply, trip_plans = handle_a1_trip_planning(session_id, turn_id, trip_req)
+        return {
+            "session_id": session_id,
+            "turn_id": turn_id,
+            "status": "completed",
+            "reply": reply,
+            "plans": trip_plans,
+            "routing": {"intent": "plan_itinerary", "status": "ready"},
+        }
+
+    # 3. Phân loại yêu cầu & Chuẩn hóa dữ liệu
     t_start = time.time()
     updated_profile, is_complete, missing_fields, intent_type, routing = extract_or_update_request(
         user_message=user_message,
@@ -842,6 +1003,28 @@ def run_orchestration_stream(
 
     # H3: Sanitize user input trước khi xử lý
     user_message = sanitize_user_input(user_message)
+
+    # Kiểm tra yêu cầu lập lịch trình du lịch tổng quát cho Agent A1
+    trip_req = check_general_trip_request(user_message)
+    if trip_req:
+        dest_name = trip_req.get("destination", "")
+        thinking_payload = {
+            "stage": "planner",
+            "message": f"Agent A0 đang điều phối Agent A1 (Planner Specialist) lập lịch trình du lịch {dest_name}...",
+        }
+        yield f"event: thinking\ndata: {json.dumps(thinking_payload, ensure_ascii=False)}\n\n"
+        reply, trip_plans = handle_a1_trip_planning(session_id, turn_id, trip_req)
+        yield f"event: token\ndata: {json.dumps({'token': reply}, ensure_ascii=False)}\n\n"
+        done_payload = {
+            "session_id": session_id,
+            "turn_id": turn_id,
+            "status": "completed",
+            "reply": reply,
+            "plans": trip_plans,
+            "events": get_events(session_id),
+        }
+        yield f"event: done\ndata: {json.dumps(done_payload, ensure_ascii=False)}\n\n"
+        return
 
     yield f"event: thinking\ndata: {json.dumps({'stage': 'intent', 'message': 'Agent A0 đang phân tích nội dung và ràng buộc...'}, ensure_ascii=False)}\n\n"
 

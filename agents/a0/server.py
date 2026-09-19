@@ -5,8 +5,11 @@ Cung cấp API điều phối tác tử A0, quản lý session và tích hợp v
 Bám sát mục 2, 4, 6 và 7 của V-AI-Implementation-Plan.md.
 """
 
+import os
 import secrets
+import time
 from typing import Any
+import httpx
 
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -24,6 +27,7 @@ from shared.security import (
     validate_session_id,
     MAX_MESSAGE_LENGTH,
 )
+from shared.security.config import V_AI_INTERNAL_SECRET, INTERNAL_AUTH_ENABLED
 
 from agents.a0.orchestrator import run_orchestration, run_orchestration_stream
 from agents.a0.admin_server import admin_router
@@ -33,6 +37,7 @@ from shared.memory.database import (
     get_messages,
     get_or_create_session,
     init_db,
+    record_event,
     update_session,
 )
 from shared.data_adapter import DATA_REVISION, load_v2_data
@@ -186,3 +191,4 @@ def handle_chat_stream(req: ChatRequest):
 if __name__ == "__main__":
     print("Khởi động Agent A0 Orchestrator Server tại http://127.0.0.1:8000...")
     uvicorn.run(app, host="127.0.0.1", port=8000, log_level="info")
+

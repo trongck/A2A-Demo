@@ -6,6 +6,7 @@ Bám sát mục 4 và mục 7 của V-AI-Implementation-Plan.md.
 """
 
 import json
+import os
 import time
 import uuid
 from datetime import datetime
@@ -13,11 +14,9 @@ from pathlib import Path
 from typing import Any
 
 import httpx
+from fastapi import Depends
 from pydantic import BaseModel
 import uvicorn
-
-from shared.security import get_logger, require_internal_secret
-from shared.security.config import V_AI_INTERNAL_SECRET, INTERNAL_AUTH_ENABLED
 
 from a2a.server.agent_execution import AgentExecutor, RequestContext
 from a2a.server.apps import A2AFastAPIApplication
@@ -34,8 +33,11 @@ from a2a.types import (
 )
 from shared.llm import generate_crowd_insight_with_llm, is_llm_available
 from shared.data_adapter import DATA_REVISION
+from shared.security import get_logger, require_internal_secret
+from shared.security.config import V_AI_INTERNAL_SECRET, INTERNAL_AUTH_ENABLED
 
-MCP_URL = "http://127.0.0.1:8003"
+MCP_URL = os.environ.get("MCP_URL", "http://127.0.0.1:8003")
+
 
 logger = get_logger("a2.crowd")
 

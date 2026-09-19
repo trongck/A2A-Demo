@@ -10,10 +10,11 @@ from datetime import datetime, timedelta
 import itertools
 import json
 from pathlib import Path
+import re
 from typing import Any
 
 import httpx
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 import uvicorn
 
 from shared.security import get_logger, require_internal_secret
@@ -34,13 +35,16 @@ from a2a.types import (
 )
 from fastapi import Depends
 from shared.llm import (
+    call_llm,
     generate_plan_rationale_with_llm,
     generate_unfeasible_explanation_with_llm,
     is_llm_available,
 )
 from shared.data_adapter import DATA_REVISION, START_NODE_ID, calculate_entry_ticket, members_to_ticket_groups
 
-MCP_URL = "http://127.0.0.1:8003"
+import os
+
+MCP_URL = os.environ.get("MCP_URL", "http://127.0.0.1:8003")
 
 logger = get_logger("a1.planner")
 
@@ -439,12 +443,15 @@ def plan_itinerary_logic(
 
                 # Chi phí
                 step_cost = 0
+                attr_loc = attr.get("location") or {}
 
                 legs.append({
                     "step": step_idx,
                     "service_id": sid,
                     "service_name": attr.get("name", sid),
                     "node_id": dest_node,
+                    "lat": attr_loc.get("lat"),
+                    "lng": attr_loc.get("lng"),
                     "arrival_time": arrival.strftime("%H:%M"),
                     "start_time": act_start.strftime("%H:%M"),
                     "end_time": act_end.strftime("%H:%M"),
@@ -562,6 +569,19 @@ def plan_itinerary_logic(
             except Exception as e:
                 logger.warning("LLM rationale generation error: %s", e)
 
+        plan_stops = [
+            {
+                "name": leg["service_name"],
+                "lat": leg["lat"],
+                "lng": leg["lng"],
+                "time": leg["arrival_time"],
+                "duration_minutes": leg["activity_duration_minutes"],
+                "note": leg["note"],
+            }
+            for leg in raw["legs"]
+            if leg.get("lat") is not None and leg.get("lng") is not None
+        ]
+
         plan_obj = {
             "plan_id": f"plan_opt_{idx}_{style}",
             "style": style,
@@ -574,6 +594,8 @@ def plan_itinerary_logic(
             "end_node_id": raw["end_node_id"],
             "return_arrival_time": raw["return_arrival_time"],
             "legs": raw["legs"],
+            "stops": plan_stops,
+            "travel_mode": "walking",
             "service_ids": raw["sequence"],
             "rationale": plan_rationale,
         }
@@ -612,6 +634,420 @@ def plan_itinerary_logic(
     }
 
 
+# --- Logic Lập Lịch Trình Du Lịch Tổng Quát & Bản Đồ Số (Agent A1) ---
+
+SYSTEM_PROMPT_ITINERARY = """Bạn là một trợ lý lập kế hoạch du lịch. Nhiệm vụ của bạn là tạo lịch trình chi tiết cho chuyến đi dựa trên yêu cầu của người dùng, và xuất kết quả dưới dạng JSON để hệ thống có thể hiển thị lên bản đồ trực quan kèm chỉ đường.
+
+ĐẦU VÀO bạn sẽ nhận được:
+- Điểm đến / khu vực (ví dụ: Hà Nội, Đà Lạt...)
+- Số ngày
+- Sở thích hoặc loại hình (tham quan, ẩm thực, nghỉ dưỡng...)
+- Phương tiện di chuyển (đi bộ / xe máy / ô tô)
+- (Tùy chọn) ngân sách, số người
+
+YÊU CẦU KHI LẬP LỊCH TRÌNH:
+1. Chọn các địa điểm cụ thể, có thật, theo đúng khu vực yêu cầu — không bịa tên địa điểm.
+2. Với MỖI địa điểm, PHẢI cung cấp toạ độ (lat, lng) chính xác. Nếu không chắc chắn toạ độ, hãy dùng tên địa điểm đầy đủ và rõ ràng nhất có thể để hệ thống geocode sau.
+3. Sắp xếp các điểm theo thứ tự di chuyển hợp lý về mặt địa lý (tránh đi vòng lại), có tính đến giờ mở cửa nếu có thông tin.
+4. Ước lượng thời gian nên dành ở mỗi điểm.
+5. Nếu chuyến đi nhiều ngày, chia rõ theo từng ngày.
+
+ĐỊNH DẠNG ĐẦU RA — CHỈ trả về JSON theo đúng cấu trúc sau, không thêm text giải thích nào khác ngoài JSON:
+
+{
+  "trip_title": "Tên chuyến đi",
+  "travel_mode": "driving" | "walking" | "cycling",
+  "days": [
+    {
+      "day_label": "Ngày 1",
+      "stops": [
+        {
+          "name": "Tên địa điểm",
+          "lat": 21.0285,
+          "lng": 105.8524,
+          "time": "08:00",
+          "duration_minutes": 60,
+          "note": "Mô tả ngắn hoặc lý do nên ghé"
+        }
+      ]
+    }
+  ]
+}
+
+LƯU Ý:
+- Mỗi ngày nên có 3–6 điểm dừng để lịch trình không quá dày hoặc quá thưa.
+- "travel_mode" phải khớp với phương tiện người dùng chọn, vì hệ thống bản đồ sẽ dùng giá trị này để tính tuyến đường và chỉ dẫn phù hợp (ô tô/xe máy dùng "driving", đi bộ dùng "walking").
+- Nếu người dùng không nêu rõ phương tiện, mặc định chọn "driving".
+- Không trả lời bằng markdown code block (không bọc ```), chỉ trả về JSON thuần để hệ thống parse trực tiếp."""
+
+
+class TripPlanRequest(BaseModel):
+    destination: str = Field(..., description="Điểm đến hoặc khu vực, ví dụ: Đà Lạt, Hà Nội, Nha Trang...")
+    days: int = Field(default=1, ge=1, le=7, description="Số ngày chuyến đi")
+    preferences: str = Field(default="tham quan, ẩm thực", description="Sở thích hoặc loại hình chuyến đi")
+    travel_mode: str = Field(default="driving", description="driving | walking | cycling")
+    budget: str | None = Field(default=None, description="Ngân sách dự kiến")
+    people: int | None = Field(default=2, description="Số lượng thành viên trong đoàn")
+
+
+FALLBACK_SAMPLES: dict[str, dict[str, Any]] = {
+    "nha trang": {
+        "trip_title": "Khám Phá VinWonders & Vịnh Biển Nha Trang",
+        "travel_mode": "driving",
+        "days": [
+            {
+                "day_label": "Ngày 1",
+                "stops": [
+                    {
+                        "name": "Ga Cáp Treo VinWonders Nha Trang",
+                        "lat": 12.2023,
+                        "lng": 109.2178,
+                        "time": "08:30",
+                        "duration_minutes": 45,
+                        "note": "Đi cáp treo vượt biển ngắm toàn cảnh vịnh Nha Trang sang đảo Hòn Tre",
+                    },
+                    {
+                        "name": "Thủy Cung VinWonders Nha Trang (Cung Điện Hải Vương)",
+                        "lat": 12.2172,
+                        "lng": 109.2415,
+                        "time": "09:30",
+                        "duration_minutes": 90,
+                        "note": "Khám phá đường hầm sinh vật biển và xem biểu diễn nàng tiên cá",
+                    },
+                    {
+                        "name": "Khu Trò Chơi Cảm Giác Mạnh VinWonders",
+                        "lat": 12.2185,
+                        "lng": 109.2428,
+                        "time": "11:15",
+                        "duration_minutes": 75,
+                        "note": "Trải nghiệm đu quay lộn đầu và tàu lượn siêu tốc mạo hiểm",
+                    },
+                    {
+                        "name": "Nhà Hàng Ẩm Thực VinWonders",
+                        "lat": 12.2168,
+                        "lng": 109.2405,
+                        "time": "12:45",
+                        "duration_minutes": 60,
+                        "note": "Nghỉ trưa và thưởng thức ẩm thực đặc sắc",
+                    },
+                    {
+                        "name": "Công Viên Nước VinWonders Nha Trang",
+                        "lat": 12.2155,
+                        "lng": 109.2435,
+                        "time": "14:00",
+                        "duration_minutes": 120,
+                        "note": "Vui chơi tại vịnh phao nổi và hệ thống máng trượt nước hiện đại",
+                    },
+                    {
+                        "name": "Quảng Trường Thần Thoại - Tata Show",
+                        "lat": 12.2178,
+                        "lng": 109.2412,
+                        "time": "19:15",
+                        "duration_minutes": 60,
+                        "note": "Thưởng thức siêu phẩm trình diễn đa phương tiện thực cảnh hoành tráng",
+                    },
+                ],
+            }
+        ],
+    },
+    "đà lạt": {
+        "trip_title": "Hành Trình Mộng Mơ Đà Lạt 2 Ngày",
+        "travel_mode": "driving",
+        "days": [
+            {
+                "day_label": "Ngày 1",
+                "stops": [
+                    {
+                        "name": "Hồ Xuân Hương",
+                        "lat": 11.9404,
+                        "lng": 108.4452,
+                        "time": "07:30",
+                        "duration_minutes": 45,
+                        "note": "Dạo quanh hồ hít thở không khí se lạnh buổi sớm và ngắm bình minh",
+                    },
+                    {
+                        "name": "Ga Đà Lạt",
+                        "lat": 11.9416,
+                        "lng": 108.4552,
+                        "time": "08:30",
+                        "duration_minutes": 60,
+                        "note": "Nhà ga cổ kính nhất Đông Dương mang phong cách kiến trúc Pháp độc đáo",
+                    },
+                    {
+                        "name": "Vườn Hoa Thành Phố Đà Lạt",
+                        "lat": 11.9515,
+                        "lng": 108.4526,
+                        "time": "10:00",
+                        "duration_minutes": 90,
+                        "note": "Chiêm ngưỡng hàng trăm loài hoa ôn đới rực rỡ sắc màu",
+                    },
+                    {
+                        "name": "Quán Bánh Căn Lệ",
+                        "lat": 11.9362,
+                        "lng": 108.4385,
+                        "time": "12:00",
+                        "duration_minutes": 60,
+                        "note": "Thưởng thức món bánh căn trứng cút xíu mại trứ danh Đà Lạt",
+                    },
+                    {
+                        "name": "Chùa Linh Phước (Chùa Ve Chai)",
+                        "lat": 11.9238,
+                        "lng": 108.4988,
+                        "time": "14:00",
+                        "duration_minutes": 90,
+                        "note": "Công trình Phật giáo kỳ vĩ khảm từ hàng triệu mảnh gốm sành sứ",
+                    },
+                    {
+                        "name": "Chợ Đêm Đà Lạt",
+                        "lat": 11.9429,
+                        "lng": 108.4371,
+                        "time": "18:30",
+                        "duration_minutes": 120,
+                        "note": "Thưởng thức bánh tráng nướng, sữa đậu nành nóng và mua đặc sản",
+                    },
+                ],
+            },
+            {
+                "day_label": "Ngày 2",
+                "stops": [
+                    {
+                        "name": "Đồi Chè Cầu Đất",
+                        "lat": 11.8596,
+                        "lng": 108.5714,
+                        "time": "06:00",
+                        "duration_minutes": 120,
+                        "note": "Săn mây sớm và ngắm những nương chè xanh ngát bạt ngàn",
+                    },
+                    {
+                        "name": "Dinh I Bảo Đại",
+                        "lat": 11.9287,
+                        "lng": 108.4682,
+                        "time": "09:30",
+                        "duration_minutes": 75,
+                        "note": "Dinh thự sang trọng giữa rừng thông cổ thụ của vị vua cuối cùng",
+                    },
+                    {
+                        "name": "Thác Datanla",
+                        "lat": 11.9029,
+                        "lng": 108.4485,
+                        "time": "11:30",
+                        "duration_minutes": 105,
+                        "note": "Trải nghiệm hệ thống xe trượt máng Alpine Coaster xuyên rừng thông mạo hiểm",
+                    },
+                    {
+                        "name": "Hồ Tuyền Lâm & Thiền Viện Trúc Lâm",
+                        "lat": 11.9042,
+                        "lng": 108.4354,
+                        "time": "14:30",
+                        "duration_minutes": 90,
+                        "note": "Không gian thanh tịnh tĩnh lặng bên hồ nước trong xanh",
+                    },
+                ],
+            },
+        ],
+    },
+    "hà nội": {
+        "trip_title": "Dạo Bước Hà Nội Nghìn Năm Văn Hiến",
+        "travel_mode": "walking",
+        "days": [
+            {
+                "day_label": "Ngày 1",
+                "stops": [
+                    {
+                        "name": "Hồ Hoàn Kiếm & Đền Ngọc Sơn",
+                        "lat": 21.0307,
+                        "lng": 105.8524,
+                        "time": "08:00",
+                        "duration_minutes": 60,
+                        "note": "Đi dạo quanh bờ hồ, ngắm Tháp Rùa và cầu Thê Húc đỏ son",
+                    },
+                    {
+                        "name": "Phố Cổ Hà Nội (Hàng Gai, Hàng Bạc, Hàng Đào)",
+                        "lat": 21.0345,
+                        "lng": 105.8501,
+                        "time": "09:15",
+                        "duration_minutes": 75,
+                        "note": "Khám phá nét kiến trúc nhà ống cổ và các làng nghề truyền thống",
+                    },
+                    {
+                        "name": "Phở Bát Đàn",
+                        "lat": 21.0336,
+                        "lng": 105.8465,
+                        "time": "10:45",
+                        "duration_minutes": 45,
+                        "note": "Thưởng thức bát phở bò truyền thống nước dùng thơm ngọt ngào",
+                    },
+                    {
+                        "name": "Văn Miếu - Quốc Tử Giám",
+                        "lat": 21.0285,
+                        "lng": 105.8355,
+                        "time": "12:00",
+                        "duration_minutes": 90,
+                        "note": "Trường đại học đầu tiên của Việt Nam với 82 bia Tiến sĩ vinh danh hiền tài",
+                    },
+                    {
+                        "name": "Nhà Thờ Lớn Hà Nội",
+                        "lat": 21.0288,
+                        "lng": 105.8495,
+                        "time": "14:30",
+                        "duration_minutes": 45,
+                        "note": "Kiến trúc Gothic cổ kính và thưởng thức trà chanh vỉa hè",
+                    },
+                ],
+            }
+        ],
+    },
+}
+
+
+def _clean_json_string(text: str) -> str:
+    """Làm sạch chuỗi JSON nếu LLM vô tình bọc trong markdown code block."""
+    text = text.strip()
+    if text.startswith("```"):
+        text = re.sub(r"^```(?:json)?\s*", "", text, flags=re.IGNORECASE)
+        text = re.sub(r"\s*```$", "", text)
+    return text.strip()
+
+
+def _validate_itinerary_structure(data: dict[str, Any]) -> bool:
+    """Kiểm tra cấu trúc JSON đúng chuẩn schema yêu cầu."""
+    if not isinstance(data, dict):
+        return False
+    if "trip_title" not in data or "travel_mode" not in data or "days" not in data:
+        return False
+    if not isinstance(data["days"], list) or len(data["days"]) == 0:
+        return False
+    for day in data["days"]:
+        if "stops" not in day or not isinstance(day["stops"], list):
+            return False
+        for stop in day["stops"]:
+            if not all(k in stop for k in ("name", "lat", "lng", "time", "duration_minutes", "note")):
+                return False
+            try:
+                lat = float(stop["lat"])
+                lng = float(stop["lng"])
+                if lat < 0:
+                    lat = abs(lat)
+                if lng < 0:
+                    lng = abs(lng)
+                stop["lat"] = round(lat, 5)
+                stop["lng"] = round(lng, 5)
+            except (ValueError, TypeError):
+                return False
+    return True
+
+
+def get_fallback_itinerary(dest: str, days: int, mode: str) -> dict[str, Any]:
+    """Tạo lịch trình fallback chất lượng cao khi không có LLM."""
+    dest_lower = dest.lower().strip()
+    for key, sample in FALLBACK_SAMPLES.items():
+        if key in dest_lower or dest_lower in key:
+            plan = json.loads(json.dumps(sample))
+            plan["travel_mode"] = mode if mode in ("driving", "walking", "cycling") else "driving"
+            if days == 1 and len(plan["days"]) > 1:
+                plan["days"] = plan["days"][:1]
+            return plan
+
+    # Mẫu mặc định cho bất kỳ địa điểm nào khác
+    return {
+        "trip_title": f"Hành Trình Khám Phá {dest.title()}",
+        "travel_mode": mode if mode in ("driving", "walking", "cycling") else "driving",
+        "days": [
+            {
+                "day_label": f"Ngày {i + 1}",
+                "stops": [
+                    {
+                        "name": f"Điểm tham quan trung tâm {dest.title()} (Chặng 1)",
+                        "lat": 12.2388 + (i * 0.01),
+                        "lng": 109.1967 + (i * 0.01),
+                        "time": "08:30",
+                        "duration_minutes": 90,
+                        "note": "Khám phá danh thắng nổi tiếng và chụp hình lưu niệm",
+                    },
+                    {
+                        "name": f"Khu ẩm thực & đặc sản {dest.title()} (Chặng 2)",
+                        "lat": 12.2420 + (i * 0.01),
+                        "lng": 109.1980 + (i * 0.01),
+                        "time": "11:30",
+                        "duration_minutes": 60,
+                        "note": "Thưởng thức các món ngon truyền thống trứ danh địa phương",
+                    },
+                    {
+                        "name": f"Khu vui chơi & thư giãn {dest.title()} (Chặng 3)",
+                        "lat": 12.2450 + (i * 0.01),
+                        "lng": 109.2020 + (i * 0.01),
+                        "time": "14:00",
+                        "duration_minutes": 120,
+                        "note": "Trải nghiệm hoạt động giải trí và ngắm hoàng hôn",
+                    },
+                    {
+                        "name": f"Chợ đêm & phố đi bộ {dest.title()} (Chặng 4)",
+                        "lat": 12.2405 + (i * 0.01),
+                        "lng": 109.1950 + (i * 0.01),
+                        "time": "18:30",
+                        "duration_minutes": 90,
+                        "note": "Dạo phố đêm, mua quà lưu niệm và ngắm cảnh đêm rực rỡ",
+                    },
+                ],
+            }
+            for i in range(min(days, 5))
+        ],
+    }
+
+
+def generate_trip_itinerary(req: TripPlanRequest) -> dict[str, Any]:
+    """Tạo lịch trình du lịch chi tiết xuất JSON theo đúng format yêu cầu."""
+    mode = req.travel_mode if req.travel_mode in ("driving", "walking", "cycling") else "driving"
+    user_prompt = (
+        f"Lập lịch trình du lịch chi tiết theo các thông tin sau:\n"
+        f"- Điểm đến / khu vực: {req.destination}\n"
+        f"- Số ngày: {req.days} ngày\n"
+        f"- Sở thích / loại hình: {req.preferences}\n"
+        f"- Phương tiện di chuyển: {mode}\n"
+    )
+    if req.budget:
+        user_prompt += f"- Ngân sách dự kiến: {req.budget}\n"
+    if req.people:
+        user_prompt += f"- Số lượng người: {req.people} người\n"
+
+    user_prompt += (
+        "\nYêu cầu đặc biệt: CHỈ trả về duy nhất chuỗi JSON thuần hợp lệ theo đúng cấu trúc schema, "
+        "tuyệt đối không bọc trong ```json và không có văn bản giải thích nào khác."
+    )
+
+    if not is_llm_available():
+        logger.info("LLM không khả dụng, sử dụng bộ dữ liệu mẫu GPS cho %s", req.destination)
+        return get_fallback_itinerary(req.destination, req.days, mode)
+
+    try:
+        raw_response = call_llm(prompt=user_prompt, system_instruction=SYSTEM_PROMPT_ITINERARY)
+        if not raw_response:
+            logger.warning("LLM trả về rỗng, chuyển sang fallback")
+            return get_fallback_itinerary(req.destination, req.days, mode)
+
+        cleaned = _clean_json_string(raw_response)
+        parsed = json.loads(cleaned)
+
+        if _validate_itinerary_structure(parsed):
+            if parsed.get("travel_mode") not in ("driving", "walking", "cycling"):
+                parsed["travel_mode"] = mode
+            return parsed
+        else:
+            logger.warning("Cấu trúc JSON từ LLM không khớp schema, chuyển sang fallback")
+            return get_fallback_itinerary(req.destination, req.days, mode)
+
+    except Exception as err:
+        logger.error("Lỗi tạo lịch trình du lịch từ LLM: %s", err)
+        return get_fallback_itinerary(req.destination, req.days, mode)
+
+
+def plan_trip_itinerary_logic(req: TripPlanRequest | dict[str, Any]) -> dict[str, Any]:
+    """Logic lập lịch trình du lịch tổng quát có toạ độ GPS xuất JSON do Agent A1 phụ trách."""
+    if isinstance(req, dict):
+        req = TripPlanRequest(**req)
+    return generate_trip_itinerary(req)
+
+
 # --- A2A Server & Executor ---
 
 class PlannerSpecialistExecutor(AgentExecutor):
@@ -629,8 +1065,33 @@ class PlannerSpecialistExecutor(AgentExecutor):
         turn_id = req_data.get("turn_id", "turn_001")
         request_id = req_data.get("request_id", "req_a1_001")
         scenario_id = req_data.get("scenario_id", "base")
+        action = req_data.get("action", "create_plans")
         inp = req_data.get("input", {})
 
+        # Nhánh 1: Lập lịch trình du lịch tổng quát & bản đồ GPS
+        if action == "plan_trip_itinerary":
+            trip_req_data = inp.get("trip_request", inp)
+            trip_result = plan_trip_itinerary_logic(trip_req_data)
+            agent_result = {
+                "schema_version": "1.0",
+                "session_id": session_id,
+                "turn_id": turn_id,
+                "request_id": request_id,
+                "action": "plan_trip_itinerary",
+                "status": "completed",
+                "data_revision": req_data.get("data_revision", DATA_REVISION),
+                "result": trip_result,
+                "warnings": [],
+                "errors": [],
+            }
+            reply_msg = Message(
+                role=Role.assistant,
+                parts=[TextPart(text=json.dumps(agent_result, ensure_ascii=False))],
+            )
+            await event_queue.enqueue_event(reply_msg)
+            return
+
+        # Nhánh 2: Lập lịch trình chi tiết khu vui chơi VinWonders
         normalized_request = inp.get("normalized_request", {})
         crowd_analysis = inp.get("crowd_analysis", {})
 
@@ -666,8 +1127,8 @@ class PlannerSpecialistExecutor(AgentExecutor):
 
 agent_card = AgentCard(
     name="a1_planner_specialist",
-    description="Agent chuyên gia lập lịch trình, tối ưu đường đi và kiểm tra ràng buộc vui chơi VinWonders",
-    version="1.0.0",
+    description="Agent chuyên gia lập lịch trình, tối ưu đường đi và bản đồ toạ độ GPS cho du lịch & vui chơi",
+    version="1.1.0",
     url="http://127.0.0.1:8001",
     capabilities=AgentCapabilities(),
     default_input_modes=["text"],
@@ -675,10 +1136,16 @@ agent_card = AgentCard(
     skills=[
         AgentSkill(
             id="create_plans",
-            name="Lập lịch trình",
-            description="Tạo và xác thực 1-2 phương án lịch trình theo thời gian thực",
+            name="Lập lịch trình khu vui chơi",
+            description="Tạo và xác thực 1-2 phương án lịch trình vui chơi theo thời gian thực",
             tags=["planner", "routing", "scheduling"],
-        )
+        ),
+        AgentSkill(
+            id="plan_trip_itinerary",
+            name="Lập lịch trình du lịch & Bản đồ GPS",
+            description="Lập lịch trình chi tiết theo điểm đến, số ngày, toạ độ GPS chính xác và thứ tự tối ưu xuất JSON bản đồ",
+            tags=["trip_planner", "map", "gps", "routing"],
+        ),
     ],
 )
 
@@ -705,6 +1172,19 @@ class DirectPlanRequest(BaseModel):
 @app.post("/api/plan", dependencies=[Depends(require_internal_secret)])
 def direct_plan(req: DirectPlanRequest) -> dict[str, Any]:
     return plan_itinerary_logic(req.normalized_request, req.crowd_analysis, req.scenario_id)
+
+
+@app.post("/api/itinerary/plan")
+def a1_itinerary_plan(req: TripPlanRequest) -> dict[str, Any]:
+    """Endpoint lập lịch trình du lịch tổng quát & bản đồ GPS do Agent A1 phụ trách."""
+    plan = plan_trip_itinerary_logic(req)
+    return {"status": "success", "data": plan}
+
+
+@app.get("/api/itinerary/samples")
+def a1_itinerary_samples() -> dict[str, Any]:
+    """Danh sách mẫu lịch trình GPS có sẵn của Agent A1."""
+    return {"status": "success", "samples": FALLBACK_SAMPLES}
 
 
 if __name__ == "__main__":

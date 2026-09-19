@@ -3,14 +3,26 @@
 import React, { useState, useEffect, useRef } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import ChatMapboxMessage from "./components/ChatMapboxMessage";
 
 const API_BASE = "http://127.0.0.1:8000";
+
+interface PlanStop {
+  name: string;
+  lat: number;
+  lng: number;
+  time?: string;
+  duration_minutes?: number;
+  note?: string;
+}
 
 interface PlanLeg {
   step: number;
   service_id: string;
   service_name: string;
   node_id: string;
+  lat?: number;
+  lng?: number;
   arrival_time: string;
   start_time: string;
   end_time: string;
@@ -39,9 +51,13 @@ interface PlanOption {
   };
   return_arrival_time: string;
   legs: PlanLeg[];
+  stops?: PlanStop[];
+  travel_mode?: string;
   service_ids: string[];
   rationale: string;
 }
+
+// ChatPlanMap đã được thay thế bởi ChatMapboxMessage (Mapbox GL JS) trong components/ChatMapboxMessage.tsx
 
 interface EventRecord {
   event_id: string;
@@ -479,7 +495,7 @@ export default function Home() {
         </div>
 
         {/* Action */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5">
           <button
             onClick={() => createNewSession()}
             className="px-3 py-1.5 rounded-md bg-[#18181b] hover:bg-[#27272a] text-white text-xs font-medium transition cursor-pointer"
@@ -727,7 +743,7 @@ export default function Home() {
 
                   {/* Plan Cards Rendered Directly in Feed */}
                   {m.plans && m.plans.length > 0 && (
-                    <div className="self-start w-full grid grid-cols-1 md:grid-cols-2 gap-4 my-2">
+                    <div className={`self-start w-full grid gap-4 my-2 ${m.plans.length > 1 ? "grid-cols-1 md:grid-cols-2" : "grid-cols-1"}`}>
                       {m.plans.map((p) => (
                         <div
                           key={p.plan_id}
@@ -789,6 +805,33 @@ export default function Home() {
                               <div>Dịch vụ phát sinh chưa chọn: 0 VNĐ.</div>
                             </div>
                           )}
+
+                          {/* Bản đồ lộ trình Mapbox GL inline trong chat */}
+                          {(() => {
+                            const mapStops: PlanStop[] = (p.stops && p.stops.length > 0)
+                              ? p.stops
+                              : p.legs
+                                  .filter((leg) => typeof leg.lat === "number" && typeof leg.lng === "number")
+                                  .map((leg) => ({
+                                    name: leg.service_name,
+                                    lat: leg.lat!,
+                                    lng: leg.lng!,
+                                    time: leg.arrival_time,
+                                    duration_minutes: leg.activity_duration_minutes,
+                                    note: leg.note,
+                                  }));
+                            if (mapStops.length > 0) {
+                              return (
+                                <ChatMapboxMessage
+                                  stops={mapStops}
+                                  travelMode={p.travel_mode || "driving"}
+                                  planId={p.plan_id}
+                                  dayLabel={p.style_label?.startsWith("Ngày") ? p.style_label.split(":")[0] : undefined}
+                                />
+                              );
+                            }
+                            return null;
+                          })()}
 
                           {/* Legs Timeline */}
                           <div className="space-y-2 pt-2 border-t border-[#f4f2eb] text-xs">

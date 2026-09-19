@@ -308,11 +308,7 @@ def classify_and_extract_intent_with_llm(
         }
 
 
-def extract_intent_with_llm(user_message: str, current_profile: dict[str, Any]) -> dict[str, Any] | None:
-    """Tương thích ngược: Dùng LLM trích xuất các thông tin ràng buộc."""
-    res = classify_and_extract_intent_with_llm(user_message, current_profile)
-    entities = res.get("entities", {})
-    return entities if entities else None
+
 
 
 def answer_general_chat_with_llm(
@@ -470,29 +466,6 @@ def generate_plan_rationale_with_llm(
     return call_llm(prompt, system_instruction)
 
 
-def generate_clarification_with_llm(
-    user_message: str,
-    missing_fields: list[str],
-) -> str | None:
-    """Dùng LLM (Agent A0) để tạo câu hỏi làm rõ thông tin còn thiếu một cách tự nhiên và chu đáo."""
-    if not is_llm_available():
-        return None
-
-    system_instruction = (
-        "Bạn là V-AI - Hướng dẫn viên thông minh tại VinWonders. "
-        "Khách gửi yêu cầu nhưng còn thiếu thông tin an toàn/lập lịch. "
-        "Hãy phản hồi bằng tiếng Việt thật tự nhiên, thân thiện và hỏi khéo các thông tin cần thiết."
-        + VAI_TRAVEL_PERSONA + PUBLIC_RESPONSE_POLICY
-    )
-
-    prompt = (
-        f"Khách nhắn: '{user_message}'\n"
-        f"Thông tin cần bổ sung: {', '.join(missing_fields)}"
-    )
-
-    return call_llm(prompt, system_instruction)
-
-
 def generate_hitl_questions_with_llm(
     user_message: str,
     current_profile: dict[str, Any],
@@ -585,27 +558,6 @@ def stream_answer_general_chat_with_llm(
     prompt = f"Thông tin bối cảnh công viên: {ctx_str}\nTin nhắn của khách: '{user_message}'"
     yield from stream_call_llm(prompt, system_instruction)
 
-
-def stream_generate_clarification_with_llm(
-    user_message: str,
-    missing_fields: list[str],
-) -> Generator[str, None, None]:
-    """Stream câu hỏi làm rõ của Agent A0 khi thiếu thông tin an toàn/lập lịch."""
-    if not is_llm_available():
-        return
-
-    system_instruction = (
-        "Bạn là V-AI - Hướng dẫn viên thông minh tại VinWonders.\n"
-        "Khách gửi yêu cầu nhưng còn thiếu thông tin an toàn/lập lịch.\n"
-        "Hãy phản hồi bằng tiếng Việt thật tự nhiên, thân thiện và hỏi khéo các thông tin cần thiết. "
-        "Định dạng câu hỏi rõ ràng bằng Markdown (dùng danh sách gạch đầu dòng và in đậm thông tin quan trọng)."
-        + VAI_TRAVEL_PERSONA + PUBLIC_RESPONSE_POLICY
-    )
-    prompt = (
-        f"Khách nhắn: '{user_message}'\n"
-        f"Thông tin cần bổ sung: {', '.join(missing_fields)}"
-    )
-    yield from stream_call_llm(prompt, system_instruction)
 
 
 def stream_synthesize_chat_response_with_llm(

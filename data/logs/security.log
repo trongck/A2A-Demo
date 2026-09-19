@@ -62,3 +62,6 @@
 2026-09-19T11:12:30 | SECURITY | v_ai.a1.planner | WARNING | L3: Search iteration limit reached (5000). Stopping permutation search.
 2026-09-19T11:16:33 | SECURITY | v_ai.a1.planner | WARNING | L3: Search iteration limit reached (5000). Stopping permutation search.
 2026-09-19T11:18:17 | SECURITY | v_ai.a1.planner | WARNING | L3: Search iteration limit reached (5000). Stopping permutation search.
+2026-09-19T11:21:36 | SECURITY | v_ai.a1.planner | WARNING | L3: Search iteration limit reached (5000). Stopping permutation search.
+2026-09-19T11:40:01 | SECURITY | v_ai.a0.server | WARNING | Không thể ghi log sự kiện A2A: FOREIGN KEY constraint failed
+2026-09-19T12:03:23 | SECURITY | v_ai.a1.planner | WARNING | L3: Search iteration limit reached (5000). Stopping permutation search.
