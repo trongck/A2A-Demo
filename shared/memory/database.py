@@ -106,8 +106,65 @@ def init_db() -> None:
             created_at TEXT NOT NULL,
             FOREIGN KEY (session_id) REFERENCES sessions(session_id) ON DELETE CASCADE
         );
+
+        -- Admin Portal tables
+        CREATE TABLE IF NOT EXISTS admin_users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT UNIQUE NOT NULL,
+            password_hash TEXT NOT NULL,
+            display_name TEXT NOT NULL,
+            role TEXT NOT NULL DEFAULT 'coordinator',
+            is_active INTEGER NOT NULL DEFAULT 1,
+            last_login_at TEXT,
+            created_at TEXT NOT NULL,
+            updated_at TEXT NOT NULL
+        );
         """)
+
+        # Backward-compat: thêm cột admin tracking vào plans nếu chưa có
+        _ensure_column(conn, "plans", "admin_status", "TEXT NOT NULL DEFAULT 'pending'")
+        _ensure_column(conn, "plans", "admin_note", "TEXT")
+        _ensure_column(conn, "plans", "admin_confirmed_by", "TEXT")
+        _ensure_column(conn, "plans", "admin_confirmed_at", "TEXT")
+
+        # Backward-compat: thêm cột admin_status vào sessions
+        _ensure_column(conn, "sessions", "admin_status", "TEXT NOT NULL DEFAULT 'pending'")
+        _ensure_column(conn, "sessions", "admin_reject_reason", "TEXT")
+
         conn.commit()
+
+    # Seed default admin account
+    seed_admin_users()
+
+
+def _ensure_column(conn: sqlite3.Connection, table: str, column: str, col_def: str) -> None:
+    """Thêm cột vào bảng nếu chưa tồn tại (idempotent)."""
+    existing = conn.execute(f"PRAGMA table_info({table})").fetchall()
+    col_names = [r["name"] for r in existing]
+    if column not in col_names:
+        conn.execute(f"ALTER TABLE {table} ADD COLUMN {column} {col_def}")
+
+
+def seed_admin_users() -> None:
+    """Tạo tài khoản admin mặc định nếu chưa có. Chỉ seed khi bảng trống."""
+    try:
+        from shared.admin_auth.auth import hash_password as _hash
+    except Exception:
+        return  # passlib chưa cài — skip silently
+
+    now = get_current_iso_time()
+    with get_connection() as conn:
+        count = conn.execute("SELECT COUNT(*) as c FROM admin_users").fetchone()["c"]
+        if count == 0:
+            pw_hash = _hash("123456")
+            conn.execute(
+                """
+                INSERT INTO admin_users (username, password_hash, display_name, role, is_active, created_at, updated_at)
+                VALUES (?, ?, ?, ?, 1, ?, ?)
+                """,
+                ("ai20k", pw_hash, "Điều phối viên V-AI", "coordinator", now, now),
+            )
+            conn.commit()
 
 
 # --- Session Operations ---
@@ -330,3 +387,201 @@ def get_latest_plans(session_id: str) -> dict[str, Any] | None:
         if row:
             return json.loads(row["plan_json"])
         return None
+
+
+def get_all_plans_for_session(session_id: str) -> list[dict[str, Any]]:
+    """Lấy tất cả plan records (có admin metadata) của một session."""
+    with get_connection() as conn:
+        rows = conn.execute(
+            "SELECT * FROM plans WHERE session_id = ? ORDER BY created_at ASC",
+            (session_id,),
+        ).fetchall()
+        result = []
+        for r in rows:
+            plans_list = json.loads(r["plan_json"])
+            result.append({
+                "plan_id": r["plan_id"],
+                "session_id": r["session_id"],
+                "turn_id": r["turn_id"],
+                "plans": plans_list if isinstance(plans_list, list) else [plans_list],
+                "is_selected": bool(r["is_selected"]),
+                "admin_status": r["admin_status"] if "admin_status" in r.keys() else "pending",
+                "admin_note": r["admin_note"] if "admin_note" in r.keys() else None,
+                "admin_confirmed_by": r["admin_confirmed_by"] if "admin_confirmed_by" in r.keys() else None,
+                "admin_confirmed_at": r["admin_confirmed_at"] if "admin_confirmed_at" in r.keys() else None,
+                "created_at": r["created_at"],
+            })
+        return result
+
+
+# --- Admin Operations ---
+
+def get_admin_user(username: str) -> dict[str, Any] | None:
+    """Lấy thông tin admin user theo username."""
+    with get_connection() as conn:
+        row = conn.execute(
+            "SELECT * FROM admin_users WHERE username = ? AND is_active = 1",
+            (username,),
+        ).fetchone()
+        if row:
+            return {
+                "id": row["id"],
+                "username": row["username"],
+                "password_hash": row["password_hash"],
+                "display_name": row["display_name"],
+                "role": row["role"],
+                "is_active": bool(row["is_active"]),
+                "last_login_at": row["last_login_at"],
+                "created_at": row["created_at"],
+            }
+        return None
+
+
+def update_admin_last_login(username: str) -> None:
+    """Cập nhật thời gian đăng nhập gần nhất."""
+    now = get_current_iso_time()
+    with get_connection() as conn:
+        conn.execute(
+            "UPDATE admin_users SET last_login_at = ?, updated_at = ? WHERE username = ?",
+            (now, now, username),
+        )
+        conn.commit()
+
+
+def get_all_sessions_summary(
+    admin_status_filter: str | None = None,
+    page: int = 1,
+    page_size: int = 20,
+) -> dict[str, Any]:
+    """Lấy danh sách tóm tắt sessions cho trang Bookings của Admin."""
+    with get_connection() as conn:
+        where_clauses = []
+        params: list[Any] = []
+        if admin_status_filter and admin_status_filter != "all":
+            where_clauses.append("s.admin_status = ?")
+            params.append(admin_status_filter)
+
+        where_sql = ("WHERE " + " AND ".join(where_clauses)) if where_clauses else ""
+
+        total_row = conn.execute(
+            f"SELECT COUNT(*) as c FROM sessions s {where_sql}", params
+        ).fetchone()
+        total = total_row["c"] if total_row else 0
+
+        offset = (page - 1) * page_size
+        rows = conn.execute(
+            f"""
+            SELECT s.session_id, s.scenario_id, s.profile_json, s.memory_version,
+                   s.admin_status, s.admin_reject_reason,
+                   s.created_at, s.updated_at,
+                   (
+                     SELECT COUNT(*) FROM plans p WHERE p.session_id = s.session_id
+                   ) as plan_count,
+                   (
+                     SELECT content FROM messages m
+                     WHERE m.session_id = s.session_id AND m.role = 'user'
+                     ORDER BY m.id DESC LIMIT 1
+                   ) as last_user_message
+            FROM sessions s
+            {where_sql}
+            ORDER BY s.updated_at DESC
+            LIMIT ? OFFSET ?
+            """,
+            [*params, page_size, offset],
+        ).fetchall()
+
+        items = []
+        for r in rows:
+            profile = json.loads(r["profile_json"] or "{}")
+            group_members = profile.get("group_members", [])
+            items.append({
+                "session_id": r["session_id"],
+                "scenario_id": r["scenario_id"],
+                "admin_status": r["admin_status"] or "pending",
+                "admin_reject_reason": r["admin_reject_reason"],
+                "group_size": len(group_members),
+                "plan_count": r["plan_count"],
+                "memory_version": r["memory_version"],
+                "last_message_preview": (r["last_user_message"] or "")[:100],
+                "created_at": r["created_at"],
+                "updated_at": r["updated_at"],
+            })
+
+        return {
+            "total": total,
+            "page": page,
+            "page_size": page_size,
+            "items": items,
+        }
+
+
+def admin_confirm_plan(
+    session_id: str,
+    plan_id: str,
+    note: str | None,
+    confirmed_by: str,
+) -> bool:
+    """Xác nhận 1 plan cụ thể, đánh dấu admin_status = confirmed."""
+    now = get_current_iso_time()
+    with get_connection() as conn:
+        # Cập nhật plan được chọn
+        conn.execute(
+            """
+            UPDATE plans SET
+                admin_status = 'confirmed',
+                is_selected = 1,
+                admin_note = ?,
+                admin_confirmed_by = ?,
+                admin_confirmed_at = ?
+            WHERE plan_id = ? AND session_id = ?
+            """,
+            (note, confirmed_by, now, plan_id, session_id),
+        )
+        # Cập nhật admin_status của session
+        conn.execute(
+            "UPDATE sessions SET admin_status = 'confirmed', updated_at = ? WHERE session_id = ?",
+            (now, session_id),
+        )
+        conn.commit()
+    return True
+
+
+def admin_reject_session(session_id: str, reason: str) -> bool:
+    """Từ chối toàn bộ phiên đặt lịch."""
+    now = get_current_iso_time()
+    with get_connection() as conn:
+        conn.execute(
+            """
+            UPDATE sessions SET
+                admin_status = 'rejected',
+                admin_reject_reason = ?,
+                updated_at = ?
+            WHERE session_id = ?
+            """,
+            (reason, now, session_id),
+        )
+        conn.commit()
+    return True
+
+
+def get_admin_booking_stats() -> dict[str, Any]:
+    """Thống kê tổng hợp cho Dashboard của Admin."""
+    with get_connection() as conn:
+        total = conn.execute("SELECT COUNT(*) as c FROM sessions").fetchone()["c"]
+        pending = conn.execute(
+            "SELECT COUNT(*) as c FROM sessions WHERE admin_status = 'pending'"
+        ).fetchone()["c"]
+        confirmed = conn.execute(
+            "SELECT COUNT(*) as c FROM sessions WHERE admin_status = 'confirmed'"
+        ).fetchone()["c"]
+        rejected = conn.execute(
+            "SELECT COUNT(*) as c FROM sessions WHERE admin_status = 'rejected'"
+        ).fetchone()["c"]
+        plan_count = conn.execute("SELECT COUNT(*) as c FROM plans").fetchone()["c"]
+        return {
+            "total_sessions": total,
+            "pending": pending,
+            "confirmed": confirmed,
+            "rejected": rejected,
+            "total_plans": plan_count,
+        }

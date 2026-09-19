@@ -1,5 +1,10 @@
 @import "tailwindcss";
 
+@theme {
+  --font-sans: var(--font-be-vietnam), var(--font-plus-jakarta), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
 :root {
   --bg-milky: #faf9f6;
   --bg-sidebar: #f4f2eb;
@@ -13,15 +18,18 @@
   --accent-success: #059669;
 }
 
+html, body, button, input, select, textarea {
+  font-family: var(--font-be-vietnam), var(--font-plus-jakarta), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
 body {
   background-color: var(--bg-milky);
   color: var(--text-main);
-  font-family: var(--font-plus-jakarta), -apple-system, BlinkMacSystemFont, sans-serif;
   min-height: 100vh;
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-outfit), sans-serif;
+  font-family: var(--font-be-vietnam), var(--font-plus-jakarta), sans-serif;
   color: var(--text-main);
 }
 

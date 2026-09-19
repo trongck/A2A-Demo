@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans, Outfit, JetBrains_Mono } from "next/font/google";
+import { Plus_Jakarta_Sans, Be_Vietnam_Pro, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
-const outfit = Outfit({
-  variable: "--font-outfit",
-  subsets: ["latin", "latin-ext"],
+const beVietnamPro = Be_Vietnam_Pro({
+  weight: ["400", "500", "600", "700", "800", "900"],
+  variable: "--font-be-vietnam",
+  subsets: ["latin", "vietnamese"],
 });
 
 const plusJakarta = Plus_Jakarta_Sans({
@@ -48,7 +49,7 @@ export default function RootLayout({
   return (
     <html
       lang="vi"
-      className={`${outfit.variable} ${plusJakarta.variable} ${jetbrainsMono.variable} h-full`}
+      className={`${beVietnamPro.variable} ${plusJakarta.variable} ${jetbrainsMono.variable} h-full`}
       suppressHydrationWarning
     >
       <head>

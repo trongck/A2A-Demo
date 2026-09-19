@@ -28,6 +28,7 @@ from shared.security import (
 )
 
 from agents.a0.orchestrator import run_orchestration, run_orchestration_stream
+from agents.a0.admin_server import admin_router
 
 from shared.memory.database import (
     get_events,
@@ -50,10 +51,13 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title="Agent A0 - Orchestrator API",
-    description="Tác tử điều phối trung tâm A0 trong hệ thống đa tác tử VinWonders (A0, A1, A2, MCP, A2A)",
+    description="Tac tu dieu phoi trung tam A0 trong he thong da tac tu VinWonders (A0, A1, A2, MCP, A2A)",
     version="1.0.0",
     lifespan=lifespan,
 )
+
+# Mount Admin Portal router
+app.include_router(admin_router)
 
 # Security Middlewares (L2, H2)
 app.add_middleware(SecurityHeadersMiddleware)
@@ -62,8 +66,8 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=ALLOWED_ORIGINS,  # C2: Whitelist thay vì "*"
     allow_credentials=True,
-    allow_methods=["GET", "POST", "OPTIONS"],
-    allow_headers=["Content-Type", "X-Api-Key"],
+    allow_methods=["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["Content-Type", "Authorization", "X-Api-Key"],
 )
 
 
