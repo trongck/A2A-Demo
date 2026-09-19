@@ -223,6 +223,22 @@ export default function Home() {
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
 
   const chatEndRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const adjustTextareaHeight = () => {
+    const textarea = textareaRef.current;
+    if (!textarea) return;
+    textarea.style.height = "auto";
+    const scrollH = textarea.scrollHeight;
+    // Tự động mở rộng từ chiều cao tối thiểu 48px lên tối đa 240px
+    const newHeight = Math.min(Math.max(scrollH, 48), 240);
+    textarea.style.height = `${newHeight}px`;
+    textarea.style.overflowY = scrollH > 240 ? "auto" : "hidden";
+  };
+
+  useEffect(() => {
+    adjustTextareaHeight();
+  }, [inputMessage]);
 
   useEffect(() => {
     createNewSession();
@@ -829,10 +845,12 @@ export default function Home() {
                   onSubmit={sendMessage}
                 />
               )}
-              <div className="relative flex items-center">
+              <div className="relative flex items-end">
               <textarea
+                ref={textareaRef}
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
+                onInput={adjustTextareaHeight}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && !e.shiftKey) {
                     e.preventDefault();
@@ -844,17 +862,18 @@ export default function Home() {
                     ? "V-AI đang trả lời, bạn có thể nhấn Dừng tạo..."
                     : "Cùng lập kế hoạch cho chuyến du lịch nào! (Enter để gửi, Shift+Enter xuống dòng)"
                 }
-                rows={2}
+                rows={1}
                 disabled={isStreaming}
-                className="w-full bg-[#faf9f6] border border-[#e6e3da] focus:border-[#18181b] rounded-2xl pl-4 pr-24 py-3 text-sm text-[#18181b] placeholder-[#a1a1aa] focus:outline-none transition resize-none leading-relaxed disabled:opacity-75"
+                style={{ minHeight: "48px", maxHeight: "240px" }}
+                className="w-full bg-[#faf9f6] border border-[#e6e3da] focus:border-[#18181b] rounded-2xl pl-4 pr-24 py-3 text-sm text-[#18181b] placeholder-[#a1a1aa] focus:outline-none transition-colors resize-none leading-relaxed disabled:opacity-75"
               />
 
-              {/* Nút Dừng tạo hoặc Nút Gửi */}
+              {/* Nút Dừng tạo hoặc Nút Gửi - neo ở góc dưới bên phải */}
               {isStreaming ? (
                 <button
                   type="button"
                   onClick={handleStopGenerating}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 px-3 py-1.5 rounded-full bg-[#18181b] hover:bg-red-600 text-white flex items-center gap-1.5 text-xs font-medium transition cursor-pointer shadow-xs group"
+                  className="absolute right-3 bottom-2 px-3 py-1.5 rounded-full bg-[#18181b] hover:bg-red-600 text-white flex items-center gap-1.5 text-xs font-medium transition cursor-pointer shadow-xs group"
                   title="Dừng tạo phản hồi"
                 >
                   <div className="w-2.5 h-2.5 bg-red-400 group-hover:bg-white rounded-xs transition" />
@@ -865,7 +884,7 @@ export default function Home() {
                   type="button"
                   onClick={handleSend}
                   disabled={!inputMessage.trim()}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-[#18181b] hover:bg-[#27272a] disabled:opacity-25 text-white flex items-center justify-center transition cursor-pointer disabled:cursor-not-allowed shadow-xs"
+                  className="absolute right-3 bottom-1.5 w-9 h-9 rounded-full bg-[#18181b] hover:bg-[#27272a] disabled:opacity-25 text-white flex items-center justify-center transition cursor-pointer disabled:cursor-not-allowed shadow-xs"
                   title="Gửi"
                 >
                   <svg

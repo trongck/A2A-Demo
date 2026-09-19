@@ -10,8 +10,8 @@ Dự án triển khai hệ thống Multi-Agent cục bộ (local) phục vụ g�
 |---|---|---|---|
 | **Chat UI + Backend A0** | Quản lý phiên, giao diện chat, điều phối state machine, tổng hợp câu trả lời | `http://127.0.0.1:8000` | FastAPI, HTML5 Semantic, Vanilla CSS |
 | **Agent A1 (Planner)** | Lập lịch trình, thuật toán tìm kiếm cắt nhánh, bộ Validator xác định | `http://127.0.0.1:8001` | A2A Protocol (`a2a-sdk`), Dijkstra Graph |
-| **Agent A2 (Crowd Specialist)** | Phân tích mật độ, tính tỷ lệ tải, kiểm tra độ mới stale 180s | `http://127.0.0.1:8002` | A2A Protocol (`a2a-sdk`), Analytics |
-| **MCP Server** | Cung cấp 4 công cụ đọc catalog, mật độ, đường đi, thời tiết | `http://127.0.0.1:8003` | Model Context Protocol (`mcp` SDK) |
+| **Agent A2 (Crowd Specialist)** | Phân tích trạng thái vận hành; giữ crowd ở `unknown` khi nguồn không cung cấp | `http://127.0.0.1:8002` | A2A Protocol (`a2a-sdk`), Analytics |
+| **MCP Server** | Chuẩn hóa Google Places V2, cung cấp catalog, trạng thái, đường đi và thời tiết | `http://127.0.0.1:8003` | Model Context Protocol (`mcp` SDK) |
 | **Shared Memory** | SQLite lưu trữ tập trung dữ liệu phiên, hội thoại, kết quả, sự kiện | `data/memory.sqlite` | SQLite WAL Mode, Transactional |
 
 ---
@@ -30,32 +30,24 @@ Nhấn `Ctrl + C` tại cửa sổ dòng lệnh để tắt đồng thời cả 
 
 ---
 
-## 3. Chạy Kiểm Thử Tự Động (10 Ca Nghiệm Thu)
-Chạy toàn bộ 10 ca kiểm thử nghiệm thu bám sát mục 10 của kế hoạch:
+## 3. Dữ liệu và kiểm thử
+
+Nguồn runtime duy nhất là `data/V-AI-Mock-Data-V2.json` (267 Google Places). MCP chuẩn hóa `placeId`, tọa độ, loại hình, giờ mở cửa, rating/reviews và trạng thái đóng cửa. Các trường không có trong nguồn như live crowd, hàng chờ, sức chứa, giá vé VND và điều kiện chiều cao được giữ ở `null`/`unavailable`, không tự suy diễn.
+
+Chạy kiểm thử contract V2 xuyên suốt MCP → A2 → A1:
 ```bash
 python -m pytest tests/test_all_criteria.py -v
 ```
 
-Các ca kiểm tra bao gồm:
-1. `test_acceptance_baseline`: Nạp preset gia đình sinh đúng 2 phương án hợp lệ, buffer ≥ 10 phút.
-2. `test_acceptance_missing_input`: Khách chat tự do thiếu chiều cao/thời gian thì A0 hỏi lại, không tự ý bịa dữ liệu.
-3. `test_acceptance_multiturn_same_session`: Chat đa lượt "chỉ đi trong nhà, tối thiểu 2 điểm" giữ nguyên hồ sơ nhóm và sinh lịch trình 100% trong nhà.
-4. `test_acceptance_aquarium_crowded`: Thủy cung quá tải 35 phút (>20p) bị loại khỏi lịch trình.
-5. `test_acceptance_alpine_closed`: Điểm Alpine đóng cửa đột xuất bị loại khỏi lịch trình.
-6. `test_acceptance_stale_data`: Dữ liệu cũ (>180s) được đánh dấu stale chính xác.
-7. `test_acceptance_missing_data_no_zero_coercion`: Thiếu dữ liệu giữ nguyên `null`, không ép thành `0`.
-8. `test_acceptance_no_feasible_plan`: Yêu cầu bất khả thi trả về `no_feasible_plan` và lý do nghẽn.
-9. `test_acceptance_session_isolation`: Hai session độc lập không làm nhiễm dữ liệu của nhau.
-10. `test_acceptance_event_audit_trail`: Chuỗi sự kiện A0, A2, A1 được ghi nhận đầy đủ vào SQLite.
+Các ca kiểm tra bao gồm nguồn V2, chuẩn hóa MCP, lọc category, routing từ tọa độ, bảo toàn crowd thiếu, lập lịch A1, khung giờ bất khả thi, HITL và cô lập session.
 
 ---
 
 ## 4. Kiểm chứng Tương tác trên Giao diện Web
 
-1. **Thử Preset Gia Đình 2 Phương Án**: Nhấn nút **👨‍👩‍👧 Gia đình 2 phương án** bên góc trái. Hệ thống sẽ hiển thị 2 thẻ lịch trình:
+1. **Thử lập lịch 2 phương án**: Cung cấp thành viên và khung giờ; hệ thống sẽ hiển thị 2 thẻ lịch trình:
    - **Phương án 1 (Gentle)**: Nhẹ nhàng, ít chờ, thời gian dự phòng cao.
    - **Phương án 2 (More Rides)**: Nhiều trò chơi trải nghiệm hơn, khác biệt ít nhất 1 điểm hoạt động.
 2. **Thử Multi-turn trong cùng phiên**: Nhấn nút **🏛️ Chỉ đi trong nhà** hoặc gõ tin nhắn *"Chỉ đi trong nhà, tối thiểu 2 điểm"*. Lịch trình mới sẽ cập nhật chỉ gồm các điểm trong nhà và giữ nguyên cấu hình gia đình.
-3. **Thử Đổi Kịch Bản**: Chuyển dropdown sang *"2. Thủy cung quá tải (35 phút chờ)"* rồi yêu cầu lập lịch để quan sát A2 phát hiện hàng chờ 35 phút và A1 tự động thay thế bằng điểm khác.
-4. **Kiểm chứng Nhật ký Trao đổi Agent (Audit Log)**: Nhấn vào tab **🔬 Nhật ký Trao đổi Agent (A2A & MCP Audit)** để xem toàn bộ danh sách lời gọi A0 ➔ A2, A0 ➔ A1, MCP Tool Calls. Bấm nút **🔍 Xem JSON** tại từng dòng để kiểm tra trực tiếp raw payload trao đổi giữa các Agent.
+3. **Kiểm chứng Nhật ký Trao đổi Agent (Audit Log)**: Xem payload A0 ➔ A2 ➔ A1; `data_revision` phải là `google_places_v2` và các trường crowd không có dữ liệu phải là `null`.
 "# A2A-Demo" 

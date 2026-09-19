@@ -38,6 +38,7 @@ from shared.llm import (
     generate_unfeasible_explanation_with_llm,
     is_llm_available,
 )
+from shared.data_adapter import DATA_REVISION, START_NODE_ID
 
 MCP_URL = "http://127.0.0.1:8003"
 
@@ -78,9 +79,14 @@ def call_mcp_tool(tool_name: str, arguments: dict[str, Any]) -> dict[str, Any]:
         tool_get_weather,
     )
     if tool_name == "get_attractions":
-        return tool_get_attractions(arguments.get("scenario_id", "base"), arguments.get("service_ids"))
+        return tool_get_attractions(
+            arguments.get("scenario_id", "base"), arguments.get("service_ids"),
+            arguments.get("categories"), arguments.get("limit"), arguments.get("scope", "vinwonders"),
+        )
     elif tool_name == "get_crowd_snapshots":
-        return tool_get_crowd_snapshots(arguments.get("scenario_id", "base"), arguments.get("service_ids"))
+        return tool_get_crowd_snapshots(
+            arguments.get("scenario_id", "base"), arguments.get("service_ids"), arguments.get("scope", "vinwonders"),
+        )
     elif tool_name == "get_route_matrix":
         return tool_get_route_matrix(arguments.get("node_ids", []))
     elif tool_name == "get_weather":
@@ -90,6 +96,27 @@ def call_mcp_tool(tool_name: str, arguments: dict[str, Any]) -> dict[str, Any]:
 
 # --- Bảng chuyển đổi cấp độ cảm giác mạnh ---
 THRILL_ORDER = {"none": 0, "low": 1, "moderate": 2, "high": 3, "extreme": 4}
+MAX_PLANNING_CANDIDATES = 8
+
+
+def is_open_for_visit(schedule: dict[str, Any], start: datetime, end: datetime) -> bool:
+    """Kiểm tra khoảng ghé thăm theo weekly_intervals chuẩn hóa từ V2."""
+    weekly = schedule.get("weekly_intervals", {})
+    if not weekly:
+        return True
+    intervals = weekly.get(str(start.weekday()), [])
+    start_minute = start.hour * 60 + start.minute
+    end_minute = end.hour * 60 + end.minute
+    for open_at, close_at in intervals:
+        open_hour, open_minute = map(int, open_at.split(":"))
+        close_hour, close_minute = map(int, close_at.split(":"))
+        open_value = open_hour * 60 + open_minute
+        close_value = close_hour * 60 + close_minute
+        if close_value <= open_value:
+            close_value += 24 * 60
+        if open_value <= start_minute and end_minute <= close_value:
+            return True
+    return False
 
 
 def is_eligible_for_group(attraction: dict[str, Any], members: list[dict[str, Any]]) -> tuple[bool, str]:
@@ -196,13 +223,29 @@ def plan_itinerary_logic(
 ) -> dict[str, Any]:
     """Tìm kiếm và tạo các phương án lịch trình tối ưu, kiểm tra qua Validator."""
     req = normalized_request
+    if crowd_analysis.get("data_revision") != DATA_REVISION:
+        return {
+            "plan_result_id": "res_revision_mismatch",
+            "crowd_analysis_id": crowd_analysis.get("analysis_id", ""),
+            "scenario_id": scenario_id,
+            "data_revision": DATA_REVISION,
+            "status": "failed",
+            "plans": [],
+            "unfeasible_reasons": [],
+            "warnings": [],
+            "errors": ["Crowd analysis không thuộc Google Places V2."],
+        }
     hard = req.get("hard_constraints", {})
     prefs = req.get("preferences", {})
     num_plans = req.get("number_of_plans", 2)
     members = req.get("group_members", [])
 
-    start_node = req.get("start_node_id", "start_sea_hub")
-    end_node = req.get("end_node_id", "start_sea_hub")
+    start_node = req.get("start_node_id", START_NODE_ID)
+    end_node = req.get("end_node_id", START_NODE_ID)
+    if start_node == "start_sea_hub":
+        start_node = START_NODE_ID
+    if end_node == "start_sea_hub":
+        end_node = START_NODE_ID
     start_time = datetime.fromisoformat(req.get("start_at", "2026-09-18T14:00:00+07:00"))
     deadline = datetime.fromisoformat(req.get("end_by", "2026-09-18T16:00:00+07:00"))
     total_window_minutes = (deadline - start_time).total_seconds() / 60
@@ -212,22 +255,37 @@ def plan_itinerary_logic(
     max_wait = hard.get("max_wait_minutes_per_stop", 20)
     budget_total = hard.get("budget_vnd_total", 150000)
     min_buffer = hard.get("min_end_buffer_minutes", 10)
-    allow_unknown = hard.get("allow_unknown_crowd", False)
+    crowd_items = {item["service_id"]: item for item in crowd_analysis.get("items", [])}
+    crowd_data_available = any(
+        item.get("data_quality") != "unavailable" and item.get("wait_minutes") is not None
+        for item in crowd_items.values()
+    )
+    allow_unknown = hard.get("allow_unknown_crowd", True) or not crowd_data_available
     min_act = hard.get("min_activity_count", 3)
     excluded = set(hard.get("excluded_service_ids", []))
 
     # 1. Gọi MCP lấy danh mục và ma trận đường đi
-    attractions_list = call_mcp_tool("get_attractions", {"scenario_id": scenario_id})
+    analyzed_service_ids = [item["service_id"] for item in crowd_analysis.get("items", [])]
+    attractions_list = call_mcp_tool("get_attractions", {
+        "scenario_id": scenario_id,
+        "service_ids": analyzed_service_ids or None,
+    })
+    if any(attraction.get("data_revision") != DATA_REVISION for attraction in attractions_list):
+        return {
+            "plan_result_id": "res_revision_mismatch",
+            "crowd_analysis_id": crowd_analysis.get("analysis_id", ""),
+            "scenario_id": scenario_id,
+            "data_revision": DATA_REVISION,
+            "status": "failed",
+            "plans": [],
+            "unfeasible_reasons": [],
+            "warnings": [],
+            "errors": ["MCP catalog không thuộc Google Places V2."],
+        }
     attractions_map = {a["service_id"]: a for a in attractions_list}
-    all_nodes = [a["location"]["node_id"] for a in attractions_list] + [start_node, end_node]
-    route_data = call_mcp_tool("get_route_matrix", {"node_ids": list(set(all_nodes))})
-    routes = route_data.get("matrix", {})
 
     weather_data = call_mcp_tool("get_weather", {"start_at": req.get("start_at"), "end_by": req.get("end_by")})
     weather_windows = weather_data.get("weather_windows", [])
-
-    # Map crowd analysis
-    crowd_items = {item["service_id"]: item for item in crowd_analysis.get("items", [])}
 
     # 2. Lọc điểm ban đầu
     eligible_sids = []
@@ -281,12 +339,22 @@ def plan_itinerary_logic(
 
         eligible_sids.append(sid)
 
+    category_priority = {"ride": 0, "attraction": 1, "food": 2, "service": 3, "shop": 4, "hotel": 5}
+    if prefs.get("meal_required"):
+        category_priority["food"] = 0
+    eligible_sids.sort(key=lambda sid: (
+        category_priority.get(attractions_map[sid].get("category"), 9),
+        -(attractions_map[sid].get("rating") or 0),
+        -(attractions_map[sid].get("reviews_count") or 0),
+    ))
+    eligible_sids = eligible_sids[:MAX_PLANNING_CANDIDATES]
+
     if len(eligible_sids) < min_act:
         return {
             "plan_result_id": "res_none",
             "crowd_analysis_id": crowd_analysis.get("analysis_id", ""),
             "scenario_id": scenario_id,
-            "data_revision": "v1",
+            "data_revision": DATA_REVISION,
             "status": "no_feasible_plan",
             "plans": [],
             "unfeasible_reasons": [
@@ -295,6 +363,10 @@ def plan_itinerary_logic(
             ],
             "warnings": [],
         }
+
+    all_nodes = [attractions_map[sid]["location"]["node_id"] for sid in eligible_sids] + [start_node, end_node]
+    route_data = call_mcp_tool("get_route_matrix", {"node_ids": list(set(all_nodes))})
+    routes = route_data.get("matrix", {})
 
     # 3. Tìm kiếm các tổ hợp khả thi (L3: giới hạn iterations chống DoS)
     candidate_plans = []
@@ -355,12 +427,16 @@ def plan_itinerary_logic(
                     wait_min = int((act_start - arrival).total_seconds() / 60)
                     act_end = act_start + timedelta(minutes=dur_min)
 
+                if not is_open_for_visit(sched, act_start, act_end):
+                    feasible = False
+                    break
+
                 if act_end > deadline:
                     feasible = False
                     break
 
                 # Chi phí
-                price_per = attr.get("pricing", {}).get("price_per_person_vnd", 0)
+                price_per = attr.get("pricing", {}).get("price_per_person_vnd") or 0
                 step_cost = price_per * len(members)
                 total_cost += step_cost
 
@@ -425,7 +501,7 @@ def plan_itinerary_logic(
             "plan_result_id": "res_none",
             "crowd_analysis_id": crowd_analysis.get("analysis_id", ""),
             "scenario_id": scenario_id,
-            "data_revision": "v1",
+            "data_revision": DATA_REVISION,
             "status": "no_feasible_plan",
             "plans": [],
             "unfeasible_reasons": [
@@ -515,7 +591,7 @@ def plan_itinerary_logic(
             "plan_result_id": "res_failed_validation",
             "crowd_analysis_id": crowd_analysis.get("analysis_id", ""),
             "scenario_id": scenario_id,
-            "data_revision": "v1",
+            "data_revision": DATA_REVISION,
             "status": "no_feasible_plan",
             "plans": [],
             "unfeasible_reasons": ["Tất cả các phương án sinh ra đều không vượt qua bộ kiểm tra ràng buộc (Validator)."],
@@ -526,7 +602,7 @@ def plan_itinerary_logic(
         "plan_result_id": "res_success",
         "crowd_analysis_id": crowd_analysis.get("analysis_id", ""),
         "scenario_id": scenario_id,
-        "data_revision": "v1",
+        "data_revision": DATA_REVISION,
         "status": "completed",
         "plans": validated_plans,
         "unfeasible_reasons": [],
@@ -570,7 +646,7 @@ class PlannerSpecialistExecutor(AgentExecutor):
             "action": "create_plans",
             "status": plan_result.get("status", "completed"),
             "input_memory_version": req_data.get("memory_ref", {}).get("version", 1),
-            "data_revision": req_data.get("data_revision", "v1"),
+            "data_revision": req_data.get("data_revision", DATA_REVISION),
             "result": plan_result,
             "warnings": plan_result.get("warnings", []),
             "errors": plan_result.get("unfeasible_reasons", []),
@@ -615,7 +691,7 @@ app = app_builder.build()
 
 @app.get("/health")
 def health() -> dict[str, Any]:
-    return {"status": "ok", "service": "v_ai_internal", "port": "8001"}
+    return {"status": "ok", "service": "v_ai_internal", "port": "8001", "data_revision": DATA_REVISION}
 
 
 class DirectPlanRequest(BaseModel):

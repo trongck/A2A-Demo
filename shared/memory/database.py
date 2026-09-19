@@ -326,7 +326,7 @@ def save_agent_result(
     turn_id: str,
     agent_name: str,
     result_data: dict[str, Any],
-    data_revision: str = "v1",
+    data_revision: str = "google_places_v2",
 ) -> str:
     result_id = f"res_{uuid.uuid4().hex[:10]}"
     now = get_current_iso_time()

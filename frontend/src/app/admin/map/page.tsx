@@ -27,9 +27,11 @@ interface PathResult {
 
 const CATEGORY_NAMES: Record<string, string> = {
   ride: "Trò chơi giải trí",
-  exhibit: "Khu tham quan",
-  show: "Biểu diễn nghệ thuật",
-  restaurant: "Ẩm thực & Nhà hàng",
+  attraction: "Khu tham quan",
+  food: "Ẩm thực & Nhà hàng",
+  shop: "Cửa hàng",
+  hotel: "Khách sạn / nghỉ dưỡng",
+  service: "Dịch vụ",
   hub: "Điểm xuất phát",
   junction: "Nút giao thông",
 };
@@ -39,8 +41,8 @@ export default function MapPage() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [graph, setGraph] = useState<GraphData | null>(null);
   const [pathResult, setPathResult] = useState<PathResult | null>(null);
-  const [fromNode, setFromNode] = useState("start_sea_hub");
-  const [toNode, setToNode] = useState("poi_01");
+  const [fromNode, setFromNode] = useState("");
+  const [toNode, setToNode] = useState("");
   const [pathLoading, setPathLoading] = useState(false);
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
   const [highlightPath, setHighlightPath] = useState<string[]>([]);
@@ -54,7 +56,13 @@ export default function MapPage() {
     const apiBase = getApiBase();
     fetch(`${apiBase}/admin/map/graph`, { headers })
       .then((r) => r.json())
-      .then(setGraph)
+      .then((data: GraphData) => {
+        setGraph(data);
+        const start = data.nodes.find((node) => node.type === "hub")?.node_id ?? data.nodes[0]?.node_id ?? "";
+        const destination = data.nodes.find((node) => node.type === "poi" && node.node_id !== start)?.node_id ?? "";
+        setFromNode(start);
+        setToNode(destination);
+      })
       .catch(() => {});
   }, [token]);
 
@@ -204,7 +212,7 @@ export default function MapPage() {
     try {
       const apiBase = getApiBase();
       const r = await fetch(
-        `${apiBase}/admin/map/path?from_node=${fromNode}&to_node=${toNode}`,
+        `${apiBase}/admin/map/path?from_node=${encodeURIComponent(fromNode)}&to_node=${encodeURIComponent(toNode)}`,
         {
           headers: { Authorization: `Bearer ${curToken}` },
         }
@@ -379,7 +387,7 @@ export default function MapPage() {
                 <button
                   key={n.node_id}
                   onClick={() => {
-                    setFromNode("start_sea_hub");
+                    setFromNode(graph?.nodes.find((node) => node.type === "hub")?.node_id ?? "");
                     setToNode(n.node_id);
                   }}
                   className="w-full text-left px-3 py-2 rounded-xl hover:bg-slate-100 text-xs font-semibold text-slate-700 hover:text-slate-900 transition-colors flex items-center justify-between cursor-pointer"

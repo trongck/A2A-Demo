@@ -50,20 +50,23 @@ with urllib.request.urlopen(req) as resp:
     graph = json.loads(resp.read().decode())
     print(f'[PASS] /admin/map/graph: {len(graph["nodes"])} nodes, {len(graph["edges"])} edges')
 
+hub_id = next(node['node_id'] for node in graph['nodes'] if node['type'] == 'hub')
+poi_id = next(node['node_id'] for node in graph['nodes'] if node['type'] == 'poi')
+
 # 7. Get /admin/map/path (Dijkstra)
-req = urllib.request.Request(f'{base_url}/admin/map/path?from_node=start_sea_hub&to_node=poi_03', headers=auth_headers)
+req = urllib.request.Request(f'{base_url}/admin/map/path?from_node={hub_id}&to_node={poi_id}', headers=auth_headers)
 with urllib.request.urlopen(req) as resp:
     assert resp.status == 200
     path = json.loads(resp.read().decode())
-    print(f'[PASS] /admin/map/path (Dijkstra to poi_03): path={path["path_nodes"]}, walking_minutes={path["total_walking_minutes"]}')
+    print(f'[PASS] /admin/map/path: path={path["path_nodes"]}, walking_minutes={path["total_walking_minutes"]}')
 
-# 8. PATCH /admin/crowd/poi_01
+# 8. PATCH /admin/crowd/{placeId}
 patch_data = json.dumps({'current_people': 75, 'wait_minutes': 10}).encode()
-req = urllib.request.Request(f'{base_url}/admin/crowd/poi_01', data=patch_data, headers=auth_headers, method='PATCH')
+req = urllib.request.Request(f'{base_url}/admin/crowd/{poi_id}', data=patch_data, headers=auth_headers, method='PATCH')
 with urllib.request.urlopen(req) as resp:
     assert resp.status == 200
     patched = json.loads(resp.read().decode())
-    print('[PASS] PATCH /admin/crowd/poi_01 successful')
+    print('[PASS] PATCH /admin/crowd/{placeId} successful')
 
 # 9. GET /admin/bookings/{session_id} and confirm
 if bookings['items']:
@@ -75,7 +78,7 @@ if bookings['items']:
         print(f'[PASS] /admin/bookings/{sid}: {len(detail["plans"])} plans found')
         
     if detail['plans']:
-        confirm_data = json.dumps({'plan_index': 0, 'note': 'Automated test note'}).encode()
+        confirm_data = json.dumps({'plan_id': detail['plans'][0]['plan_id'], 'note': 'Automated test note'}).encode()
         confirm_req = urllib.request.Request(f'{base_url}/admin/bookings/{sid}/confirm', data=confirm_data, headers=auth_headers)
         with urllib.request.urlopen(confirm_req) as cr:
             assert cr.status == 200

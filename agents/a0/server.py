@@ -5,9 +5,7 @@ Cung cấp API điều phối tác tử A0, quản lý session và tích hợp v
 Bám sát mục 2, 4, 6 và 7 của V-AI-Implementation-Plan.md.
 """
 
-import json
 import secrets
-from pathlib import Path
 from typing import Any
 
 from fastapi import FastAPI, Depends, HTTPException
@@ -37,8 +35,7 @@ from shared.memory.database import (
     init_db,
     update_session,
 )
-
-DATA_PATH = Path(__file__).resolve().parent.parent.parent / "data" / "V-AI-Mock-Data.json"
+from shared.data_adapter import DATA_REVISION, load_v2_data
 
 logger = get_logger("a0.server")
 
@@ -110,15 +107,12 @@ def root() -> dict[str, Any]:
 
 @app.get("/health")
 def health_check() -> dict[str, Any]:
-    return {"status": "ok", "service": "v_ai", "port": 8000}
+    return {"status": "ok", "service": "v_ai", "port": 8000, "data_revision": DATA_REVISION}
 
 
 @app.get("/api/presets")
 def get_presets() -> dict[str, Any]:
-    if not DATA_PATH.exists():
-        return {"demo_requests": [], "test_scenarios": []}
-    with open(DATA_PATH, "r", encoding="utf-8") as f:
-        data = json.load(f)
+    data = load_v2_data()
     return {
         "demo_requests": data.get("demo_requests", []),
         "test_scenarios": data.get("test_scenarios", []),

@@ -403,6 +403,7 @@ def generate_crowd_insight_with_llm(
         "1. Tình trạng chung về tải lưu lượng trong công viên. "
         "2. Cảnh báo cụ thể các điểm nóng có thời gian chờ cao hoặc quá tải (nếu có). "
         "3. Đề xuất nhóm điểm thông thoáng nên ưu tiên điều hướng khách tới."
+        " Nếu data_quality là unavailable hoặc các chỉ số crowd là null, phải nói rõ nguồn không có dữ liệu và tuyệt đối không suy diễn mật độ từ rating/reviews."
         + VAI_TRAVEL_PERSONA + PUBLIC_RESPONSE_POLICY
     )
 

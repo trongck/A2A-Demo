@@ -5,6 +5,7 @@ Bám sát mục 4 và mục 7 của V-AI-Implementation-Plan.md.
 
 from typing import Any, Literal
 from pydantic import BaseModel, Field
+from shared.data_adapter import DATA_REVISION, START_NODE_ID
 
 
 # --- Cấu trúc thành viên nhóm & Ràng buộc ---
@@ -22,7 +23,7 @@ class HardConstraints(BaseModel):
     max_wait_minutes_per_stop: int = 20
     budget_vnd_total: int = 150000
     min_end_buffer_minutes: int = 10
-    allow_unknown_crowd: bool = False
+    allow_unknown_crowd: bool = True
     excluded_service_ids: list[str] = Field(default_factory=list)
     min_activity_count: int = 3
 
@@ -44,8 +45,8 @@ class NormalizedRequest(BaseModel):
     message: str
     start_at: str  # ISO8601 (ví dụ "2026-09-18T14:00:00+07:00")
     end_by: str    # ISO8601 (ví dụ "2026-09-18T16:00:00+07:00")
-    start_node_id: str = "start_sea_hub"
-    end_node_id: str = "start_sea_hub"
+    start_node_id: str = START_NODE_ID
+    end_node_id: str = START_NODE_ID
     group_members: list[GroupMember] = Field(default_factory=list)
     hard_constraints: HardConstraints = Field(default_factory=HardConstraints)
     preferences: Preferences = Field(default_factory=Preferences)
@@ -68,7 +69,7 @@ class AgentRequest(BaseModel):
     action: str  # "analyze_crowd", "create_plans"
     memory_ref: MemoryRef
     scenario_id: str = "base"
-    data_revision: str = "v1"
+    data_revision: str = DATA_REVISION
     input: dict[str, Any] = Field(default_factory=dict)
 
 

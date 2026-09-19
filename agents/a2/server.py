@@ -33,6 +33,7 @@ from a2a.types import (
     TextPart,
 )
 from shared.llm import generate_crowd_insight_with_llm, is_llm_available
+from shared.data_adapter import DATA_REVISION
 
 MCP_URL = "http://127.0.0.1:8003"
 
@@ -71,9 +72,14 @@ def call_mcp_tool(tool_name: str, arguments: dict[str, Any]) -> dict[str, Any]:
         tool_get_weather,
     )
     if tool_name == "get_attractions":
-        return tool_get_attractions(arguments.get("scenario_id", "base"), arguments.get("service_ids"))
+        return tool_get_attractions(
+            arguments.get("scenario_id", "base"), arguments.get("service_ids"),
+            arguments.get("categories"), arguments.get("limit"), arguments.get("scope", "vinwonders"),
+        )
     elif tool_name == "get_crowd_snapshots":
-        return tool_get_crowd_snapshots(arguments.get("scenario_id", "base"), arguments.get("service_ids"))
+        return tool_get_crowd_snapshots(
+            arguments.get("scenario_id", "base"), arguments.get("service_ids"), arguments.get("scope", "vinwonders"),
+        )
     elif tool_name == "get_route_matrix":
         return tool_get_route_matrix(arguments.get("node_ids", []))
     elif tool_name == "get_weather":
@@ -90,6 +96,10 @@ def analyze_crowd_logic(
     # 1. Đọc dữ liệu từ MCP Server
     attractions = call_mcp_tool("get_attractions", {"scenario_id": scenario_id, "service_ids": service_ids})
     crowd_data = call_mcp_tool("get_crowd_snapshots", {"scenario_id": scenario_id, "service_ids": service_ids})
+    if crowd_data.get("data_revision") != DATA_REVISION or any(
+        attraction.get("data_revision") != DATA_REVISION for attraction in attractions
+    ):
+        raise RuntimeError("MCP đang trả dữ liệu không đúng revision Google Places V2")
 
     simulation_now_str = crowd_data.get("simulation_now", "2026-09-18T14:00:00+07:00")
     sim_now = datetime.fromisoformat(simulation_now_str)
@@ -177,6 +187,13 @@ def analyze_crowd_logic(
             "service_id": sid,
             "name": name,
             "zone_id": zone_id,
+            "category": attr.get("category"),
+            "category_name": attr.get("category_name"),
+            "address": attr.get("address"),
+            "location": attr.get("location"),
+            "rating": attr.get("rating"),
+            "reviews_count": attr.get("reviews_count"),
+            "opening_hours": attr.get("schedule", {}).get("raw_opening_hours", []),
             "indoor": indoor,
             "current_people": current_people,
             "queue_people": queue_people,
@@ -208,18 +225,23 @@ def analyze_crowd_logic(
         low_wait = [it for it in items if (it.get("wait_minutes") or 0) <= 10 and it.get("operating_status") == "open"]
         high_names = ", ".join(it["name"] for it in high_wait[:3]) if high_wait else "không có điểm nào"
         low_names = ", ".join(it["name"] for it in low_wait[:3]) if low_wait else "các khu vực tiêu chuẩn"
-        crowd_insight_text = (
-            f"Vào thời điểm {simulation_now_str.split('T')[1][:5]}, công viên hoạt động ổn định. "
-            f"Điểm nóng có hàng chờ cao gồm: {high_names}. "
-            f"Khuyến nghị ưu tiên điều hướng khách qua các điểm thông thoáng: {low_names}."
-        )
+        if all(item.get("data_quality") == "unavailable" for item in items):
+            crowd_insight_text = (
+                "Nguồn Google Places V2 không cung cấp mật độ hoặc thời gian chờ trực tiếp, "
+                "nên A2 giữ các chỉ số này ở trạng thái chưa xác định và không suy diễn từ rating/reviews."
+            )
+        else:
+            crowd_insight_text = (
+                f"Vào thời điểm {simulation_now_str.split('T')[1][:5]}, điểm nóng có hàng chờ cao gồm: {high_names}. "
+                f"Có thể ưu tiên các điểm thông thoáng: {low_names}."
+            )
 
     analysis_id = f"analysis_{uuid.uuid4().hex[:8]}"
     return {
         "analysis_id": analysis_id,
         "simulation_now": simulation_now_str,
         "scenario_id": scenario_id,
-        "data_revision": "v1",
+        "data_revision": DATA_REVISION,
         "items": items,
         "crowd_insights": crowd_insight_text,
         "warnings": warnings,
@@ -258,7 +280,7 @@ class CrowdSpecialistExecutor(AgentExecutor):
             "action": "analyze_crowd",
             "status": "completed" if not analysis.get("errors") else "failed",
             "input_memory_version": req_data.get("memory_ref", {}).get("version", 1),
-            "data_revision": req_data.get("data_revision", "v1"),
+            "data_revision": req_data.get("data_revision", DATA_REVISION),
             "result": analysis,
             "warnings": analysis.get("warnings", []),
             "errors": analysis.get("errors", []),
@@ -303,7 +325,7 @@ app = app_builder.build()
 
 @app.get("/health")
 def health() -> dict[str, Any]:
-    return {"status": "ok", "service": "v_ai_internal", "port": "8002"}
+    return {"status": "ok", "service": "v_ai_internal", "port": "8002", "data_revision": DATA_REVISION}
 
 
 class DirectAnalyzeRequest(BaseModel):

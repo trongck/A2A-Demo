@@ -9,10 +9,8 @@ Cung cấp 4 tools:
 Bám sát mục 5 của V-AI-Implementation-Plan.md.
 """
 
-import copy
 import heapq
 import json
-from pathlib import Path
 from typing import Any
 
 from fastapi import FastAPI, HTTPException, Depends
@@ -27,18 +25,14 @@ from shared.security import (
     get_logger,
     require_internal_secret,
 )
+from shared.data_adapter import DATA_PATH, DATA_REVISION, load_v2_data
 
 logger = get_logger("mcp.server")
 
-DATA_PATH = Path(__file__).resolve().parent.parent / "data" / "V-AI-Mock-Data.json"
-
 # --- Khởi tạo và đọc dữ liệu ---
 
-def load_data() -> dict[str, Any]:
-    if not DATA_PATH.exists():
-        raise FileNotFoundError(f"Không tìm thấy file dữ liệu tại {DATA_PATH}")
-    with open(DATA_PATH, "r", encoding="utf-8") as f:
-        return json.load(f)
+def load_data(scope: str = "vinwonders") -> dict[str, Any]:
+    return load_v2_data(scope)
 
 
 # --- Thuật toán tìm đường ngắn nhất Dijkstra ---
@@ -104,31 +98,33 @@ def compute_shortest_paths(edges_data: list[dict[str, Any]], nodes: list[str]) -
 
 # --- Core Tool Implementations ---
 
-def tool_get_attractions(scenario_id: str = "base", service_ids: list[str] | None = None) -> list[dict[str, Any]]:
-    data = load_data()
+def tool_get_attractions(
+    scenario_id: str = "base",
+    service_ids: list[str] | None = None,
+    categories: list[str] | None = None,
+    limit: int | None = None,
+    scope: str = "vinwonders",
+) -> list[dict[str, Any]]:
+    data = load_data(scope)
     attractions = data.get("attractions", [])
     if service_ids:
         s_set = set(service_ids)
         attractions = [a for a in attractions if a.get("service_id") in s_set]
-    return attractions
+    if categories:
+        category_set = set(categories)
+        attractions = [a for a in attractions if a.get("category") in category_set]
+    return attractions[:limit] if limit else attractions
 
 
-def tool_get_crowd_snapshots(scenario_id: str = "base", service_ids: list[str] | None = None) -> dict[str, Any]:
-    data = load_data()
-    snapshots = copy.deepcopy(data.get("crowd_snapshots", []))
-    simulation_now = data.get("simulation_now", "2026-09-18T14:00:00+07:00")
+def tool_get_crowd_snapshots(
+    scenario_id: str = "base",
+    service_ids: list[str] | None = None,
+    scope: str = "vinwonders",
+) -> dict[str, Any]:
+    data = load_data(scope)
+    snapshots = data.get("crowd_snapshots", [])
+    simulation_now = data.get("simulation_now")
     config = data.get("config", {})
-
-    # Áp dụng scenario overrides nếu có
-    test_scenarios = data.get("test_scenarios", [])
-    matching_scenario = next((s for s in test_scenarios if s.get("scenario_id") == scenario_id), None)
-    if matching_scenario and "snapshot_overrides" in matching_scenario:
-        overrides = {o["service_id"]: o for o in matching_scenario["snapshot_overrides"]}
-        for snap in snapshots:
-            sid = snap.get("service_id")
-            if sid in overrides:
-                # Cập nhật snapshot theo override
-                snap.update(overrides[sid])
 
     if service_ids:
         s_set = set(service_ids)
@@ -136,6 +132,7 @@ def tool_get_crowd_snapshots(scenario_id: str = "base", service_ids: list[str] |
 
     return {
         "scenario_id": scenario_id,
+        "data_revision": DATA_REVISION,
         "simulation_now": simulation_now,
         "config": config,
         "snapshots": snapshots,
@@ -149,6 +146,7 @@ def tool_get_route_matrix(node_ids: list[str]) -> dict[str, Any]:
     target_nodes = list(set(node_ids if node_ids else all_nodes))
     matrix = compute_shortest_paths(edges, target_nodes)
     return {
+        "data_revision": DATA_REVISION,
         "map_id": data.get("routing", {}).get("map_id", "vinwonders_nha_trang_mock_map"),
         "matrix": matrix,
     }
@@ -158,6 +156,7 @@ def tool_get_weather(start_at: str, end_by: str) -> dict[str, Any]:
     data = load_data()
     windows = data.get("environment", {}).get("weather_windows", [])
     return {
+        "data_revision": DATA_REVISION,
         "forecast_issued_at": data.get("environment", {}).get("forecast_issued_at", ""),
         "query_range": {"start_at": start_at, "end_by": end_by},
         "weather_windows": windows,
@@ -170,16 +169,26 @@ mcp = MCPServer("v-ai-mcp-server")
 
 
 @mcp.tool()
-def get_attractions(scenario_id: str = "base", service_ids: list[str] | None = None) -> str:
-    """Lấy thông tin danh mục trò chơi, điểm tham quan, quy định chiều cao và giá vé."""
-    result = tool_get_attractions(scenario_id, service_ids)
+def get_attractions(
+    scenario_id: str = "base",
+    service_ids: list[str] | None = None,
+    categories: list[str] | None = None,
+    limit: int | None = None,
+    scope: str = "vinwonders",
+) -> str:
+    """Lấy địa điểm V2 cùng tọa độ, loại hình, giờ mở cửa, rating và metadata nguồn."""
+    result = tool_get_attractions(scenario_id, service_ids, categories, limit, scope)
     return json.dumps(result, ensure_ascii=False)
 
 
 @mcp.tool()
-def get_crowd_snapshots(scenario_id: str = "base", service_ids: list[str] | None = None) -> str:
-    """Lấy thông tin mật độ hiện tại, số người xếp hàng, thời gian chờ và trạng thái camera."""
-    result = tool_get_crowd_snapshots(scenario_id, service_ids)
+def get_crowd_snapshots(
+    scenario_id: str = "base",
+    service_ids: list[str] | None = None,
+    scope: str = "vinwonders",
+) -> str:
+    """Lấy trạng thái crowd V2; trường không có trong nguồn được trả null/unavailable."""
+    result = tool_get_crowd_snapshots(scenario_id, service_ids, scope)
     return json.dumps(result, ensure_ascii=False)
 
 
@@ -227,16 +236,16 @@ class ToolCallRequest(BaseModel):
 
 @app.get("/health")
 def health_check() -> dict[str, str]:
-    return {"status": "ok", "service": "mcp_server", "port": "8003"}
+    return {"status": "ok", "service": "mcp_server", "port": "8003", "data_revision": DATA_REVISION}
 
 
 @app.get("/api/tools/list")
 def list_tools() -> list[dict[str, Any]]:
     return [
-        {"name": "get_attractions", "allowed_callers": list(TOOL_PERMISSIONS["get_attractions"]), "description": "Lấy thông tin danh mục trò chơi"},
-        {"name": "get_crowd_snapshots", "allowed_callers": list(TOOL_PERMISSIONS["get_crowd_snapshots"]), "description": "Lấy thông tin mật độ và hàng chờ"},
-        {"name": "get_route_matrix", "allowed_callers": list(TOOL_PERMISSIONS["get_route_matrix"]), "description": "Tính ma trận đường đi ngắn nhất"},
-        {"name": "get_weather", "allowed_callers": list(TOOL_PERMISSIONS["get_weather"]), "description": "Lấy thông tin thời tiết"},
+        {"name": "get_attractions", "allowed_callers": list(TOOL_PERMISSIONS["get_attractions"]), "description": "Địa điểm V2: tọa độ, loại hình, giờ mở cửa, rating/reviews", "arguments": ["scenario_id", "service_ids", "categories", "limit", "scope"]},
+        {"name": "get_crowd_snapshots", "allowed_callers": list(TOOL_PERMISSIONS["get_crowd_snapshots"]), "description": "Trạng thái vận hành; crowd thiếu trong V2 trả null", "arguments": ["scenario_id", "service_ids", "scope"]},
+        {"name": "get_route_matrix", "allowed_callers": list(TOOL_PERMISSIONS["get_route_matrix"]), "description": "Ma trận đi bộ ước tính từ tọa độ V2", "arguments": ["node_ids"]},
+        {"name": "get_weather", "allowed_callers": list(TOOL_PERMISSIONS["get_weather"]), "description": "Thời tiết; V2 không cung cấp nên có thể rỗng", "arguments": ["start_at", "end_by"]},
     ]
 
 
@@ -254,9 +263,14 @@ def call_tool_endpoint(req: ToolCallRequest) -> dict[str, Any]:
         )
 
     if name == "get_attractions":
-        return {"result": tool_get_attractions(args.get("scenario_id", "base"), args.get("service_ids"))}
+        return {"result": tool_get_attractions(
+            args.get("scenario_id", "base"), args.get("service_ids"), args.get("categories"),
+            args.get("limit"), args.get("scope", "vinwonders"),
+        )}
     elif name == "get_crowd_snapshots":
-        return {"result": tool_get_crowd_snapshots(args.get("scenario_id", "base"), args.get("service_ids"))}
+        return {"result": tool_get_crowd_snapshots(
+            args.get("scenario_id", "base"), args.get("service_ids"), args.get("scope", "vinwonders"),
+        )}
     elif name == "get_route_matrix":
         node_ids = args.get("node_ids", [])
         return {"result": tool_get_route_matrix(node_ids)}

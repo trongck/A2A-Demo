@@ -23,11 +23,9 @@ Endpoints:
 """
 
 import heapq
-import json
 import os
 import time
 from collections import defaultdict
-from pathlib import Path
 from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
@@ -52,8 +50,7 @@ from shared.memory.database import (
     init_db,
     update_admin_last_login,
 )
-
-DATA_PATH = Path(__file__).resolve().parent.parent.parent / "data" / "V-AI-Mock-Data.json"
+from shared.data_adapter import START_NODE_ID, load_v2_data
 
 admin_router = APIRouter(prefix="/admin", tags=["Admin Portal"])
 
@@ -62,9 +59,8 @@ admin_router = APIRouter(prefix="/admin", tags=["Admin Portal"])
 _mock_crowd_overrides: dict[str, dict[str, Any]] = {}  # in-memory cho demo PATCH
 
 def _load_mock_data() -> dict[str, Any]:
-    """Doc V-AI-Mock-Data.json."""
-    with open(DATA_PATH, "r", encoding="utf-8") as f:
-        return json.load(f)
+    """Đọc và chuẩn hóa V-AI-Mock-Data-V2.json."""
+    return load_v2_data()
 
 
 def _compute_crowd_level(occupancy_rate: float | None, data_quality: str) -> str:
@@ -215,7 +211,7 @@ def crowd_overview(_: dict = Depends(require_admin_token)) -> dict[str, Any]:
             snapshots[sid].update(override)
 
     zones_map: dict[str, list[dict]] = defaultdict(list)
-    open_count = maintenance_count = closed_count = 0
+    open_count = maintenance_count = closed_count = unknown_count = 0
 
     for service_id, attr in attractions.items():
         snap = snapshots.get(service_id, {})
@@ -225,8 +221,10 @@ def crowd_overview(_: dict = Depends(require_admin_token)) -> dict[str, Any]:
             open_count += 1
         elif status_val == "maintenance":
             maintenance_count += 1
-        else:
+        elif status_val in {"temporarily_closed", "permanently_closed", "closed"}:
             closed_count += 1
+        else:
+            unknown_count += 1
 
         current_people = snap.get("current_people")
         capacity = attr["crowd_reference"]["comfort_capacity_people"]
@@ -270,6 +268,7 @@ def crowd_overview(_: dict = Depends(require_admin_token)) -> dict[str, Any]:
         "open_count": open_count,
         "maintenance_count": maintenance_count,
         "closed_count": closed_count,
+        "unknown_count": unknown_count,
         "zones": zones,
     }
 
@@ -418,7 +417,7 @@ def get_map_graph() -> dict[str, Any]:
     typed_nodes = []
     poi_ids = {a["service_id"] for a in data.get("attractions", [])}
     for n in nodes:
-        if n["node_id"] == "start_sea_hub":
+        if n["node_id"] == START_NODE_ID:
             ntype = "hub"
         elif n["node_id"] in poi_ids:
             ntype = "poi"
@@ -481,8 +480,8 @@ def get_plan_path(
         return {"session_id": session_id, "plan_index": plan_index, "path_segments": [], "total_walking_minutes": 0}
 
     # Tinh tong path: start -> leg1 -> leg2 -> ... -> end
-    start_node = plan.get("start_node_id", "start_sea_hub")
-    end_node = plan.get("end_node_id", "start_sea_hub")
+    start_node = plan.get("start_node_id", START_NODE_ID)
+    end_node = plan.get("end_node_id", START_NODE_ID)
     service_sequence = [leg.get("service_id") for leg in legs if leg.get("service_id")]
 
     all_node_sequence = [start_node]

@@ -2,7 +2,7 @@
 
 **Mục tiêu:** khách chat với A0, A2 phân tích mật độ, A1 lập 1–2 lịch trình khả thi, A0 trả lời và tiếp tục điều chỉnh trong cùng phiên. Toàn bộ ứng dụng chạy local; không yêu cầu deploy hoặc push code.
 
-**Giả định:** sử dụng Python; nhóm 3 người đã biết lập trình API; dùng bộ `V-AI-Mock-Data.json` schema 2.0 đã chuẩn bị. Kế hoạch thời gian là ước lượng, cần điều chỉnh sau bước chạy thử SDK. Các dữ liệu vận hành VinWonders trong fixture đều là mock.
+**Giả định hiện hành:** sử dụng Python; nguồn runtime là `V-AI-Mock-Data-V2.json` dạng Google Places và được chuẩn hóa tại MCP. Các trường vận hành không có trong nguồn V2 phải giữ `null`/`unavailable`, không suy diễn thành dữ liệu thật.
 
 ## 1. Phạm vi và kết quả cần bàn giao
 
@@ -89,8 +89,8 @@ Ví dụ A0 giao A2, sau khi memory phiên bản 3 đã được lưu:
   "request_id": "req_a2_001",
   "action": "analyze_crowd",
   "memory_ref": {"session_id": "demo_family_001", "version": 3},
-  "scenario_id": "baseline",
-  "data_revision": "baseline_v1",
+  "scenario_id": "base",
+  "data_revision": "google_places_v2",
   "input": {"scope": "all_park_services"}
 }
 ```
@@ -105,8 +105,8 @@ A2 đọc view memory dành cho nhiệm vụ, gọi MCP, tính toán rồi trả
   "request_id": "req_a1_001",
   "action": "create_plans",
   "memory_ref": {"session_id": "demo_family_001", "version": 4},
-  "scenario_id": "baseline",
-  "data_revision": "baseline_v1",
+  "scenario_id": "base",
+  "data_revision": "google_places_v2",
   "input": {
     "crowd_analysis_id": "analysis_001",
     "number_of_plans": 2
@@ -225,14 +225,12 @@ Dành thêm thời gian nếu nhóm mới học Python/API hoặc gặp khác bi
 
 | Ca | Thao tác | Kết quả bắt buộc |
 |---|---|---|
-| Baseline | Nạp đầy đủ preset `family_two_plans` | Có 2 phương án khác nhau, ít nhất 3 hoạt động/phương án, hợp lệ cho cả nhóm, về đúng node trước 16:00 và có buffer ≥10 phút |
-| Đối chiếu lịch | Chạy fixture tham chiếu bằng validator | Lịch gentle 108 phút/buffer 12; more-rides 109 phút/buffer 11 phải được công nhận hợp lệ. Planner có thể tạo lịch khác nếu đúng mọi ràng buộc |
+| Nguồn V2 | Đọc `V-AI-Mock-Data-V2.json` | Có 267 Google Places; mọi kết quả runtime mang revision `google_places_v2` |
+| Baseline | Gửi đủ thành viên và khung giờ | Có 2 phương án khác nhau, ít nhất 3 hoạt động/phương án và về đúng node với buffer ≥10 phút |
 | Input thiếu | Chat tự do chưa cho chiều cao trẻ/thời gian | A0 hỏi đúng thông tin ảnh hưởng lựa chọn; không lén lấy hồ sơ fixture |
 | Multi-turn thật | Trong cùng phiên nói “chỉ đi trong nhà, tối thiểu 2 điểm” | Giữ hồ sơ và giới hạn chưa sửa; cập nhật indoor/min_activity_count; tăng phiên bản lịch; các điểm đều trong nhà |
-| Tăng mật độ | Chọn `aquarium_crowded` trong phiên | A2 thấy chờ 35 phút; A1 không chọn điểm vi phạm max_wait 20; A0 giải thích đổi lịch |
-| Đóng điểm | Chọn `alpine_closed` | Không đưa Alpine vào lịch mới; không tự đổi sang baseline |
-| Thiếu dữ liệu | Chọn `missing_flying_cinema` | Null không thành 0; loại/đánh dấu theo allow_unknown_crowd |
-| Stale | Đọc snapshot poi_10 lúc 13:40, demo now 14:00 | Đánh dấu stale theo ngưỡng 180 giây; không dùng như dữ liệu mới |
+| Thiếu crowd | Phân tích catalog V2 | `current_people`, `wait_minutes` giữ null và tải là unknown; không suy diễn từ rating/reviews |
+| Revision mismatch | Cho agent/tool trả revision khác V2 | A0/A1/A2 từ chối kết quả, không trộn dữ liệu |
 | Không khả thi | Yêu cầu vượt thời gian/điều kiện nhóm | Trả `no_feasible_plan` hoặc thông báo giới hạn tìm kiếm; không tạo lịch sai |
 | MCP/A2A lỗi | Tắt MCP hoặc một specialist | Có timeout và lỗi rõ; không tiếp tục bằng số bịa; UI thoát trạng thái loading |
 | Hai phiên | Hai tab có scenario/input khác nhau | Memory và override không lẫn nhau |
@@ -250,7 +248,7 @@ Lưu ý: `indoor_followup` trong bộ dữ liệu hiện tại là một fixture
 3. Gửi yêu cầu hai phương án. Theo dõi event A0 → A2, tool MCP, kết quả A2 được lưu, rồi A0 → A1.
 4. Mở hai plan cards: từng điểm, giờ đến, thời gian chờ, đi bộ, chi phí và buffer.
 5. Chat chỉnh “chỉ trong nhà, tối thiểu 2 điểm” trong cùng session; xem lịch mới vẫn giữ hồ sơ nhóm.
-6. Dùng một phiên baseline khác để bật `aquarium_crowded`; yêu cầu lập lại và xem A2 phát hiện tăng chờ, A1 đổi phương án.
+6. Mở health A0/A1/A2/MCP và xác nhận cả bốn cùng báo `google_places_v2`.
 7. Mở bản ghi task/kết quả JSON để giải thích A2A là giao agent, MCP là gọi tool và shared memory là ngữ cảnh chung.
 
 **Hoàn thành khi:** demo chạy từ hướng dẫn, khách chat được nhiều lượt qua A0, giao tiếp A2A/MCP được quan sát thực tế, lịch vượt qua validator, và không cần chép lịch mẫu vào response.

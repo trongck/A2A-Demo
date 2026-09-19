@@ -9,7 +9,9 @@ import json
 import re
 import time
 import uuid
+from datetime import datetime, timedelta
 from typing import Any
+from zoneinfo import ZoneInfo
 
 import httpx
 
@@ -36,6 +38,7 @@ from shared.memory.database import (
     save_plans,
     update_session,
 )
+from shared.data_adapter import DATA_REVISION, START_NODE_ID
 
 
 logger = get_logger("a0.orchestrator")
@@ -79,9 +82,13 @@ def call_a2a_agent(agent_url: str, request_payload: dict[str, Any]) -> dict[str,
                 )
 
             if resp.status_code == 200:
+                result = resp.json()
+                if result.get("data_revision") != DATA_REVISION:
+                    logger.error("Rejected mismatched agent data revision: %s", result.get("data_revision"))
+                    return {"status": "failed", "error": "Phiên bản dữ liệu agent không đồng bộ."}
                 return {
                     "status": "completed",
-                    "result": resp.json(),
+                    "result": result,
                 }
     except Exception as e:
         # M6: Log chi tiết nội bộ, không lộ cho client
@@ -93,6 +100,8 @@ def call_a2a_agent(agent_url: str, request_payload: dict[str, Any]) -> dict[str,
                 scenario_id=request_payload.get("scenario_id", "base"),
                 service_ids=request_payload.get("input", {}).get("service_ids"),
             )
+            if res.get("data_revision") != DATA_REVISION:
+                return {"status": "failed", "error": "Phiên bản dữ liệu agent không đồng bộ."}
             return {"status": "completed", "result": res}
         else:
             from agents.a1.server import plan_itinerary_logic
@@ -101,6 +110,8 @@ def call_a2a_agent(agent_url: str, request_payload: dict[str, Any]) -> dict[str,
                 crowd_analysis=request_payload.get("input", {}).get("crowd_analysis", {}),
                 scenario_id=request_payload.get("scenario_id", "base"),
             )
+            if res.get("data_revision") != DATA_REVISION:
+                return {"status": "failed", "error": "Phiên bản dữ liệu agent không đồng bộ."}
             return {"status": res.get("status", "completed"), "result": res}
 
     # M6: Error message generic, không lộ URL nội bộ
@@ -115,6 +126,9 @@ def extract_or_update_request(
     """Trích xuất và chuẩn hóa yêu cầu của người dùng kết hợp LLM và quy tắc logic."""
     profile = copy.deepcopy(current_session.get("profile", {}))
     missing_fields: list[str] = []
+    visit_date = datetime.now(ZoneInfo("Asia/Ho_Chi_Minh")).date()
+    if "ngày mai" in user_message.lower():
+        visit_date += timedelta(days=1)
 
     # Nếu người dùng nạp từ preset (ví dụ preset gia đình)
     if preset_data:
@@ -184,12 +198,12 @@ def extract_or_update_request(
             if entities.get("start_time"):
                 st = str(entities["start_time"]).strip()
                 if len(st) == 5 and ":" in st:
-                    profile["start_at"] = f"2026-09-18T{st}:00+07:00"
+                    profile["start_at"] = f"{visit_date.isoformat()}T{st}:00+07:00"
 
             if entities.get("end_time"):
                 et = str(entities["end_time"]).strip()
                 if len(et) == 5 and ":" in et:
-                    profile["end_by"] = f"2026-09-18T{et}:00+07:00"
+                    profile["end_by"] = f"{visit_date.isoformat()}T{et}:00+07:00"
 
         except Exception as e:
             logger.warning("LLM intent extraction error: %s", e)
@@ -332,17 +346,19 @@ def extract_or_update_request(
         )
         if explicit_window:
             start_hour, start_minute, end_hour, end_minute = explicit_window.groups()
-            profile["start_at"] = f"2026-09-18T{int(start_hour):02d}:{int(start_minute or 0):02d}:00+07:00"
-            profile["end_by"] = f"2026-09-18T{int(end_hour):02d}:{int(end_minute or 0):02d}:00+07:00"
+            profile["start_at"] = f"{visit_date.isoformat()}T{int(start_hour):02d}:{int(start_minute or 0):02d}:00+07:00"
+            profile["end_by"] = f"{visit_date.isoformat()}T{int(end_hour):02d}:{int(end_minute or 0):02d}:00+07:00"
         elif "cả ngày" in msg_lower:
-            profile["start_at"] = "2026-09-18T09:00:00+07:00"
-            profile["end_by"] = "2026-09-18T20:00:00+07:00"
+            profile["start_at"] = f"{visit_date.isoformat()}T09:00:00+07:00"
+            profile["end_by"] = f"{visit_date.isoformat()}T20:00:00+07:00"
         elif intent_type not in {"general_chat", "out_of_scope", "too_ambiguous"}:
             missing_fields.append("khung_giờ_tham_quan")
 
     # Mặc định các thông số tiêu chuẩn nếu chưa có
-    profile.setdefault("start_node_id", "start_sea_hub")
-    profile.setdefault("end_node_id", "start_sea_hub")
+    if profile.get("start_node_id") in {None, "start_sea_hub"}:
+        profile["start_node_id"] = START_NODE_ID
+    if profile.get("end_node_id") in {None, "start_sea_hub"}:
+        profile["end_node_id"] = START_NODE_ID
     profile.setdefault("number_of_plans", 2)
     hard_defaults = {
         "indoor_only": False,
@@ -350,7 +366,7 @@ def extract_or_update_request(
         "max_wait_minutes_per_stop": 20,
         "budget_vnd_total": 150000,
         "min_end_buffer_minutes": 10,
-        "allow_unknown_crowd": False,
+        "allow_unknown_crowd": True,
         "excluded_service_ids": [],
         "min_activity_count": 3,
     }
@@ -607,7 +623,7 @@ def run_orchestration(
         "action": "analyze_crowd",
         "memory_ref": {"session_id": session_id, "version": new_version},
         "scenario_id": scenario_id,
-        "data_revision": "v1",
+        "data_revision": DATA_REVISION,
         "input": {"service_ids": None},
     }
 
@@ -678,7 +694,7 @@ def run_orchestration(
         "action": "create_plans",
         "memory_ref": {"session_id": session_id, "version": a2_version},
         "scenario_id": scenario_id,
-        "data_revision": "v1",
+        "data_revision": DATA_REVISION,
         "input": {
             "normalized_request": updated_profile,
             "crowd_analysis": crowd_analysis,
@@ -691,6 +707,31 @@ def run_orchestration(
     plan_result = a1_resp.get("result", {})
     plans = plan_result.get("plans", [])
     plan_status = plan_result.get("status", "failed")
+    if plan_result:
+        save_agent_result(session_id, turn_id, "a1_planner_specialist", plan_result)
+
+    if a1_resp.get("status") == "failed" or plan_status == "failed":
+        reply = "Xin lỗi quý khách, dịch vụ lập lịch chưa đồng bộ dữ liệu V2. Vui lòng thử lại sau khi các agent được khởi động lại."
+        add_message(session_id, turn_id, "assistant", reply)
+        record_event(
+            session_id=session_id,
+            turn_id=turn_id,
+            event_type="error",
+            sender="A1",
+            receiver="A0",
+            summary="A1 từ chối lập lịch do lỗi dịch vụ hoặc data revision.",
+            payload=a1_resp,
+            duration_ms=a1_duration,
+            status="error",
+        )
+        return {
+            "session_id": session_id,
+            "turn_id": turn_id,
+            "status": "failed",
+            "reply": reply,
+            "plans": [],
+            "routing": routing,
+        }
 
     if plan_status == "no_feasible_plan":
         unfeasible_reasons = plan_result.get("unfeasible_reasons", [])
@@ -994,7 +1035,7 @@ def run_orchestration_stream(
         "action": "analyze_crowd",
         "memory_ref": {"session_id": session_id, "version": new_version},
         "scenario_id": scenario_id,
-        "data_revision": "v1",
+        "data_revision": DATA_REVISION,
         "input": {"service_ids": None},
     }
 
@@ -1060,7 +1101,7 @@ def run_orchestration_stream(
         "action": "create_plans",
         "memory_ref": {"session_id": session_id, "version": a2_version},
         "scenario_id": scenario_id,
-        "data_revision": "v1",
+        "data_revision": DATA_REVISION,
         "input": {
             "normalized_request": updated_profile,
             "crowd_analysis": crowd_analysis,
@@ -1073,6 +1114,26 @@ def run_orchestration_stream(
     plan_result = a1_resp.get("result", {})
     plans = plan_result.get("plans", [])
     plan_status = plan_result.get("status", "failed")
+    if plan_result:
+        save_agent_result(session_id, turn_id, "a1_planner_specialist", plan_result)
+
+    if a1_resp.get("status") == "failed" or plan_status == "failed":
+        reply = "Xin lỗi quý khách, dịch vụ lập lịch chưa đồng bộ dữ liệu V2. Vui lòng thử lại sau khi các agent được khởi động lại."
+        add_message(session_id, turn_id, "assistant", reply)
+        record_event(
+            session_id=session_id,
+            turn_id=turn_id,
+            event_type="error",
+            sender="A1",
+            receiver="A0",
+            summary="A1 từ chối lập lịch do lỗi dịch vụ hoặc data revision.",
+            payload=a1_resp,
+            duration_ms=a1_duration,
+            status="error",
+        )
+        yield f"event: token\ndata: {json.dumps({'token': reply}, ensure_ascii=False)}\n\n"
+        yield f"event: done\ndata: {json.dumps({'session_id': session_id, 'turn_id': turn_id, 'status': 'failed', 'reply': reply, 'plans': [], 'events': get_events(session_id)}, ensure_ascii=False)}\n\n"
+        return
 
     if plan_status == "no_feasible_plan":
         unfeasible_reasons = plan_result.get("unfeasible_reasons", [])

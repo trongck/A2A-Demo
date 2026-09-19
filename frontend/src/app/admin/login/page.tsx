@@ -72,6 +72,9 @@ export default function AdminLoginPage() {
         backgroundImage: "url('/background_admin.png')",
       }}
     >
+      {/* Lớp phủ làm dịu màu nền nhẹ nhàng, giữ trọn cảnh sắc nhưng êm mắt hơn */}
+      <div className="absolute inset-0 bg-gradient-to-b from-slate-900/15 via-slate-900/20 to-slate-900/30 backdrop-brightness-95" />
+
       <div className="relative w-full max-w-md z-10">
         {/* Khung đăng nhập phong cách sáng, gom toàn bộ thông tin vào trong card */}
         <div className="bg-white/95 backdrop-blur-xl border border-white shadow-[0_25px_60px_rgba(0,0,0,0.25)] rounded-3xl p-8 sm:p-10">

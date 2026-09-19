@@ -10,7 +10,7 @@ interface Attraction {
   indoor: boolean;
   operating_status: string;
   current_people: number | null;
-  capacity: number;
+  capacity: number | null;
   occupancy_rate: number | null;
   crowd_level: string;
   wait_minutes: number | null;
@@ -31,6 +31,7 @@ interface OverviewData {
   open_count: number;
   maintenance_count: number;
   closed_count: number;
+  unknown_count: number;
   zones: ZoneData[];
 }
 
@@ -41,18 +42,13 @@ const CROWD_DOT: Record<string, string> = {
   unknown: "#94a3b8",
 };
 
-const CROWD_INFO: Record<string, { bg: string; text: string; label: string }> = {
-  low: { bg: "bg-emerald-50 border-emerald-200", text: "text-emerald-700", label: "Vắng" },
-  medium: { bg: "bg-amber-50 border-amber-200", text: "text-amber-700", label: "Bình thường" },
-  high: { bg: "bg-rose-50 border-rose-200", text: "text-rose-700", label: "Đông đúc" },
-  unknown: { bg: "bg-slate-50 border-slate-200", text: "text-slate-600", label: "Chưa rõ" },
-};
-
 const STATUS_TEXT: Record<string, { label: string; bg: string; text: string }> = {
   open: { label: "Đang mở cửa", bg: "bg-emerald-50 border-emerald-200", text: "text-emerald-700" },
   maintenance: { label: "Đang bảo trì", bg: "bg-amber-50 border-amber-200", text: "text-amber-700" },
   temporarily_closed: { label: "Tạm dừng", bg: "bg-rose-50 border-rose-200", text: "text-rose-700" },
+  permanently_closed: { label: "Đóng vĩnh viễn", bg: "bg-slate-100 border-slate-200", text: "text-slate-600" },
   closed: { label: "Đã đóng cửa", bg: "bg-slate-100 border-slate-200", text: "text-slate-600" },
+  unknown: { label: "Chưa có trạng thái", bg: "bg-slate-50 border-slate-200", text: "text-slate-600" },
 };
 
 function MapSVG({
@@ -147,8 +143,10 @@ export default function CrowdPage() {
   const [updating, setUpdating] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
 
-  const getEffectiveToken = () =>
-    token || (typeof window !== "undefined" ? localStorage.getItem("admin_token") : null);
+  const getEffectiveToken = useCallback(
+    () => token || (typeof window !== "undefined" ? localStorage.getItem("admin_token") : null),
+    [token],
+  );
 
   const fetchData = useCallback(async () => {
     const curToken = getEffectiveToken();
@@ -162,12 +160,15 @@ export default function CrowdPage() {
     } catch (err) {
       console.warn("Crowd fetch error:", err);
     }
-  }, [token]);
+  }, [getEffectiveToken]);
 
   useEffect(() => {
-    fetchData();
+    const initial = setTimeout(() => void fetchData(), 0);
     const id = setInterval(fetchData, 30000);
-    return () => clearInterval(id);
+    return () => {
+      clearTimeout(initial);
+      clearInterval(id);
+    };
   }, [fetchData]);
 
   const selectedAttr = data?.zones.flatMap((z) => z.attractions).find((a) => a.service_id === selected);
@@ -231,7 +232,7 @@ export default function CrowdPage() {
 
       {/* Thẻ trạng thái hoạt động */}
       {data && (
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
           <div className="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-xs border-l-4 border-emerald-500">
             <p className="text-2xl font-black text-slate-900">{data.open_count}</p>
             <p className="text-xs font-bold text-slate-500 mt-1 uppercase tracking-wider">Đang mở cửa</p>
@@ -244,6 +245,10 @@ export default function CrowdPage() {
             <p className="text-2xl font-black text-slate-900">{data.closed_count}</p>
             <p className="text-xs font-bold text-slate-500 mt-1 uppercase tracking-wider">Đã đóng cửa</p>
           </div>
+          <div className="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-xs border-l-4 border-blue-400">
+            <p className="text-2xl font-black text-slate-900">{data.unknown_count}</p>
+            <p className="text-xs font-bold text-slate-500 mt-1 uppercase tracking-wider">Chưa có trạng thái</p>
+          </div>
         </div>
       )}
 
@@ -251,7 +256,7 @@ export default function CrowdPage() {
         {/* Bản đồ trực quan */}
         <div className="xl:col-span-2 space-y-4">
           <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-xs">
-            <h3 className="font-extrabold text-slate-900 text-base mb-4">Bản đồ mật độ trực tiếp</h3>
+            <h3 className="font-extrabold text-slate-900 text-base mb-4">Bản đồ trạng thái địa điểm</h3>
             {data ? (
               <MapSVG zones={data.zones} selected={selected} onSelect={setSelected} />
             ) : (
@@ -294,12 +299,14 @@ export default function CrowdPage() {
                 </div>
                 <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/60">
                   <p className="text-slate-500 font-medium">Sức chứa tối đa</p>
-                  <p className="font-black text-slate-900 text-lg mt-0.5">{selectedAttr.capacity} người</p>
+                  <p className="font-black text-slate-900 text-lg mt-0.5">
+                    {selectedAttr.capacity !== null ? `${selectedAttr.capacity} người` : "Chưa có dữ liệu"}
+                  </p>
                 </div>
                 <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/60">
                   <p className="text-slate-500 font-medium">Thời gian chờ</p>
                   <p className="font-black text-slate-900 text-lg mt-0.5">
-                    {selectedAttr.wait_minutes !== null ? `${selectedAttr.wait_minutes} phút` : "Không phải chờ"}
+                    {selectedAttr.wait_minutes !== null ? `${selectedAttr.wait_minutes} phút` : "Chưa có dữ liệu"}
                   </p>
                 </div>
               </div>
@@ -409,7 +416,9 @@ export default function CrowdPage() {
                     <div className="flex-1 min-w-0">
                       <p className="text-xs font-bold text-slate-800 truncate">{a.name}</p>
                       <p className="text-xs text-slate-500 font-medium">
-                        {a.current_people !== null ? `${a.current_people}/${a.capacity} khách` : "Chưa rõ"}{" "}
+                        {a.current_people !== null
+                          ? `${a.current_people}/${a.capacity ?? "?"} khách`
+                          : "Chưa có dữ liệu crowd"}{" "}
                         {a.indoor ? "[Trong nhà]" : ""}
                       </p>
                     </div>
