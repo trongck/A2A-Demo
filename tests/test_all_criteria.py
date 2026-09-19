@@ -96,7 +96,8 @@ def test_a2_uses_mock_crowd_for_every_vinwonders_poi(monkeypatch):
     assert all(item["data_quality"] == "mock" for item in result["items"])
     assert all(item["current_people"] is not None for item in result["items"])
     assert all(item["wait_minutes"] is not None for item in result["items"])
-    assert all(item["load_category"] in {"low", "medium", "high", "overloaded"} for item in result["items"])
+    assert all(item["load_category"] in {"low", "medium"} for item in result["items"])
+    assert result["excluded_crowded_count"] > 0
 
 
 def test_a1_builds_plans_from_v2(monkeypatch):
@@ -116,6 +117,12 @@ def test_a1_builds_plans_from_v2(monkeypatch):
         assert plan["total_cost_vnd"] == 1050000
         assert plan["cost_breakdown"]["entry_ticket"]["ticket_type_id"] == "standard_1_day"
         assert all(leg["cost_vnd"] == 0 for leg in plan["legs"])
+        assert all(leg["crowd_level"] in {"low", "medium"} for leg in plan["legs"])
+        assert all(
+            next(item for item in analysis["items"] if item["service_id"] == leg["service_id"])["category"]
+            in {"ride", "attraction"}
+            for leg in plan["legs"]
+        )
 
 
 def test_a1_maximizes_stops_within_a_long_window(monkeypatch):

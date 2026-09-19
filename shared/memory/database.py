@@ -11,14 +11,14 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+from dotenv import load_dotenv
+
+ENV_PATH = Path(__file__).resolve().parent.parent.parent / ".env"
+load_dotenv(dotenv_path=ENV_PATH, override=True)
+
 DB_DIR = Path(__file__).resolve().parent.parent.parent / "data"
 DB_PATH = DB_DIR / "memory.sqlite"
 
-# ⚠️ M3: PRODUCTION WARNING — SQLite database chứa PII (profile nhóm, chiều cao trẻ em,
-# lịch sử hội thoại). Khi deploy production, cần:
-# 1. Dùng sqlcipher để mã hóa database at-rest
-# 2. Hoặc chuyển sang PostgreSQL/MySQL với TDE (Transparent Data Encryption)
-# 3. Backup phải được mã hóa, xóa theo retention policy
 
 
 def get_current_iso_time() -> str:
@@ -146,22 +146,24 @@ def _ensure_column(conn: sqlite3.Connection, table: str, column: str, col_def: s
 
 
 def seed_admin_users() -> None:
-    """Seed tài khoản admin từ biến môi trường khi bảng còn trống."""
+    """Seed hoặc đồng bộ tài khoản admin từ biến môi trường .env."""
+    load_dotenv(dotenv_path=ENV_PATH, override=True)
     username = os.environ.get("ADMIN_USERNAME", "").strip()
     password = os.environ.get("ADMIN_PASSWORD", "")
+    display_name = os.environ.get("ADMIN_DISPLAY_NAME", "Điều phối viên V-AI")
     if not username or not password:
         return
 
     try:
         from shared.admin_auth.auth import hash_password as _hash
     except Exception:
-        return  # passlib chưa cài — skip silently
+        return  # bcrypt chưa cài — skip silently
 
     now = get_current_iso_time()
     with get_connection() as conn:
-        count = conn.execute("SELECT COUNT(*) as c FROM admin_users").fetchone()["c"]
-        if count == 0:
-            pw_hash = _hash(password)
+        existing = conn.execute("SELECT * FROM admin_users WHERE username = ?", (username,)).fetchone()
+        pw_hash = _hash(password)
+        if not existing:
             conn.execute(
                 """
                 INSERT INTO admin_users (username, password_hash, display_name, role, is_active, created_at, updated_at)
@@ -170,11 +172,22 @@ def seed_admin_users() -> None:
                 (
                     username,
                     pw_hash,
-                    os.environ.get("ADMIN_DISPLAY_NAME", "Điều phối viên V-AI"),
+                    display_name,
                     "coordinator",
                     now,
                     now,
                 ),
+            )
+            conn.commit()
+        else:
+            # Luôn cập nhật hash mật khẩu và tên hiển thị mới nhất theo .env
+            conn.execute(
+                """
+                UPDATE admin_users
+                SET password_hash = ?, display_name = ?, updated_at = ?
+                WHERE username = ?
+                """,
+                (pw_hash, display_name, now, username),
             )
             conn.commit()
 

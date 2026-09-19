@@ -1,12 +1,13 @@
 "use client";
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useAdminAuth } from "../layout";
 import { getApiBase } from "../config";
+import { DOMAIN_CONFIG } from "../map/page";
 
 interface Attraction {
   service_id: string;
   name: string;
-  zone_id: string;
+  category: string;
   indoor: boolean;
   operating_status: string;
   current_people: number | null;
@@ -15,8 +16,9 @@ interface Attraction {
   crowd_level: string;
   wait_minutes: number | null;
   data_quality: string;
-  x_m: number;
-  y_m: number;
+  lat?: number;
+  lng?: number;
+  zone_id: string;
 }
 
 interface ZoneData {
@@ -35,296 +37,506 @@ interface OverviewData {
   zones: ZoneData[];
 }
 
-const CROWD_DOT: Record<string, string> = {
-  low: "#10b981",
-  medium: "#f59e0b",
-  high: "#ef4444",
-  unknown: "#94a3b8",
+const CROWD_COLORS: Record<string, { hex: string; bg: string; text: string; border: string; label: string }> = {
+  low: { hex: "#10b981", bg: "bg-emerald-50", text: "text-emerald-700", border: "border-emerald-200", label: "Vắng" },
+  medium: { hex: "#f59e0b", bg: "bg-amber-50", text: "text-amber-700", border: "border-amber-200", label: "Bình thường" },
+  high: { hex: "#ef4444", bg: "bg-rose-50", text: "text-rose-700", border: "border-rose-200", label: "Đông đúc" },
+  unknown: { hex: "#94a3b8", bg: "bg-slate-50", text: "text-slate-600", border: "border-slate-200", label: "Đóng / Chưa rõ" },
 };
 
-const STATUS_TEXT: Record<string, { label: string; bg: string; text: string }> = {
-  open: { label: "Đang mở cửa", bg: "bg-emerald-50 border-emerald-200", text: "text-emerald-700" },
-  maintenance: { label: "Đang bảo trì", bg: "bg-amber-50 border-amber-200", text: "text-amber-700" },
-  temporarily_closed: { label: "Tạm dừng", bg: "bg-rose-50 border-rose-200", text: "text-rose-700" },
-  permanently_closed: { label: "Đóng vĩnh viễn", bg: "bg-slate-100 border-slate-200", text: "text-slate-600" },
-  closed: { label: "Đã đóng cửa", bg: "bg-slate-100 border-slate-200", text: "text-slate-600" },
-  unknown: { label: "Chưa có trạng thái", bg: "bg-slate-50 border-slate-200", text: "text-slate-600" },
+const STATUS_TEXT: Record<string, { label: string; text: string }> = {
+  open: { label: "Mở cửa", text: "text-emerald-700" },
+  maintenance: { label: "Bảo trì", text: "text-amber-700" },
+  temporarily_closed: { label: "Tạm dừng", text: "text-rose-700" },
+  closed: { label: "Đóng cửa", text: "text-slate-600" },
+  unknown: { label: "Chưa rõ", text: "text-slate-500" },
 };
-
-function MapSVG({
-  zones,
-  selected,
-  onSelect,
-}: {
-  zones: ZoneData[];
-  selected: string | null;
-  onSelect: (id: string) => void;
-}) {
-  const allAttrs = zones.flatMap((z) => z.attractions);
-  const maxX = Math.max(...allAttrs.map((a) => a.x_m), 1280);
-  const maxY = Math.max(...allAttrs.map((a) => a.y_m), 960);
-  const W = 560;
-  const H = 420;
-  const sx = W / (maxX + 160);
-  const sy = H / (maxY + 160);
-  const scale = Math.min(sx, sy);
-  const px = (x: number) => (x + 80) * scale;
-  const py = (y: number) => (y + 80) * scale;
-
-  return (
-    <svg width={W} height={H} className="w-full h-auto rounded-xl bg-slate-50 border border-slate-200">
-      {/* Khung viền các khu vực */}
-      {zones.map((z) => {
-        const attrs = z.attractions;
-        if (!attrs.length) return null;
-        const xs = attrs.map((a) => a.x_m);
-        const ys = attrs.map((a) => a.y_m);
-        const x1 = Math.min(...xs) - 60;
-        const y1 = Math.min(...ys) - 60;
-        const x2 = Math.max(...xs) + 60;
-        const y2 = Math.max(...ys) + 60;
-        return (
-          <rect
-            key={z.zone_id}
-            x={px(x1)}
-            y={py(y1)}
-            width={(x2 - x1) * scale}
-            height={(y2 - y1) * scale}
-            rx={10}
-            fill="rgba(241,245,249,0.8)"
-            stroke="#cbd5e1"
-            strokeWidth={1}
-          />
-        );
-      })}
-      {/* Tọa độ các điểm POI */}
-      {allAttrs.map((a) => {
-        const cx = px(a.x_m);
-        const cy = py(a.y_m);
-        const color = CROWD_DOT[a.crowd_level] ?? "#94a3b8";
-        const isSelected = selected === a.service_id;
-        return (
-          <g key={a.service_id} onClick={() => onSelect(a.service_id)} className="cursor-pointer">
-            {isSelected && <circle cx={cx} cy={cy} r={20} fill={color} opacity={0.25} />}
-            <circle
-              cx={cx}
-              cy={cy}
-              r={isSelected ? 10 : 7}
-              fill={color}
-              opacity={a.operating_status === "open" ? 1 : 0.4}
-              stroke={isSelected ? "#1e293b" : "#ffffff"}
-              strokeWidth={2}
-            />
-            <text
-              x={cx}
-              y={cy + 18}
-              textAnchor="middle"
-              fontSize={9}
-              fontWeight="600"
-              fill="#334155"
-              className="select-none pointer-events-none"
-            >
-              {a.name.length > 12 ? a.name.slice(0, 12) + "…" : a.name}
-            </text>
-          </g>
-        );
-      })}
-    </svg>
-  );
-}
 
 export default function CrowdPage() {
   const { token } = useAdminAuth();
+  const mapContainerRef = useRef<HTMLDivElement>(null);
+  const mapRef = useRef<any>(null);
+  const markersRef = useRef<Record<string, { marker: any; element: HTMLElement; category: string; crowd_level: string }>>({});
+
   const [data, setData] = useState<OverviewData | null>(null);
-  const [selected, setSelected] = useState<string | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [filterCrowd, setFilterCrowd] = useState<string>("all");
+  const [filterCategory, setFilterCategory] = useState<string>("all");
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(true);
+  const [lastRefresh, setLastRefresh] = useState<Date | null>(null);
 
-  const getEffectiveToken = useCallback(
-    () => token || (typeof window !== "undefined" ? localStorage.getItem("admin_token") : null),
-    [token],
-  );
+  const fetchOverview = useCallback(async () => {
+    const effectiveToken = token || (typeof window !== "undefined" ? localStorage.getItem("admin_token") : null);
+    if (!effectiveToken) return;
 
-  const fetchData = useCallback(async () => {
-    const curToken = getEffectiveToken();
-    if (!curToken) return;
     try {
       const apiBase = getApiBase();
-      const r = await fetch(`${apiBase}/admin/crowd/overview`, {
-        headers: { Authorization: `Bearer ${curToken}` },
+      const res = await fetch(`${apiBase}/admin/crowd/overview`, {
+        headers: { Authorization: `Bearer ${effectiveToken}` },
       });
-      if (r.ok) setData(await r.json());
+      if (res.ok) {
+        const d: OverviewData = await res.json();
+        setData(d);
+        setLastRefresh(new Date());
+      }
     } catch (err) {
       console.warn("Crowd fetch error:", err);
+    } finally {
+      setLoading(false);
     }
-  }, [getEffectiveToken]);
+  }, [token]);
 
   useEffect(() => {
-    const initial = setTimeout(() => void fetchData(), 0);
-    const id = setInterval(fetchData, 30000);
-    return () => {
-      clearTimeout(initial);
-      clearInterval(id);
-    };
-  }, [fetchData]);
+    fetchOverview();
+    const id = setInterval(fetchOverview, 30000);
+    return () => clearInterval(id);
+  }, [fetchOverview]);
 
-  const selectedAttr = data?.zones.flatMap((z) => z.attractions).find((a) => a.service_id === selected);
+  const allAttractions = data?.zones.flatMap((z) => z.attractions) ?? [];
+
+  // Khởi tạo Mapbox GL JS map
+  useEffect(() => {
+    if (typeof window === "undefined" || !mapContainerRef.current) return;
+    const mbToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
+    if (!mbToken) return;
+
+    let cancelled = false;
+
+    async function initMap() {
+      const mapboxgl = (await import("mapbox-gl")).default;
+      if (cancelled || !mapContainerRef.current) return;
+
+      if (mapRef.current) {
+        try {
+          mapRef.current.remove();
+        } catch (_) {}
+        mapRef.current = null;
+      }
+
+      mapboxgl.accessToken = mbToken;
+
+      const map = new mapboxgl.Map({
+        container: mapContainerRef.current!,
+        style: "mapbox://styles/mapbox/streets-v12",
+        center: [109.243, 12.218], // VinWonders Nha Trang
+        zoom: 15.3,
+        attributionControl: false,
+      });
+
+      mapRef.current = map;
+      map.addControl(new mapboxgl.NavigationControl({ showCompass: true }), "top-right");
+
+      map.on("load", () => {
+        if (cancelled) return;
+        map.resize();
+      });
+    }
+
+    initMap();
+
+    return () => {
+      cancelled = true;
+      if (mapRef.current) {
+        try {
+          mapRef.current.remove();
+        } catch (_) {}
+        mapRef.current = null;
+      }
+    };
+  }, []);
+
+  // Lựa chọn và đồng bộ POI giữa bản đồ và danh sách
+  const selectPoi = useCallback((attr: Attraction, fly: boolean = true) => {
+    setSelectedId(attr.service_id);
+
+    // Cuộn danh sách bên phải tới thẻ POI tương ứng
+    const cardEl = document.getElementById(`poi-card-${attr.service_id}`);
+    if (cardEl) {
+      cardEl.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+
+    // Di chuyển bản đồ và bật popup
+    if (fly && mapRef.current && attr.lat && attr.lng) {
+      mapRef.current.flyTo({
+        center: [attr.lng, attr.lat],
+        zoom: 17,
+        duration: 700,
+      });
+      const item = markersRef.current[attr.service_id];
+      if (item && !item.marker.getPopup()?.isOpen()) {
+        item.marker.togglePopup();
+      }
+    }
+  }, []);
+
+  // Cập nhật Markers Google Maps Style trên Mapbox khi có dữ liệu attractions
+  useEffect(() => {
+    if (!mapRef.current || allAttractions.length === 0) return;
+
+    const map = mapRef.current;
+    import("mapbox-gl").then(({ default: mapboxgl }) => {
+      // Xóa markers cũ
+      Object.values(markersRef.current).forEach((m) => m.marker.remove());
+      markersRef.current = {};
+
+      allAttractions.forEach((attr) => {
+        if (!attr.lat || !attr.lng) return;
+
+        const cat = attr.category || "attraction";
+        const domain = DOMAIN_CONFIG[cat] ?? DOMAIN_CONFIG.attraction;
+        const crowd = CROWD_COLORS[attr.crowd_level] ?? CROWD_COLORS.unknown;
+        const status = STATUS_TEXT[attr.operating_status] ?? STATUS_TEXT.unknown;
+
+        // Container gốc định vị bởi Mapbox (KHÔNG dùng scale/transition để tránh xung đột với translate)
+        const el = document.createElement("div");
+        el.className = "cursor-pointer select-none";
+        el.style.pointerEvents = "auto";
+
+        // Khung wrapper bên trong: Thực hiện hover scale mượt mà KHÔNG bị nháy
+        const innerWrapper = document.createElement("div");
+        innerWrapper.className = "flex flex-col items-center group transition-transform duration-150 ease-out hover:scale-120";
+        innerWrapper.style.transformOrigin = "bottom center";
+
+        // Khung pin chính theo phong cách Google Maps (giọt nước bo góc quay -45 độ)
+        const pin = document.createElement("div");
+        pin.style.cssText = `
+          width: 26px;
+          height: 26px;
+          background-color: ${domain.color};
+          color: #ffffff;
+          border: 2px solid #ffffff;
+          border-radius: 50% 50% 50% 0;
+          transform: rotate(-45deg);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 3px 8px rgba(0,0,0,0.35);
+          position: relative;
+        `;
+
+        // Icon SVG của Domain nằm ngay ngắn bên trong pin
+        const iconWrap = document.createElement("div");
+        iconWrap.style.cssText = `
+          transform: rotate(45deg);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        `;
+        iconWrap.innerHTML = domain.svg;
+        pin.appendChild(iconWrap);
+
+        // Huy hiệu mật độ / số phút chờ đính góc trên của pin
+        const crowdBadge = document.createElement("div");
+        crowdBadge.style.cssText = `
+          position: absolute;
+          top: -6px;
+          right: -6px;
+          background-color: ${crowd.hex};
+          color: #ffffff;
+          border: 1.5px solid #ffffff;
+          border-radius: 10px;
+          font-size: 8.5px;
+          font-weight: 800;
+          padding: 1px 4px;
+          transform: rotate(45deg);
+          box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+          line-height: 1;
+        `;
+        crowdBadge.textContent = attr.wait_minutes ? `${attr.wait_minutes}p` : "•";
+        pin.appendChild(crowdBadge);
+
+        // Nhãn tên POI hiển thị trực tiếp bên dưới ghim (có viền trắng halo chống lóa)
+        const label = document.createElement("div");
+        label.style.cssText = `
+          font-size: 10px;
+          font-weight: 700;
+          color: #0f172a;
+          text-shadow: 0 0 2px #fff, 0 0 3px #fff, 0 0 4px #fff, 1px 1px 2px #fff, -1px -1px 2px #fff;
+          max-width: 95px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          margin-top: 3px;
+          text-align: center;
+          line-height: 1.15;
+          pointer-events: none;
+        `;
+        label.textContent = attr.name;
+
+        innerWrapper.appendChild(pin);
+        innerWrapper.appendChild(label);
+        el.appendChild(innerWrapper);
+
+        // Popup hiển thị chi tiết thông tin POI khi click vào
+        const popupContent = [
+          '<div style="font-family: inherit; font-size: 12px; min-width: 200px; padding: 4px;">',
+          '<div style="display: flex; align-items: center; justify-content: space-between; gap: 6px; margin-bottom: 5px;">',
+          `<span style="font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 6px; background-color: ${domain.color}15; color: ${domain.color}; border: 1px solid ${domain.color}40;">`,
+          `${domain.iconText} ${domain.label}`,
+          "</span>",
+          `<span style="font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 6px; background-color: ${crowd.hex}15; color: ${crowd.hex}; border: 1px solid ${crowd.hex}40;">`,
+          `${crowd.label}`,
+          "</span>",
+          "</div>",
+          `<div style="font-weight: 800; color: #0f172a; font-size: 13.5px; line-height: 1.3; margin-bottom: 4px;">${attr.name}</div>`,
+          `<div style="font-size: 11px; margin-bottom: 5px; color: ${attr.operating_status === "open" ? "#059669" : "#dc2626"}; font-weight: 600;">Trạng thái: ${status.label}</div>`,
+          attr.current_people !== null && attr.capacity
+            ? `<div style="font-size: 11px; color: #475569; margin-bottom: 2px;">Lượng khách: <b>${attr.current_people}/${attr.capacity}</b> (${Math.round((attr.occupancy_rate || 0) * 100)}%)</div>`
+            : "",
+          attr.wait_minutes !== null
+            ? `<div style="font-size: 11.5px; color: #0f766e; font-weight: 700; margin-top: 3px; padding-top: 3px; border-top: 1px dashed #e2e8f0;">Thời gian chờ: ${attr.wait_minutes} phút</div>`
+            : "",
+          "</div>",
+        ].join("");
+
+        const popup = new mapboxgl.Popup({ offset: 16, closeButton: true, maxWidth: "250px" }).setHTML(popupContent);
+
+        const marker = new mapboxgl.Marker({ element: el, anchor: "bottom" })
+          .setLngLat([attr.lng, attr.lat])
+          .setPopup(popup)
+          .addTo(map);
+
+        el.addEventListener("click", () => {
+          selectPoi(attr, false);
+        });
+
+        markersRef.current[attr.service_id] = { marker, element: el, category: cat, crowd_level: attr.crowd_level };
+      });
+    });
+  }, [allAttractions, selectPoi]);
+
+  // Bộ lọc cập nhật độ mờ hiển thị của markers trên Mapbox
+  useEffect(() => {
+    Object.values(markersRef.current).forEach(({ element, category, crowd_level }) => {
+      const matchCat = filterCategory === "all" || category === filterCategory;
+      const matchCrowd = filterCrowd === "all" || crowd_level === filterCrowd;
+
+      if (matchCat && matchCrowd) {
+        element.style.opacity = "1";
+        element.style.filter = "none";
+        element.style.pointerEvents = "auto";
+      } else {
+        element.style.opacity = "0.25";
+        element.style.filter = "grayscale(60%)";
+        element.style.pointerEvents = "auto";
+      }
+    });
+  }, [filterCategory, filterCrowd]);
+
+  // Lọc danh sách POI bên phải theo điều kiện
+  const filteredAttractions = allAttractions.filter((a) => {
+    if (filterCrowd !== "all" && a.crowd_level !== filterCrowd) return false;
+    if (filterCategory !== "all" && a.category !== filterCategory) return false;
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      return a.name.toLowerCase().includes(q) || (a.category && a.category.toLowerCase().includes(q));
+    }
+    return true;
+  });
 
   return (
-    <div className="space-y-6">
-      {/* Tiêu đề & Làm mới */}
-      <div className="flex flex-wrap items-center justify-between gap-4">
+    <div className="h-full flex flex-col gap-2.5 overflow-hidden">
+      {/* Thanh tiêu đề & Tóm tắt số liệu */}
+      <div className="flex flex-wrap items-center justify-between gap-3 shrink-0">
         <div>
-          <h2 className="text-2xl font-black text-slate-900 tracking-tight">Theo dõi mật độ khu vui chơi</h2>
-          <p className="text-xs text-slate-500 font-medium mt-0.5">Tự động làm mới dữ liệu mỗi 30 giây</p>
+          <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+            <span>Giám Sát Mật Độ &amp; Hàng Đợi Thời Gian Thực</span>
+            <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+              Live Mapbox
+            </span>
+          </h2>
+          <p className="text-xs text-slate-500 font-medium">
+            Phân loại Google Maps style với nhãn tên POI &amp; cảnh báo mật độ tức thời tại VinWonders Nha Trang
+          </p>
         </div>
-        <button
-          onClick={fetchData}
-          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl transition-all shadow-xs cursor-pointer"
-        >
-          Làm mới ngay
-        </button>
-      </div>
 
-      {/* Thẻ trạng thái hoạt động */}
-      {data && (
-        <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-          <div className="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-xs border-l-4 border-emerald-500">
-            <p className="text-2xl font-black text-slate-900">{data.open_count}</p>
-            <p className="text-xs font-bold text-slate-500 mt-1 uppercase tracking-wider">Đang mở cửa</p>
-          </div>
-          <div className="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-xs border-l-4 border-amber-500">
-            <p className="text-2xl font-black text-slate-900">{data.maintenance_count}</p>
-            <p className="text-xs font-bold text-slate-500 mt-1 uppercase tracking-wider">Đang bảo trì</p>
-          </div>
-          <div className="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-xs border-l-4 border-slate-400">
-            <p className="text-2xl font-black text-slate-900">{data.closed_count}</p>
-            <p className="text-xs font-bold text-slate-500 mt-1 uppercase tracking-wider">Đã đóng cửa</p>
-          </div>
-          <div className="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-xs border-l-4 border-blue-400">
-            <p className="text-2xl font-black text-slate-900">{data.unknown_count}</p>
-            <p className="text-xs font-bold text-slate-500 mt-1 uppercase tracking-wider">Chưa có trạng thái</p>
-          </div>
-        </div>
-      )}
-
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        {/* Bản đồ trực quan */}
-        <div className="xl:col-span-2 space-y-4">
-          <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-xs">
-            <h3 className="font-extrabold text-slate-900 text-base mb-4">Bản đồ trạng thái địa điểm</h3>
-            {data ? (
-              <MapSVG zones={data.zones} selected={selected} onSelect={setSelected} />
-            ) : (
-              <div className="h-[420px] bg-slate-100 rounded-xl animate-pulse" />
-            )}
-            <div className="flex flex-wrap items-center gap-5 mt-4 pt-4 border-t border-slate-100">
-              {[
-                ["low", "Thấp / Vắng", "#10b981"],
-                ["medium", "Bình thường", "#f59e0b"],
-                ["high", "Đông đúc", "#ef4444"],
-                ["unknown", "Chưa rõ", "#94a3b8"],
-              ].map(([k, l, c]) => (
-                <div key={k} className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full" style={{ background: c as string }} />
-                  <span className="text-xs font-semibold text-slate-600">{l as string}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Chi tiết điểm được chọn */}
-          {selectedAttr && (
-            <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-xs">
-              <div className="flex items-center justify-between mb-4">
-                <h4 className="font-extrabold text-slate-900 text-base">{selectedAttr.name}</h4>
-                <span
-                  className={`text-xs font-bold px-3 py-1 rounded-full border ${
-                    STATUS_TEXT[selectedAttr.operating_status]?.bg ?? "bg-slate-50 border-slate-200"
-                  } ${STATUS_TEXT[selectedAttr.operating_status]?.text ?? "text-slate-600"}`}
-                >
-                  {STATUS_TEXT[selectedAttr.operating_status]?.label ?? selectedAttr.operating_status}
-                </span>
-              </div>
-              <div className="grid grid-cols-3 gap-4 text-xs">
-                <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/60">
-                  <p className="text-slate-500 font-medium">Khách hiện tại</p>
-                  <p className="font-black text-slate-900 text-lg mt-0.5">
-                    {selectedAttr.current_people !== null ? `${selectedAttr.current_people} người` : "Chưa rõ"}
-                  </p>
-                </div>
-                <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/60">
-                  <p className="text-slate-500 font-medium">Sức chứa tối đa</p>
-                  <p className="font-black text-slate-900 text-lg mt-0.5">
-                    {selectedAttr.capacity !== null ? `${selectedAttr.capacity} người` : "Chưa có dữ liệu"}
-                  </p>
-                </div>
-                <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/60">
-                  <p className="text-slate-500 font-medium">Thời gian chờ</p>
-                  <p className="font-black text-slate-900 text-lg mt-0.5">
-                    {selectedAttr.wait_minutes !== null ? `${selectedAttr.wait_minutes} phút` : "Chưa có dữ liệu"}
-                  </p>
-                </div>
-              </div>
-              {selectedAttr.occupancy_rate !== null && (
-                <div className="mt-4">
-                  <div className="flex justify-between text-xs font-bold text-slate-600 mb-1.5">
-                    <span>Tỷ lệ lấp đầy</span>
-                    <span>{(selectedAttr.occupancy_rate * 100).toFixed(0)}%</span>
-                  </div>
-                  <div className="h-2.5 bg-slate-100 rounded-full overflow-hidden">
-                    <div
-                      className="h-full rounded-full transition-all"
-                      style={{
-                        width: `${Math.min(100, selectedAttr.occupancy_rate * 100)}%`,
-                        background: CROWD_DOT[selectedAttr.crowd_level] ?? CROWD_DOT.unknown,
-                      }}
-                    />
-                  </div>
-                </div>
+        {/* Thống kê nhanh */}
+        <div className="flex items-center gap-2">
+          {data && (
+            <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-xl border border-slate-200 shadow-2xs text-xs">
+              <span className="font-semibold text-emerald-700 flex items-center gap-1">
+                <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                {data.open_count} Mở
+              </span>
+              <span className="text-slate-300">|</span>
+              <span className="font-semibold text-rose-700 flex items-center gap-1">
+                <span className="w-2 h-2 rounded-full bg-rose-500" />
+                {data.closed_count + data.maintenance_count} Tạm dừng
+              </span>
+              {lastRefresh && (
+                <>
+                  <span className="text-slate-300">|</span>
+                  <span className="text-[10px] text-slate-400 font-mono">
+                    Cập nhật: {lastRefresh.toLocaleTimeString("vi-VN")}
+                  </span>
+                </>
               )}
             </div>
           )}
+
+          <button
+            type="button"
+            onClick={() => fetchOverview()}
+            disabled={loading}
+            className="text-xs font-semibold px-3 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 transition cursor-pointer shadow-2xs"
+          >
+            {loading ? "Đang tải..." : "Làm mới"}
+          </button>
+        </div>
+      </div>
+
+      {/* Thanh bộ lọc danh mục Google Maps Category Chips */}
+      <div className="flex items-center gap-1.5 overflow-x-auto py-1 shrink-0 scrollbar-none">
+        <button
+          type="button"
+          onClick={() => setFilterCategory("all")}
+          className={`text-xs font-bold px-3 py-1.5 rounded-xl border transition cursor-pointer shrink-0 flex items-center gap-1.5 ${
+            filterCategory === "all"
+              ? "bg-slate-900 text-white border-slate-900 shadow-xs"
+              : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
+          }`}
+        >
+          <span>Tất cả ({allAttractions.length})</span>
+        </button>
+
+        {Object.entries(DOMAIN_CONFIG).map(([key, cfg]) => {
+          const count = allAttractions.filter((a) => (a.category || "attraction") === key).length;
+          if (count === 0 && key !== "hub") return null;
+          const isActive = filterCategory === key;
+          return (
+            <button
+              key={key}
+              type="button"
+              onClick={() => setFilterCategory(isActive ? "all" : key)}
+              className={`text-xs font-bold px-2.5 py-1.5 rounded-xl border transition cursor-pointer shrink-0 flex items-center gap-1.5 ${
+                isActive
+                  ? "bg-white border-slate-900 shadow-sm ring-1 ring-slate-900"
+                  : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
+              }`}
+            >
+              <span
+                className="w-2 h-2 rounded-full inline-block"
+                style={{ backgroundColor: cfg.color }}
+              />
+              <span>{cfg.label}</span>
+              <span className="text-[10px] text-slate-400 font-normal">({count})</span>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Bố cục 2 cột cố định trong 1 màn hình duy nhất */}
+      <div className="flex-1 flex flex-col lg:flex-row gap-3 overflow-hidden min-h-0">
+        {/* Cột Trái: Bản đồ Mapbox GL */}
+        <div className="flex-1 h-full min-h-[300px] rounded-2xl overflow-hidden border border-slate-200 shadow-xs relative bg-slate-100">
+          <div ref={mapContainerRef} className="w-full h-full" />
+
+          {/* Chú giải góc dưới bản đồ */}
+          <div className="absolute bottom-3 left-3 bg-white/95 backdrop-blur-xs px-3 py-2 rounded-xl text-[11px] border border-slate-200 shadow-md flex flex-wrap items-center gap-2.5 max-w-[85%]">
+            <span className="font-bold text-slate-700 text-[10px] uppercase tracking-wider mr-1">Mật độ:</span>
+            <span className="flex items-center gap-1 font-semibold text-emerald-700 text-[10.5px]">
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block" /> Vắng (&lt; 40%)
+            </span>
+            <span className="flex items-center gap-1 font-semibold text-amber-700 text-[10.5px]">
+              <span className="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block" /> Bình thường (40 - 70%)
+            </span>
+            <span className="flex items-center gap-1 font-semibold text-rose-700 text-[10.5px]">
+              <span className="w-2.5 h-2.5 rounded-full bg-rose-500 inline-block" /> Đông đúc (&gt; 70%)
+            </span>
+          </div>
         </div>
 
-        {/* Cột phải: Danh sách khu vực */}
-        <div className="space-y-6">
-          {/* Danh sách theo phân khu */}
-          {data?.zones.map((z) => (
-            <div key={z.zone_id} className="bg-white border border-slate-200/80 rounded-2xl overflow-hidden shadow-xs">
-              <div className="px-5 py-3 border-b border-slate-100 bg-slate-50/80">
-                <h4 className="text-xs font-extrabold text-slate-800 uppercase tracking-wider">{z.zone_name}</h4>
+        {/* Cột Phải: Bảng danh sách POI cuộn độc lập bên trong */}
+        <div className="w-full lg:w-96 bg-white rounded-2xl border border-slate-200 shadow-xs flex flex-col overflow-hidden h-full shrink-0">
+          {/* Header bảng điều khiển */}
+          <div className="p-3.5 border-b border-slate-100 space-y-2.5 shrink-0 bg-slate-50/70">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-extrabold uppercase tracking-wider text-slate-800">
+                Danh sách POI ({filteredAttractions.length})
+              </span>
+              <select
+                value={filterCrowd}
+                onChange={(e) => setFilterCrowd(e.target.value)}
+                className="text-xs font-semibold px-2 py-1 rounded-lg border border-slate-200 bg-white text-slate-700 cursor-pointer focus:outline-none"
+              >
+                <option value="all">Tất cả mật độ</option>
+                <option value="low">Chỉ xem: Vắng</option>
+                <option value="medium">Chỉ xem: Bình thường</option>
+                <option value="high">Chỉ xem: Đông đúc</option>
+              </select>
+            </div>
+
+            <input
+              type="text"
+              placeholder="Tìm kiếm điểm tham quan..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full text-xs px-3 py-1.5 rounded-xl border border-slate-200 bg-white focus:outline-none focus:border-blue-600 transition"
+            />
+          </div>
+
+          {/* Vùng danh sách POI cuộn độc lập */}
+          <div className="flex-1 overflow-y-auto p-3 space-y-2">
+            {filteredAttractions.length === 0 ? (
+              <div className="text-center py-10 text-slate-400 text-xs font-medium">
+                Không tìm thấy điểm tham quan phù hợp
               </div>
-              <div className="divide-y divide-slate-100">
-                {z.attractions.map((a) => (
-                  <button
+            ) : (
+              filteredAttractions.map((a) => {
+                const domain = DOMAIN_CONFIG[a.category] ?? DOMAIN_CONFIG.attraction;
+                const info = CROWD_COLORS[a.crowd_level] ?? CROWD_COLORS.unknown;
+                const status = STATUS_TEXT[a.operating_status] ?? STATUS_TEXT.unknown;
+                const isSelected = selectedId === a.service_id;
+
+                return (
+                  <div
                     key={a.service_id}
-                    onClick={() => setSelected(a.service_id)}
-                    className={`w-full flex items-center gap-3 px-5 py-3 hover:bg-slate-50 transition-all text-left cursor-pointer ${
-                      selected === a.service_id ? "bg-blue-50/80" : ""
+                    id={`poi-card-${a.service_id}`}
+                    onClick={() => selectPoi(a, true)}
+                    className={`p-3 rounded-xl border transition-all cursor-pointer text-xs ${
+                      isSelected
+                        ? "bg-blue-50/90 border-blue-500 shadow-xs ring-1 ring-blue-500"
+                        : "bg-white hover:bg-slate-50 border-slate-200/80 hover:border-slate-300"
                     }`}
                   >
-                    <div
-                      className="w-2.5 h-2.5 rounded-full shrink-0"
-                      style={{ background: CROWD_DOT[a.crowd_level] ?? CROWD_DOT.unknown }}
-                    />
-                    <div className="flex-1 min-w-0">
-                      <p className="text-xs font-bold text-slate-800 truncate">{a.name}</p>
-                      <p className="text-xs text-slate-500 font-medium">
-                        {a.current_people !== null
-                          ? `${a.current_people}/${a.capacity ?? "?"} khách`
-                          : "Chưa có dữ liệu crowd"}{" "}
-                        {a.indoor ? "[Trong nhà]" : ""}
-                      </p>
-                    </div>
-                    {a.wait_minutes !== null && a.wait_minutes > 0 && (
-                      <span className="text-xs font-bold text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full shrink-0">
-                        {a.wait_minutes} phút chờ
+                    <div className="flex items-start justify-between gap-2">
+                      <div>
+                        <div className="flex items-center gap-1.5 mb-1">
+                          <span
+                            className="w-2 h-2 rounded-full inline-block"
+                            style={{ backgroundColor: domain.color }}
+                          />
+                          <span className="text-[10px] font-bold text-slate-500">
+                            {domain.label}
+                          </span>
+                        </div>
+                        <p className="font-bold text-slate-900 leading-snug">{a.name}</p>
+                      </div>
+
+                      <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded border shrink-0 ${info.bg} ${info.text} ${info.border}`}>
+                        {info.label}
                       </span>
-                    )}
-                  </button>
-                ))}
-              </div>
-            </div>
-          ))}
+                    </div>
+
+                    <div className="mt-2 flex items-center justify-between text-[11px] text-slate-500 font-medium">
+                      <span className={status.text}>{status.label}</span>
+                      {a.current_people !== null && a.capacity && (
+                        <span>
+                          {a.current_people}/{a.capacity} khách
+                        </span>
+                      )}
+                      {a.wait_minutes !== null && (
+                        <span className="font-mono font-bold text-teal-800">
+                          Chờ {a.wait_minutes}p
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                );
+              })
+            )}
+          </div>
         </div>
       </div>
     </div>

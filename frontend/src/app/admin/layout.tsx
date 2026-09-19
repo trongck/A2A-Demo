@@ -27,10 +27,9 @@ export function useAdminAuth() {
   return useContext(AdminAuthContext);
 }
 
-// Bỏ toàn bộ icon theo yêu cầu của người dùng
+// Danh sách điều hướng trang quản trị
 const NAV_ITEMS = [
   { label: "Tổng quan", href: "/admin/dashboard" },
-  { label: "Đặt lịch", href: "/admin/bookings" },
   { label: "Mật độ", href: "/admin/crowd" },
   { label: "Bản đồ", href: "/admin/map" },
 ];
@@ -45,6 +44,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [loading, setLoading] = useState<boolean>(true);
   const [mounted, setMounted] = useState<boolean>(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -117,10 +117,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   return (
     <AdminAuthContext.Provider value={{ user, token, logout }}>
-      <div className="flex min-h-screen bg-[#f1f5f9] text-slate-800 font-sans">
+      <div className="flex h-screen max-h-screen overflow-hidden bg-[#f1f5f9] text-slate-800 font-sans">
         {/* Sidebar phong cách sáng */}
         <aside
-          className={`flex flex-col bg-white border-r border-slate-200 transition-all duration-300 shadow-xs ${
+          className={`flex flex-col bg-white border-r border-slate-200 transition-all duration-300 shadow-xs shrink-0 ${
             sidebarOpen ? "w-60" : "w-18"
           }`}
         >
@@ -164,9 +164,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </aside>
 
         {/* Main Content */}
-        <main className="flex-1 flex flex-col min-w-0 overflow-hidden">
+        <main className="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
           {/* Topbar */}
-          <header className="flex items-center justify-between px-8 py-3.5 bg-white border-b border-slate-200 shadow-2xs">
+          <header className="flex items-center justify-between px-8 py-3.5 bg-white border-b border-slate-200 shadow-2xs shrink-0">
             <div>
               <h1 className="text-base font-extrabold text-slate-900">
                 {NAV_ITEMS.find((n) => pathname.startsWith(n.href))?.label ?? "Quản trị"}
@@ -196,14 +196,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 </svg>
               </div>
 
-              {/* Nút đăng xuất là icon cánh cửa */}
+              {/* Nút mở modal xác nhận đăng xuất */}
               <button
-                onClick={logout}
+                onClick={() => setShowLogoutModal(true)}
                 title="Đăng xuất"
                 aria-label="Đăng xuất"
                 className="w-9 h-9 rounded-full border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-600 hover:text-rose-700 transition-all cursor-pointer shadow-2xs flex items-center justify-center group"
               >
-                {/* Icon cánh cửa (door / logout) */}
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="w-4.5 h-4.5 transition-transform group-hover:translate-x-0.5"
@@ -222,8 +221,40 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             </div>
           </header>
 
-          <div className="flex-1 overflow-auto p-8">{children}</div>
+          {/* Vùng nội dung cố định 1 màn hình */}
+          <div className="flex-1 h-full overflow-hidden p-6">{children}</div>
         </main>
+
+        {/* Modal Xác nhận Đăng xuất */}
+        {showLogoutModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/50 backdrop-blur-xs animate-in fade-in duration-150">
+            <div className="w-full max-w-sm bg-white rounded-2xl p-6 shadow-2xl border border-slate-200 animate-in zoom-in-95 duration-150">
+              <h3 className="text-base font-extrabold text-slate-900">Xác nhận đăng xuất</h3>
+              <p className="text-xs text-slate-600 mt-2 leading-relaxed">
+                Bạn có chắc chắn muốn đăng xuất khỏi phiên làm việc quản trị V-AI không?
+              </p>
+              <div className="flex items-center justify-end gap-2.5 mt-6">
+                <button
+                  type="button"
+                  onClick={() => setShowLogoutModal(false)}
+                  className="px-4 py-2 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold transition cursor-pointer"
+                >
+                  Hủy
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowLogoutModal(false);
+                    logout();
+                  }}
+                  className="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition shadow-xs cursor-pointer"
+                >
+                  Đăng xuất
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </AdminAuthContext.Provider>
   );

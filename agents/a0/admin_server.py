@@ -230,6 +230,8 @@ def crowd_overview(_: dict = Depends(require_admin_token)) -> dict[str, Any]:
             "observed_at": snap.get("observed_at"),
             "x_m": attr["location"]["x_m"],
             "y_m": attr["location"]["y_m"],
+            "lat": attr["location"].get("lat"),
+            "lng": attr["location"].get("lng"),
             "zone_id": attr["zone_id"],
         })
 
@@ -375,11 +377,14 @@ def get_map_graph() -> dict[str, Any]:
     for n in nodes:
         if n["node_id"] == START_NODE_ID:
             ntype = "hub"
+            cat = "hub"
         elif n["node_id"] in poi_ids:
             ntype = "poi"
+            cat = poi_meta.get(n["node_id"], {}).get("category", "attraction")
         else:
             ntype = "junction"
-        typed_nodes.append({**n, "type": ntype})
+            cat = "junction"
+        typed_nodes.append({**n, "type": ntype, "category": cat})
 
     return {
         "map_id": routing.get("map_id"),

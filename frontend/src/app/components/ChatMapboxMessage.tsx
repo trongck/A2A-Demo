@@ -115,42 +115,6 @@ function ManeuverIcon({
   );
 }
 
-// Bảng sửa tọa độ chuẩn các danh thắng Nha Trang tránh bị rơi ra biển
-const NHA_TRANG_KNOWN_COORDS: Record<string, [number, number]> = {
-  "tháp bà": [109.1958, 12.2655],
-  "ponagar": [109.1958, 12.2655],
-  "chợ đầm": [109.1915, 12.2536],
-  "nhà thờ núi": [109.1894, 12.2471],
-  "nhà thờ đá": [109.1894, 12.2471],
-  "bãi biển trần phú": [109.1972, 12.2388],
-  "trần phú": [109.1972, 12.2388],
-  "chùa long sơn": [109.1804, 12.2505],
-  "viện hải dương học": [109.2005, 12.2078],
-  "hải dương học": [109.2005, 12.2078],
-  "quán ăn hải sản bờ kè": [109.1965, 12.2605],
-  "hải sản bờ kè": [109.1965, 12.2605],
-  "hòn chồng": [109.2062, 12.2718],
-  "tắm bùn i-resort": [109.1762, 12.2815],
-  "i-resort": [109.1762, 12.2815],
-  "suối khoáng nóng tháp bà": [109.1852, 12.2762],
-};
-
-function sanitizeCoordinate(stop: PlanStop): [number, number] {
-  const nameLower = stop.name.toLowerCase();
-  for (const [key, coords] of Object.entries(NHA_TRANG_KNOWN_COORDS)) {
-    if (nameLower.includes(key)) {
-      return coords;
-    }
-  }
-
-  const isIsland = nameLower.includes("vinpearl") || nameLower.includes("vinwonders") || nameLower.includes("hòn tre");
-  if (!isIsland && stop.lng > 109.208 && stop.lat >= 12.20 && stop.lat <= 12.27) {
-    return [Math.min(stop.lng, 109.1975), stop.lat];
-  }
-
-  return [stop.lng, stop.lat];
-}
-
 export default function ChatMapboxMessage({
   stops,
   travelMode = "driving",
@@ -175,11 +139,7 @@ export default function ChatMapboxMessage({
   const [totalTripDuration, setTotalTripDuration] = useState<number>(0);
 
   const sanitizedStops = stops
-    .filter((s) => typeof s.lat === "number" && typeof s.lng === "number" && !isNaN(s.lat) && !isNaN(s.lng))
-    .map((s) => {
-      const [lng, lat] = sanitizeCoordinate(s);
-      return { ...s, lat, lng };
-    });
+    .filter((s) => typeof s.lat === "number" && typeof s.lng === "number" && !isNaN(s.lat) && !isNaN(s.lng));
 
   // Xác định Điểm 1 có ở trên đảo không để ô tô đi tới cảng đất liền
   const isStop1OnIsland = sanitizedStops.length > 0 && (
@@ -567,10 +527,18 @@ export default function ChatMapboxMessage({
         setTotalTripDistance(totalMeters);
         setTotalTripDuration(totalSecs);
 
-        // MẶC ĐỊNH FITBOUNDS BAO GỒM TOÀN BỘ TUYẾN ĐƯỜNG TỪ VỊ TRÍ BẠN ĐẾN TẤT CẢ CÁC ĐIỂM
-        const allBounds = new mapboxgl.LngLatBounds([currentUser.lng, currentUser.lat], [currentUser.lng, currentUser.lat]);
-        sanitizedStops.forEach((s) => allBounds.extend([s.lng, s.lat]));
-        map.fitBounds(allBounds, { padding: 60, duration: 1000 });
+        // MẶC ĐỊNH FITBOUNDS: Nếu lịch trình trên đảo VinWonders, focus trực tiếp vào cụm điểm trên đảo
+        if (isStop1OnIsland && sanitizedStops.length > 0) {
+          const islandBounds = sanitizedStops.reduce(
+            (b, s) => b.extend([s.lng, s.lat] as [number, number]),
+            new mapboxgl.LngLatBounds([sanitizedStops[0].lng, sanitizedStops[0].lat], [sanitizedStops[0].lng, sanitizedStops[0].lat])
+          );
+          map.fitBounds(islandBounds, { padding: 60, maxZoom: 16, duration: 1000 });
+        } else {
+          const allBounds = new mapboxgl.LngLatBounds([currentUser.lng, currentUser.lat], [currentUser.lng, currentUser.lat]);
+          sanitizedStops.forEach((s) => allBounds.extend([s.lng, s.lat]));
+          map.fitBounds(allBounds, { padding: 60, duration: 1000 });
+        }
       });
     }
 

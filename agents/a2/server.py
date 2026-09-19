@@ -107,7 +107,7 @@ def analyze_crowd_logic(
 
     snapshots = {s["service_id"]: s for s in crowd_data.get("snapshots", [])}
 
-    items = []
+    all_items = []
     warnings = []
     errors = []
 
@@ -182,7 +182,7 @@ def analyze_crowd_logic(
             # current_people is null: tuyệt đối không đổi thành 0
             load_category = "unknown"
 
-        items.append({
+        all_items.append({
             "service_id": sid,
             "name": name,
             "zone_id": zone_id,
@@ -210,6 +210,14 @@ def analyze_crowd_logic(
             "snapshot_timestamp": observed_at_str,
         })
 
+    # Chỉ chuyển tiếp các POI còn ở mức tải an toàn; planner không cần nhận các điểm đông.
+    items = [
+        item for item in all_items
+        if item["operating_status"] == "open"
+        and not item["is_stale"]
+        and item["load_category"] in {"low", "medium"}
+    ]
+
     # 2. Sinh nhận định phân tích mật độ chuyên môn bằng LLM (hoặc fallback nếu LLM không khả dụng)
     crowd_insight_text = None
     if is_llm_available():
@@ -220,9 +228,7 @@ def analyze_crowd_logic(
 
     if not crowd_insight_text:
         # Fallback phân tích dựa trên quy tắc thống kê
-        high_wait = [it for it in items if (it.get("wait_minutes") or 0) >= 20 or it.get("load_category") in ("high", "overloaded")]
         low_wait = [it for it in items if (it.get("wait_minutes") or 0) <= 10 and it.get("operating_status") == "open"]
-        high_names = ", ".join(it["name"] for it in high_wait[:3]) if high_wait else "không có điểm nào"
         low_names = ", ".join(it["name"] for it in low_wait[:3]) if low_wait else "các khu vực tiêu chuẩn"
         if all(item.get("data_quality") == "unavailable" for item in items):
             crowd_insight_text = (
@@ -231,8 +237,8 @@ def analyze_crowd_logic(
             )
         else:
             crowd_insight_text = (
-                f"Vào thời điểm {simulation_now_str.split('T')[1][:5]}, điểm nóng có hàng chờ cao gồm: {high_names}. "
-                f"Có thể ưu tiên các điểm thông thoáng: {low_names}."
+                f"Vào thời điểm {simulation_now_str.split('T')[1][:5]}, có {len(items)} POI còn tải an toàn. "
+                f"Các điểm ít chờ có thể ưu tiên: {low_names}."
             )
 
     analysis_id = f"analysis_{uuid.uuid4().hex[:8]}"
@@ -242,6 +248,7 @@ def analyze_crowd_logic(
         "scenario_id": scenario_id,
         "data_revision": DATA_REVISION,
         "items": items,
+        "excluded_crowded_count": len(all_items) - len(items),
         "crowd_insights": crowd_insight_text,
         "warnings": warnings,
         "errors": errors,

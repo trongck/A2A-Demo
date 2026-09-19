@@ -7,7 +7,6 @@ Bám sát mục 4 và mục 7 của V-AI-Implementation-Plan.md.
 """
 
 from datetime import datetime, timedelta
-import itertools
 import json
 import os
 from typing import Any
@@ -95,9 +94,6 @@ def call_mcp_tool(tool_name: str, arguments: dict[str, Any]) -> dict[str, Any]:
 
 # --- Bảng chuyển đổi cấp độ cảm giác mạnh ---
 THRILL_ORDER = {"none": 0, "low": 1, "moderate": 2, "high": 3, "extreme": 4}
-MAX_PLANNING_CANDIDATES = int(os.environ.get("V_AI_MAX_PLANNING_CANDIDATES", "12"))
-
-
 def is_open_for_visit(schedule: dict[str, Any], start: datetime, end: datetime) -> bool:
     """Kiểm tra khoảng ghé thăm theo weekly_intervals chuẩn hóa từ V2."""
     weekly = schedule.get("weekly_intervals", {})
@@ -303,10 +299,20 @@ def plan_itinerary_logic(
 
     # 2. Lọc điểm ban đầu
     eligible_sids = []
+    allowed_categories = {"ride", "attraction"}
+    if prefs.get("meal_required"):
+        allowed_categories.add("food")
     for sid, attr in attractions_map.items():
         if sid in excluded:
             continue
         c_item = crowd_items.get(sid, {})
+
+        # Lịch vui chơi không đưa cửa hàng, khách sạn hay dịch vụ phụ vào để tăng số điểm giả tạo.
+        if attr.get("category") not in allowed_categories:
+            continue
+
+        if c_item.get("load_category") not in {"low", "medium"}:
+            continue
 
         # Trạng thái vận hành
         if c_item.get("operating_status") == "temporarily_closed":
@@ -351,7 +357,7 @@ def plan_itinerary_logic(
 
         eligible_sids.append(sid)
 
-    category_priority = {"ride": 0, "attraction": 1, "food": 2, "service": 3, "shop": 4, "hotel": 5}
+    category_priority = {"ride": 0, "attraction": 1, "food": 2}
     if prefs.get("meal_required"):
         category_priority["food"] = 0
     crowd_priority = {"low": 0, "medium": 1, "high": 2, "overloaded": 3, "unknown": 4}
@@ -374,8 +380,6 @@ def plan_itinerary_logic(
         -(attractions_map[sid].get("rating") or 0),
         -(attractions_map[sid].get("reviews_count") or 0),
     ))
-    eligible_sids = eligible_sids[:MAX_PLANNING_CANDIDATES]
-
     if len(eligible_sids) < min_act:
         return {
             "plan_result_id": "res_none",
@@ -395,78 +399,65 @@ def plan_itinerary_logic(
     route_data = call_mcp_tool("get_route_matrix", {"node_ids": list(set(all_nodes))})
     routes = route_data.get("matrix", {})
 
-    # 3. Tìm kiếm các tổ hợp khả thi (L3: giới hạn iterations chống DoS)
+    # 3. Beam search: mở rộng các điểm gần nhất còn kịp giờ và giữ tầng sâu nhất.
+    # Mục tiêu số 1 là số POI; thời gian đi/chờ chỉ dùng để phá hòa và giữ đường đi gọn.
+    beam_width = max(1, min(MAX_SEARCH_ITERATIONS, 256))
+    states = [{
+        "sequence": [],
+        "legs": [],
+        "curr_time": start_time,
+        "curr_node": start_node,
+        "total_wait": 0,
+        "total_walk": 0,
+        "rides_count": 0,
+        "indoor_count": 0,
+    }]
     candidate_plans = []
-    # Thử số điểm giảm dần; độ dài đầu tiên có phương án khả thi là số trò tối đa tìm được.
-    max_len = len(eligible_sids)
-    search_count = 0
-    for r in range(max_len, min_act - 1, -1):
-        length_search_count = 0
-        for seq in itertools.permutations(eligible_sids, r):
-            search_count += 1
-            length_search_count += 1
-            if length_search_count > MAX_SEARCH_ITERATIONS:
-                logger.warning(
-                    "L3: Search limit reached for plan length %d (%d permutations).",
-                    r,
-                    MAX_SEARCH_ITERATIONS,
-                )
-                break
-            curr_time = start_time
-            curr_node = start_node
-            legs = []
-            total_cost = entry_ticket["total_vnd"]
-            feasible = True
 
-            for step_idx, sid in enumerate(seq, 1):
+    while states:
+        expanded = []
+        for state in states:
+            visited = set(state["sequence"])
+            for sid in eligible_sids:
+                if sid in visited:
+                    continue
                 attr = attractions_map[sid]
-                c_item = crowd_items.get(sid, {})
+                c_item = crowd_items[sid]
                 dest_node = attr["location"]["node_id"]
-
-                # Thời gian đi bộ
-                walk_min = routes.get(curr_node, {}).get(dest_node, {}).get("walking_minutes")
+                walk_min = routes.get(state["curr_node"], {}).get(dest_node, {}).get("walking_minutes")
                 if walk_min is None:
-                    feasible = False
-                    break
-                arrival = curr_time + timedelta(minutes=walk_min)
-
+                    continue
+                arrival = state["curr_time"] + timedelta(minutes=walk_min)
                 sched = attr.get("schedule", {})
-                mode = sched.get("mode", "walk_in")
                 dur_min = sched.get("visit_duration_minutes", 15)
 
-                if mode == "walk_in":
+                if sched.get("mode", "walk_in") == "walk_in":
                     wait_min = c_item.get("wait_minutes") or 0
                     act_start = arrival + timedelta(minutes=wait_min)
-                    act_end = act_start + timedelta(minutes=dur_min)
                 else:
-                    # Suất diễn định giờ (Show)
-                    checkin_buf = sched.get("check_in_buffer_minutes", 5)
-                    # Chọn suất đầu tiên sau khi đến
-                    session_times = [
-                        datetime.fromisoformat(st) for st in sched.get("session_start_times", [])
-                        if datetime.fromisoformat(st) >= arrival + timedelta(minutes=checkin_buf)
-                    ]
-                    if not session_times:
-                        feasible = False
-                        break
-                    act_start = session_times[0]
+                    checkin = timedelta(minutes=sched.get("check_in_buffer_minutes", 5))
+                    sessions = sorted(
+                        datetime.fromisoformat(value)
+                        for value in sched.get("session_start_times", [])
+                        if datetime.fromisoformat(value) >= arrival + checkin
+                    )
+                    if not sessions:
+                        continue
+                    act_start = sessions[0]
                     wait_min = int((act_start - arrival).total_seconds() / 60)
-                    act_end = act_start + timedelta(minutes=dur_min)
 
-                if not is_open_for_visit(sched, act_start, act_end):
-                    feasible = False
-                    break
+                act_end = act_start + timedelta(minutes=dur_min)
+                return_walk = routes.get(dest_node, {}).get(end_node, {}).get("walking_minutes")
+                if (
+                    return_walk is None
+                    or not is_open_for_visit(sched, act_start, act_end)
+                    or act_end + timedelta(minutes=return_walk + min_buffer) > deadline
+                ):
+                    continue
 
-                if act_end > deadline:
-                    feasible = False
-                    break
-
-                # Chi phí
-                step_cost = 0
                 attr_loc = attr.get("location") or {}
-
-                legs.append({
-                    "step": step_idx,
+                leg = {
+                    "step": len(state["legs"]) + 1,
                     "service_id": sid,
                     "service_name": attr.get("name", sid),
                     "node_id": dest_node,
@@ -478,55 +469,49 @@ def plan_itinerary_logic(
                     "walk_from_prev_minutes": walk_min,
                     "wait_minutes": wait_min,
                     "activity_duration_minutes": dur_min,
-                    "cost_vnd": step_cost,
+                    "cost_vnd": 0,
                     "indoor": attr.get("indoor", False),
+                    "crowd_level": c_item.get("load_category"),
                     "note": f"Hàng chờ {wait_min}p, trải nghiệm {dur_min}p; đã bao gồm trong vé cổng",
+                }
+                expanded.append({
+                    "sequence": [*state["sequence"], sid],
+                    "legs": [*state["legs"], leg],
+                    "curr_time": act_end,
+                    "curr_node": dest_node,
+                    "return_walk": return_walk,
+                    "final_arrival": act_end + timedelta(minutes=return_walk),
+                    "total_wait": state["total_wait"] + wait_min,
+                    "total_walk": state["total_walk"] + walk_min,
+                    "rides_count": state["rides_count"] + (attr.get("category") == "ride"),
+                    "indoor_count": state["indoor_count"] + bool(attr.get("indoor", False)),
                 })
 
-                curr_time = act_end
-                curr_node = dest_node
-
-            if not feasible:
-                continue
-
-            # Đi bộ về điểm kết thúc
-            return_walk = routes.get(curr_node, {}).get(end_node, {}).get("walking_minutes")
-            if return_walk is None:
-                continue
-            final_arrival = curr_time + timedelta(minutes=return_walk)
-            if final_arrival > deadline:
-                continue
-
-            buffer_min = int((deadline - final_arrival).total_seconds() / 60)
-            if buffer_min < min_buffer:
-                continue
-
-            total_dur = int((final_arrival - start_time).total_seconds() / 60)
-
-            # Tính điểm phong cách
-            total_wait = sum(leg["wait_minutes"] for leg in legs)
-            total_walk = sum(leg["walk_from_prev_minutes"] for leg in legs) + return_walk
-            rides_count = sum(1 for sid in seq if attractions_map[sid].get("category") == "ride")
-            indoor_count = sum(1 for sid in seq if attractions_map[sid].get("indoor", False))
-
-            plan_candidate = {
-                "sequence": list(seq),
-                "legs": legs,
-                "total_duration_minutes": total_dur,
-                "end_buffer_minutes": buffer_min,
-                "total_cost_vnd": total_cost,
+        if not expanded:
+            break
+        expanded.sort(key=lambda state: (
+            state["final_arrival"],
+            state["total_walk"] + state["return_walk"],
+            state["total_wait"],
+            -state["rides_count"],
+        ))
+        states = expanded[:beam_width]
+        if len(states[0]["sequence"]) >= min_act:
+            candidate_plans = [{
+                "sequence": state["sequence"],
+                "legs": state["legs"],
+                "total_duration_minutes": int((state["final_arrival"] - start_time).total_seconds() / 60),
+                "end_buffer_minutes": int((deadline - state["final_arrival"]).total_seconds() / 60),
+                "total_cost_vnd": entry_ticket["total_vnd"],
                 "cost_breakdown": {"entry_ticket": entry_ticket, "addons_vnd": 0},
                 "start_node_id": start_node,
                 "end_node_id": end_node,
-                "return_arrival_time": final_arrival.strftime("%H:%M"),
-                "total_wait": total_wait,
-                "total_walk": total_walk,
-                "rides_count": rides_count,
-                "indoor_count": indoor_count,
-            }
-            candidate_plans.append(plan_candidate)
-        if candidate_plans:
-            break
+                "return_arrival_time": state["final_arrival"].strftime("%H:%M"),
+                "total_wait": state["total_wait"],
+                "total_walk": state["total_walk"] + state["return_walk"],
+                "rides_count": state["rides_count"],
+                "indoor_count": state["indoor_count"],
+            } for state in states]
 
     if not candidate_plans:
         return {

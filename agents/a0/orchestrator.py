@@ -372,7 +372,7 @@ def extract_or_update_request(
         profile["ticket_groups"] = members_to_ticket_groups(profile["group_members"])
 
     # Bổ trợ trích xuất ticket_groups theo chính sách vé VinWonders (đặc biệt khi user chọn từ ClarificationWizard hoặc trả lời HITL)
-    if use_rule_parser and not profile.get("group_members"):
+    if (use_rule_parser and not profile.get("group_members")) or is_hitl_summary:
         parsed_groups: dict[str, int] = {}
         # Parse người lớn (cao từ 140cm trở lên)
         m_adult = re.search(r"(\d+)\s*(?:người lớn|khách cao từ 140|nguoi lon|adult)", msg_lower)
@@ -439,13 +439,14 @@ def extract_or_update_request(
     if profile.get("needs_activity_count"):
         missing_fields.append("số_điểm_mong_muốn")
 
-    if use_rule_parser and (not profile.get("start_at") or not profile.get("end_by")):
-        tw = parse_time_window(msg_lower)
-        if tw:
-            sh, sm, eh, em = tw
-            profile["start_at"] = f"{visit_date.isoformat()}T{sh:02d}:{sm:02d}:00+07:00"
-            profile["end_by"] = f"{visit_date.isoformat()}T{eh:02d}:{em:02d}:00+07:00"
-        elif "cả ngày" in msg_lower or "ca ngay" in msg_lower:
+    # Trích xuất khung giờ tham quan: luôn cập nhật nếu tin nhắn có khung giờ mới (kể cả đã có trong session memory)
+    tw = parse_time_window(msg_lower)
+    if tw:
+        sh, sm, eh, em = tw
+        profile["start_at"] = f"{visit_date.isoformat()}T{sh:02d}:{sm:02d}:00+07:00"
+        profile["end_by"] = f"{visit_date.isoformat()}T{eh:02d}:{em:02d}:00+07:00"
+    elif use_rule_parser:
+        if "cả ngày" in msg_lower or "ca ngay" in msg_lower:
             profile["start_at"] = f"{visit_date.isoformat()}T09:00:00+07:00"
             profile["end_by"] = f"{visit_date.isoformat()}T20:00:00+07:00"
         elif "sau 16" in msg_lower or "sau 16:00" in msg_lower or "vé chiều" in msg_lower or "ve chieu" in msg_lower:
