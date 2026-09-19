@@ -4,7 +4,7 @@ from agents.a0 import orchestrator
 import agents.a1.server as a1
 import agents.a2.server as a2
 from mcp_server import server as mcp
-from shared.data_adapter import DATA_PATH, DATA_REVISION, START_NODE_ID, load_raw_places
+from shared.data_adapter import DATA_PATH, DATA_REVISION, START_NODE_ID, calculate_entry_ticket, load_raw_places
 from shared.memory.database import get_or_create_session, init_db
 
 
@@ -25,7 +25,7 @@ def _request(**hard_overrides):
         "indoor_only": False,
         "max_thrill_level": "moderate",
         "max_wait_minutes_per_stop": 20,
-        "budget_vnd_total": 150000,
+        "budget_vnd_total": None,
         "min_end_buffer_minutes": 10,
         "allow_unknown_crowd": True,
         "excluded_service_ids": [],
@@ -70,6 +70,23 @@ def test_mcp_filters_and_routes_v2():
     assert matrix[START_NODE_ID][rides[0]["service_id"]]["walking_minutes"] >= 1
 
 
+def test_official_ticket_policy_and_group_pricing():
+    policy = mcp.tool_get_ticket_policy()
+    assert policy["data_revision"] == DATA_REVISION
+    assert policy["source"]["publisher"] == "VinWonders"
+    standard = next(item for item in policy["ticket_types"] if item["id"] == "standard_1_day")
+    assert standard["prices_vnd"]["adult_140cm_plus"] == 1050000
+    assert standard["prices_vnd"]["child_100_to_under_140cm"] == 800000
+    assert standard["prices_vnd"]["free_under_100cm"] == 0
+    after_16 = calculate_entry_ticket({
+        "adult_140cm_plus": 2,
+        "child_100_to_under_140cm": 1,
+        "free_under_100cm": 1,
+    }, "2026-09-19T16:00:00+07:00")
+    assert after_16["ticket_type_id"] == "after_16_1_day"
+    assert after_16["total_vnd"] == 1950000
+
+
 def test_a2_preserves_missing_crowd_as_unknown(monkeypatch):
     monkeypatch.setattr(a2, "call_mcp_tool", _local_mcp)
     monkeypatch.setattr(a2, "is_llm_available", lambda: False)
@@ -95,6 +112,9 @@ def test_a1_builds_plans_from_v2(monkeypatch):
         assert plan["start_node_id"] == START_NODE_ID
         assert plan["end_node_id"] == START_NODE_ID
         assert len(plan["legs"]) >= 3
+        assert plan["total_cost_vnd"] == 1050000
+        assert plan["cost_breakdown"]["entry_ticket"]["ticket_type_id"] == "standard_1_day"
+        assert all(leg["cost_vnd"] == 0 for leg in plan["legs"])
 
 
 def test_a1_migrates_legacy_session_defaults(monkeypatch):

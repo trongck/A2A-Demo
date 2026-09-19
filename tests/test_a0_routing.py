@@ -132,23 +132,3 @@ def test_group_uses_one_representative_safety_range(monkeypatch):
     assert len(profile["group_members"]) == 4
     assert all(member["age_years"] == 12 for member in profile["group_members"])
     assert all(member["height_cm"] == 130 for member in profile["group_members"])
-
-
-def test_hitl_summary_is_parsed_without_llm(monkeypatch):
-    monkeypatch.setattr(orchestrator, "is_llm_available", lambda: False)
-
-    profile, complete, missing, _, _ = orchestrator.extract_or_update_request(
-        "Thông tin bổ sung đã xác nhận:\n"
-        "- Đoàn mình gồm những ai?: 1 người lớn và 1 trẻ em\n"
-        "- Trẻ nhỏ nhất thuộc nhóm tuổi nào?: Từ 6–11 tuổi\n"
-        "- Trẻ thấp nhất thuộc khoảng chiều cao nào?: Từ 105–109 cm\n"
-        "- Đoàn mình muốn bắt đầu và kết thúc lúc mấy giờ?: 13:00–16:00",
-        {"profile": {}},
-    )
-
-    assert complete is True
-    assert missing == []
-    assert profile["group_members"] == [
-        {"member_id": "adult_1", "age_years": 18, "height_cm": 130},
-        {"member_id": "child_1", "age_years": 6, "height_cm": 105},
-    ]

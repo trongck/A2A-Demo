@@ -224,15 +224,17 @@ def classify_and_extract_intent_with_llm(
         "- out_of_scope: không liên quan du lịch/VinWonders.\n"
         "- too_ambiguous: quá mơ hồ để xác định intent sau khi xét hồ sơ.\n"
         "Với plan_itinerary/adjust_plan, hai nhóm tiêu chí bắt buộc theo thứ tự là group_members và time_window; điểm đến mặc định là VinWonders Nha Trang. "
-        "group_members chỉ cần số người và mức tuổi/chiều cao thấp nhất đại diện cho cả nhóm để kiểm tra an toàn; không yêu cầu khai từng người. "
+        "group_members không yêu cầu người dùng khai từng người. Hãy phân loại số lượng khách trực tiếp vào ticket_groups theo chính sách vé. "
         "Không bịa giá trị còn thiếu. Tiêu chí tùy chọn không làm giảm completeness.\n"
         "Trích xuất entities:\n"
         "   - height_cm: Chiều cao thấp nhất hoặc cận dưới khoảng an toàn của nhóm (số nguyên, ví dụ 130, hoặc null)\n"
         "   - age_years: Tuổi thấp nhất hoặc cận dưới nhóm tuổi của nhóm (số nguyên hoặc null)\n"
         "   - group_size: Số người trong đoàn (số nguyên hoặc null)\n"
+        "   - ticket_groups: số khách theo đúng bốn mã nhóm vé free_under_100cm, senior_60_plus, child_100_to_under_140cm, adult_140cm_plus; dùng {} nếu chưa đủ dữ liệu\n"
         "   - group_members: danh sách thành viên nếu đã có sẵn; không yêu cầu người dùng cung cấp tuổi/chiều cao từng người\n"
         "   - indoor_only: true nếu chỉ muốn chơi trong nhà, false nếu ngoài trời, null nếu không nói\n"
         "   - min_activity_count: số điểm chơi tối thiểu mong muốn (số nguyên hoặc null)\n"
+        "   - wants_multiple_places: true nếu khách muốn đi nhiều điểm nhưng chưa nói số lượng, false nếu không\n"
         "   - time_hours: số giờ dự kiến chơi (số thực/nguyên, ví dụ 2, hoặc null)\n"
         "   - start_time: giờ bắt đầu nếu có nhắc đến (ví dụ '14:00', hoặc null)\n"
         "   - end_time: giờ kết thúc nếu có nhắc đến (ví dụ '16:00', hoặc null)\n"
@@ -248,8 +250,10 @@ def classify_and_extract_intent_with_llm(
         '    "age_years": null,\n'
         '    "group_size": null,\n'
         '    "group_members": [],\n'
+        '    "ticket_groups": {},\n'
         '    "indoor_only": null,\n'
         '    "min_activity_count": null,\n'
+        '    "wants_multiple_places": false,\n'
         '    "time_hours": null,\n'
         '    "start_time": null,\n'
         '    "end_time": null,\n'
@@ -376,7 +380,8 @@ def synthesize_chat_response_with_llm(
         "Bạn là V-AI - Hướng dẫn viên ảo tại VinWonders Nha Trang. "
         "Hãy diễn đạt câu trả lời lịch thiệp, dễ hiểu, trình bày 2 phương án lịch trình "
         "(Phương án 1: Nhẹ nhàng, ít chờ; Phương án 2: Nhiều trò chơi trải nghiệm), "
-        "nêu rõ lý do đề xuất, thời gian dự phòng trước 16:00 và gợi ý khách có thể tiếp tục chat để điều chỉnh."
+        "nêu rõ lý do đề xuất, thời gian dự phòng trước giờ kết thúc và gợi ý khách có thể tiếp tục chat để điều chỉnh. "
+        "Chi phí trong phương án là vé cổng trọn gói; các điểm chơi có cost_vnd=0 vì đã bao gồm trong vé. Không được cộng vé lẻ từng điểm."
         + VAI_TRAVEL_PERSONA + PUBLIC_RESPONSE_POLICY
     )
 
@@ -497,19 +502,25 @@ def generate_hitl_questions_with_llm(
     if not is_llm_available():
         return None
 
+    from shared.data_adapter import load_ticket_policy
+
+    ticket_policy = load_ticket_policy()
     system_instruction = (
         "Bạn là V-AI - hướng dẫn viên thông minh tại VinWonders Nha Trang. "
         "Hãy tự tạo các câu hỏi làm rõ phù hợp riêng với ngữ cảnh của khách; không dùng bộ câu hỏi mẫu cố định. "
         "Chỉ hỏi thông tin thực sự còn thiếu, không hỏi lại dữ liệu đã có. "
         "Các câu hỏi phải cùng nhau bao phủ mọi nhóm thông tin còn thiếu được cung cấp. "
         "Với thông_tin_thành_viên, tuyệt đối không hỏi tuổi hoặc chiều cao của từng người. "
-        "Chỉ cần biết số người và một khoảng an toàn đại diện theo người nhỏ tuổi/thấp nhất trong nhóm. "
-        "Nếu đã biết số người thì chỉ sinh đúng một câu hỏi chọn khoảng an toàn, ưu tiên các lựa chọn gộp tuổi và chiều cao như: "
-        "từ 12 tuổi và từ 130 cm; 6-11 tuổi hoặc 100-129 cm; dưới 6 tuổi hoặc dưới 100 cm; cần hỗ trợ đặc biệt. "
-        "Nếu chưa biết số người, có thể hỏi thêm đúng một câu về số lượng. "
+        "Hãy gộp thành một câu hỏi về số lượng khách theo các nhóm vé trong chính sách được cung cấp. "
+        "Nếu đã biết tổng số người, mỗi lựa chọn nhanh phải mô tả trọn cơ cấu và có tổng đúng bằng số người đó. "
+        "Chuỗi lựa chọn tuyệt đối không được chứa số lượng 0 hoặc cụm '0 khách'; chỉ nhắc các nhóm có người, và luôn có một lựa chọn toàn bộ khách thuộc nhóm adult_140cm_plus để thao tác nhanh. "
+        "Nếu cùng thiếu số_điểm_mong_muốn và khung_giờ_tham_quan, bắt buộc gộp cả hai vào đúng một câu hỏi. "
+        "Mỗi lựa chọn của câu gộp phải chứa một khoảng giờ bắt đầu-kết thúc và một số điểm dạng số nguyên, ví dụ cấu trúc '09:00-12:00 · 3 điểm'; không dùng tên khu thay cho số điểm và không được tách hai câu. "
+        "Các lựa chọn số điểm phải thực tế với độ dài khung giờ và cho phép khách nhập số khác. "
         "khung_giờ_tham_quan chỉ đủ khi có cả giờ bắt đầu và giờ kết thúc. "
         "Nếu hồ sơ đã có một phần của nhóm thông tin (ví dụ giờ bắt đầu), chỉ hỏi phần còn lại. "
         "Ưu tiên câu hỏi ngắn, tự nhiên, các lựa chọn thiết thực và an toàn cho việc lập lịch. "
+        "Toàn bộ payload không được vượt quá 4 câu hỏi; riêng khi thiếu thông_tin_thành_viên, số_điểm_mong_muốn và khung_giờ_tham_quan thì phải trả đúng 2 câu hỏi. "
         "Mỗi câu hỏi phải có criteria_key duy nhất bằng snake_case để định danh câu trả lời. "
         "Trả đúng JSON thuần túy theo cấu trúc: "
         '{"message":"...","questions":[{"criteria_key":"...","question":"...",'
@@ -520,6 +531,7 @@ def generate_hitl_questions_with_llm(
     prompt = (
         f"Tin nhắn mới nhất: {user_message}\n"
         f"Hồ sơ đã biết: {json.dumps(current_profile, ensure_ascii=False)}\n"
+        f"Chính sách vé chính thức: {json.dumps(ticket_policy, ensure_ascii=False)}\n"
         f"Các nhóm thông tin còn thiếu: {json.dumps(missing_fields, ensure_ascii=False)}"
     )
 
@@ -544,7 +556,7 @@ def generate_hitl_questions_with_llm(
             for question in questions
         ):
             return None
-        return {"message": data["message"], "questions": questions}
+        return {"message": data["message"], "questions": questions[:4]}
     except (AttributeError, IndexError, TypeError, ValueError, json.JSONDecodeError):
         return None
 
@@ -609,7 +621,8 @@ def stream_synthesize_chat_response_with_llm(
         "Bạn là V-AI - Hướng dẫn viên ảo tại VinWonders Nha Trang.\n"
         "Hãy diễn đạt câu trả lời lịch thiệp, dễ hiểu, trình bày 2 phương án lịch trình "
         "(Phương án 1: Nhẹ nhàng, ít chờ; Phương án 2: Nhiều trò chơi trải nghiệm), "
-        "nêu rõ lý do đề xuất, thời gian dự phòng trước 16:00 và gợi ý khách có thể tiếp tục chat để điều chỉnh.\n"
+        "nêu rõ lý do đề xuất, thời gian dự phòng trước giờ kết thúc và gợi ý khách có thể tiếp tục chat để điều chỉnh.\n"
+        "Chi phí trong phương án là vé cổng trọn gói; các điểm chơi có cost_vnd=0 vì đã bao gồm trong vé. Không được cộng vé lẻ từng điểm.\n"
         "QUY TẮC ĐỊNH DẠNG MARKDOWN BẮT BUỘC:\n"
         "- Dùng '### Phương án 1: ...' và '### Phương án 2: ...' cho tiêu đề từng phương án.\n"
         "- Dùng '- **Thời gian:** ...', '- **Chi phí:** ...', '- **Lộ trình:** ...' với gạch đầu dòng.\n"

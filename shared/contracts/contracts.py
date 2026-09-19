@@ -21,7 +21,7 @@ class HardConstraints(BaseModel):
     indoor_only: bool = False
     max_thrill_level: Literal["low", "moderate", "high", "extreme"] = "moderate"
     max_wait_minutes_per_stop: int = 20
-    budget_vnd_total: int = 150000
+    budget_vnd_total: int | None = None
     min_end_buffer_minutes: int = 10
     allow_unknown_crowd: bool = True
     excluded_service_ids: list[str] = Field(default_factory=list)
@@ -143,6 +143,7 @@ class PlanOption(BaseModel):
     total_duration_minutes: int
     end_buffer_minutes: int
     total_cost_vnd: int
+    cost_breakdown: dict[str, Any] = Field(default_factory=dict)
     start_node_id: str
     end_node_id: str
     return_arrival_time: str

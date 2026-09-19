@@ -12,6 +12,7 @@ from typing import Any
 
 
 DATA_PATH = Path(__file__).resolve().parent.parent / "data" / "V-AI-Mock-Data-V2.json"
+TICKET_POLICY_PATH = Path(__file__).resolve().parent.parent / "data" / "vinwonders-nha-trang-ticket-policy.json"
 DATA_REVISION = "google_places_v2"
 START_NODE_ID = "start_vinwonders"
 PARK_RADIUS_KM = 0.75
@@ -84,6 +85,72 @@ def load_raw_places() -> list[dict[str, Any]]:
     if not isinstance(data, list):
         raise ValueError("V-AI-Mock-Data-V2.json phải là một mảng Google Places")
     return data
+
+
+@lru_cache(maxsize=1)
+def load_ticket_policy() -> dict[str, Any]:
+    with TICKET_POLICY_PATH.open("r", encoding="utf-8") as handle:
+        policy = json.load(handle)
+    if policy.get("data_revision") != DATA_REVISION:
+        raise ValueError("Chính sách vé không đồng bộ với Google Places V2")
+    return policy
+
+
+def ticket_groups_to_members(ticket_groups: dict[str, int]) -> list[dict[str, Any]]:
+    members = []
+    groups = {item["id"]: item for item in load_ticket_policy()["visitor_groups"]}
+    for group_id, count in ticket_groups.items():
+        group = groups.get(group_id)
+        if not group or not isinstance(count, int) or count < 1:
+            continue
+        representative = group["representative"]
+        members.extend({
+            "member_id": f"{group_id}_{index}",
+            "age_years": representative["age_years"],
+            "height_cm": representative["height_cm"],
+        } for index in range(1, count + 1))
+    return members
+
+
+def members_to_ticket_groups(members: list[dict[str, Any]]) -> dict[str, int]:
+    counts: dict[str, int] = {}
+    for member in members:
+        age = member.get("age_years", 0)
+        height = member.get("height_cm", 0)
+        for group in load_ticket_policy()["visitor_groups"]:
+            criteria = group["criteria"]
+            if (
+                age >= criteria.get("min_age_years", 0)
+                and height >= criteria.get("min_height_cm", 0)
+                and height < criteria.get("max_height_cm_exclusive", float("inf"))
+            ):
+                counts[group["id"]] = counts.get(group["id"], 0) + 1
+                break
+    return counts
+
+
+def calculate_entry_ticket(ticket_groups: dict[str, int], start_at: str) -> dict[str, Any]:
+    policy = load_ticket_policy()
+    entry_time = datetime.fromisoformat(start_at).strftime("%H:%M")
+    ticket_type = max(
+        (item for item in policy["ticket_types"] if item["entry_from"] <= entry_time),
+        key=lambda item: item["entry_from"],
+    )
+    items = [{
+        "visitor_group": group_id,
+        "quantity": count,
+        "unit_price_vnd": ticket_type["prices_vnd"][group_id],
+        "subtotal_vnd": count * ticket_type["prices_vnd"][group_id],
+    } for group_id, count in ticket_groups.items() if count > 0 and group_id in ticket_type["prices_vnd"]]
+    return {
+        "ticket_type_id": ticket_type["id"],
+        "ticket_type_label": ticket_type["label"],
+        "items": items,
+        "total_vnd": sum(item["subtotal_vnd"] for item in items),
+        "included": policy["included"],
+        "excluded_addons": policy["excluded_addons"],
+        "source": policy["source"],
+    }
 
 
 def load_v2_data(scope: str = "vinwonders") -> dict[str, Any]:

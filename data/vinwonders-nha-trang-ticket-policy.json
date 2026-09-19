@@ -1,0 +1,78 @@
+{
+  "policy_id": "vinwonders_nha_trang_2026",
+  "data_revision": "google_places_v2",
+  "currency": "VND",
+  "classification_basis": "height_and_senior_age",
+  "source": {
+    "publisher": "VinWonders",
+    "url": "https://vinwonders.com/vi/vinwonders-nha-trang-price-and-regulations/",
+    "accessed_on": "2026-09-19"
+  },
+  "visitor_groups": [
+    {
+      "id": "free_under_100cm",
+      "label": "Khách cao dưới 100 cm",
+      "criteria": {"max_height_cm_exclusive": 100},
+      "representative": {"age_years": 5, "height_cm": 99}
+    },
+    {
+      "id": "senior_60_plus",
+      "label": "Khách từ 60 tuổi",
+      "criteria": {"min_age_years": 60},
+      "representative": {"age_years": 60, "height_cm": 140}
+    },
+    {
+      "id": "child_100_to_under_140cm",
+      "label": "Khách cao từ 100 cm đến dưới 140 cm",
+      "criteria": {"min_height_cm": 100, "max_height_cm_exclusive": 140},
+      "representative": {"age_years": 12, "height_cm": 100}
+    },
+    {
+      "id": "adult_140cm_plus",
+      "label": "Khách cao từ 140 cm",
+      "criteria": {"min_height_cm": 140},
+      "representative": {"age_years": 18, "height_cm": 140}
+    }
+  ],
+  "ticket_types": [
+    {
+      "id": "standard_1_day",
+      "label": "Vé tiêu chuẩn và cáp treo hai chiều",
+      "entry_from": "00:00",
+      "prices_vnd": {
+        "free_under_100cm": 0,
+        "senior_60_plus": 800000,
+        "child_100_to_under_140cm": 800000,
+        "adult_140cm_plus": 1050000
+      }
+    },
+    {
+      "id": "after_16_1_day",
+      "label": "Vé vào cửa sau 16:00 và cáp treo hai chiều",
+      "entry_from": "16:00",
+      "prices_vnd": {
+        "free_under_100cm": 0,
+        "senior_60_plus": 550000,
+        "child_100_to_under_140cm": 550000,
+        "adult_140cm_plus": 700000
+      }
+    }
+  ],
+  "included": [
+    "Cáp treo hai chiều",
+    "Các trò chơi và khu tham quan theo quy định",
+    "Các show diễn trong ngày"
+  ],
+  "excluded_addons": [
+    "Zipline",
+    "Ẩm thực và buffet",
+    "Dịch vụ thể thao biển đặc biệt",
+    "Xe nôi, tủ gửi đồ và cabana",
+    "Các dịch vụ phát sinh theo yêu cầu"
+  ],
+  "notes": [
+    "Giá đã gồm VAT",
+    "Khách từ 60 tuổi cần giấy tờ tùy thân",
+    "Trẻ em cao dưới 140 cm phải có người lớn đi kèm"
+  ]
+}

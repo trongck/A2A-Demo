@@ -1,11 +1,12 @@
 """
 MCP Server cho hệ thống V-AI.
 Chạy trên cổng 8003.
-Cung cấp 4 tools:
+Cung cấp 5 tools:
 1. get_attractions
 2. get_crowd_snapshots
 3. get_route_matrix
 4. get_weather
+5. get_ticket_policy
 Bám sát mục 5 của V-AI-Implementation-Plan.md.
 """
 
@@ -25,7 +26,7 @@ from shared.security import (
     get_logger,
     require_internal_secret,
 )
-from shared.data_adapter import DATA_PATH, DATA_REVISION, load_v2_data
+from shared.data_adapter import DATA_PATH, DATA_REVISION, load_ticket_policy, load_v2_data
 
 logger = get_logger("mcp.server")
 
@@ -163,6 +164,10 @@ def tool_get_weather(start_at: str, end_by: str) -> dict[str, Any]:
     }
 
 
+def tool_get_ticket_policy() -> dict[str, Any]:
+    return load_ticket_policy()
+
+
 # --- Khởi tạo MCP Server ---
 
 mcp = MCPServer("v-ai-mcp-server")
@@ -206,6 +211,12 @@ def get_weather(start_at: str, end_by: str) -> str:
     return json.dumps(result, ensure_ascii=False)
 
 
+@mcp.tool()
+def get_ticket_policy() -> str:
+    """Lấy nhóm khách, giá vé cổng, quyền lợi bao gồm và dịch vụ phát sinh từ nguồn chính thức."""
+    return json.dumps(tool_get_ticket_policy(), ensure_ascii=False)
+
+
 # --- FastAPI REST Wrapper & Health Endpoints ---
 
 app = FastAPI(title="V-AI MCP Service", version="1.0.0")
@@ -225,6 +236,7 @@ TOOL_PERMISSIONS = {
     "get_crowd_snapshots": {"a2_crowd_specialist"},
     "get_route_matrix": {"a1_planner_specialist"},
     "get_weather": {"a1_planner_specialist"},
+    "get_ticket_policy": {"a1_planner_specialist"},
 }
 
 
@@ -246,6 +258,7 @@ def list_tools() -> list[dict[str, Any]]:
         {"name": "get_crowd_snapshots", "allowed_callers": list(TOOL_PERMISSIONS["get_crowd_snapshots"]), "description": "Trạng thái vận hành; crowd thiếu trong V2 trả null", "arguments": ["scenario_id", "service_ids", "scope"]},
         {"name": "get_route_matrix", "allowed_callers": list(TOOL_PERMISSIONS["get_route_matrix"]), "description": "Ma trận đi bộ ước tính từ tọa độ V2", "arguments": ["node_ids"]},
         {"name": "get_weather", "allowed_callers": list(TOOL_PERMISSIONS["get_weather"]), "description": "Thời tiết; V2 không cung cấp nên có thể rỗng", "arguments": ["start_at", "end_by"]},
+        {"name": "get_ticket_policy", "allowed_callers": list(TOOL_PERMISSIONS["get_ticket_policy"]), "description": "Chính sách giá vé VinWonders Nha Trang theo nhóm khách", "arguments": []},
     ]
 
 
@@ -276,6 +289,8 @@ def call_tool_endpoint(req: ToolCallRequest) -> dict[str, Any]:
         return {"result": tool_get_route_matrix(node_ids)}
     elif name == "get_weather":
         return {"result": tool_get_weather(args.get("start_at", ""), args.get("end_by", ""))}
+    elif name == "get_ticket_policy":
+        return {"result": tool_get_ticket_policy()}
     else:
         raise HTTPException(status_code=404, detail=f"Không tìm thấy công cụ '{name}'")
 

@@ -29,6 +29,14 @@ interface PlanOption {
   total_duration_minutes: number;
   end_buffer_minutes: number;
   total_cost_vnd: number;
+  cost_breakdown?: {
+    entry_ticket?: {
+      ticket_type_label: string;
+      total_vnd: number;
+      items: Array<{ visitor_group: string; quantity: number; unit_price_vnd: number; subtotal_vnd: number }>;
+    };
+    addons_vnd: number;
+  };
   return_arrival_time: string;
   legs: PlanLeg[];
   service_ids: string[];
@@ -771,6 +779,16 @@ export default function Home() {
                           <div className="text-xs text-[#52525b] bg-[#faf9f6] p-2.5 rounded-lg border-l-2 border-[#18181b] leading-relaxed">
                             {p.rationale}
                           </div>
+
+                          {p.cost_breakdown?.entry_ticket && (
+                            <div className="rounded-lg border border-[#e6e3da] bg-white p-2.5 text-[11px] text-[#52525b]">
+                              <div className="font-semibold text-[#18181b]">
+                                {p.cost_breakdown.entry_ticket.ticket_type_label}: {p.cost_breakdown.entry_ticket.total_vnd.toLocaleString("vi-VN")} VNĐ
+                              </div>
+                              <div className="mt-1">Các điểm vui chơi trong lịch: 0 VNĐ — đã bao gồm trong vé cổng.</div>
+                              <div>Dịch vụ phát sinh chưa chọn: 0 VNĐ.</div>
+                            </div>
+                          )}
 
                           {/* Legs Timeline */}
                           <div className="space-y-2 pt-2 border-t border-[#f4f2eb] text-xs">

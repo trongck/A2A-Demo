@@ -38,7 +38,7 @@ from shared.memory.database import (
     save_plans,
     update_session,
 )
-from shared.data_adapter import DATA_REVISION, START_NODE_ID
+from shared.data_adapter import DATA_REVISION, START_NODE_ID, load_ticket_policy, ticket_groups_to_members
 
 
 logger = get_logger("a0.orchestrator")
@@ -161,6 +161,22 @@ def extract_or_update_request(
                 profile.setdefault("hard_constraints", {})["indoor_only"] = entities["indoor_only"]
             if entities.get("min_activity_count") is not None:
                 profile.setdefault("hard_constraints", {})["min_activity_count"] = entities["min_activity_count"]
+                profile.pop("needs_activity_count", None)
+            elif entities.get("wants_multiple_places") is True:
+                profile["needs_activity_count"] = True
+
+            ticket_groups = entities.get("ticket_groups")
+            if isinstance(ticket_groups, dict):
+                valid_group_ids = {group["id"] for group in load_ticket_policy()["visitor_groups"]}
+                normalized_groups = {
+                    group_id: int(count)
+                    for group_id, count in ticket_groups.items()
+                    if group_id in valid_group_ids and isinstance(count, (int, float)) and int(count) > 0
+                }
+                if normalized_groups:
+                    profile["ticket_groups"] = normalized_groups
+                    profile["group_members"] = ticket_groups_to_members(normalized_groups)
+                    profile.setdefault("pending_group_details", {})["group_size"] = sum(normalized_groups.values())
             if entities.get("max_wait_minutes") is not None:
                 profile.setdefault("hard_constraints", {})["max_wait_minutes_per_stop"] = entities["max_wait_minutes"]
 
@@ -247,87 +263,6 @@ def extract_or_update_request(
     if match_duration:
         profile["pending_duration_hours"] = float(match_duration.group(1).replace(",", "."))
 
-    if is_hitl_summary and "đoàn mình gồm những ai?:" in msg_lower:
-        composition_match = re.search(r"đoàn mình gồm những ai\?:\s*([^\n]+)", msg_lower)
-        age_band_match = re.search(r"trẻ nhỏ nhất thuộc nhóm tuổi nào\?:\s*([^\n]+)", msg_lower)
-        height_band_match = re.search(r"trẻ thấp nhất thuộc khoảng chiều cao nào\?:\s*([^\n]+)", msg_lower)
-        composition = composition_match.group(1) if composition_match else ""
-        age_band = age_band_match.group(1) if age_band_match else ""
-        height_band = height_band_match.group(1) if height_band_match else ""
-
-        adult_match = re.search(r"(\d+)\s*người\s*(?:lớn|từ\s*18)", composition)
-        child_match = re.search(r"(\d+)\s*trẻ", composition)
-        adult_count = int(adult_match.group(1)) if adult_match else 0
-        child_count = int(child_match.group(1)) if child_match else 0
-
-        child_age = None
-        if "dưới 6 tuổi" in age_band:
-            child_age = 5
-        elif "6–11 tuổi" in age_band or "6-11 tuổi" in age_band:
-            child_age = 6
-        elif "12–17 tuổi" in age_band or "12-17 tuổi" in age_band:
-            child_age = 12
-        else:
-            exact_age = re.search(r"(\d{1,2})\s*tuổi", age_band)
-            if exact_age:
-                child_age = int(exact_age.group(1))
-
-        child_height = None
-        height_ranges = {
-            "dưới 100 cm": 99,
-            "100–104 cm": 100,
-            "100-104 cm": 100,
-            "105–109 cm": 105,
-            "105-109 cm": 105,
-            "110–119 cm": 110,
-            "110-119 cm": 110,
-            "120–129 cm": 120,
-            "120-129 cm": 120,
-            "130 cm trở lên": 130,
-        }
-        for label, lower_bound in height_ranges.items():
-            if label in height_band:
-                child_height = lower_bound
-                break
-        if child_height is None:
-            exact_height = re.search(r"(\d{2,3})\s*cm", height_band)
-            if exact_height:
-                child_height = int(exact_height.group(1))
-
-        no_children = "không có trẻ em" in age_band and "không có trẻ em" in height_band
-        group_is_complete = (
-            adult_count + child_count > 0
-            and ((child_count == 0 and no_children) or (child_count > 0 and child_age and child_height))
-        )
-        if group_is_complete:
-            profile["group_members"] = [
-                {"member_id": f"adult_{index}", "age_years": 18, "height_cm": 130}
-                for index in range(1, adult_count + 1)
-            ] + [
-                {"member_id": f"child_{index}", "age_years": child_age, "height_cm": child_height}
-                for index in range(1, child_count + 1)
-            ]
-            profile["group_profile_ranges"] = {
-                "composition": composition,
-                "youngest_child_age": age_band,
-                "shortest_child_height": height_band,
-            }
-
-    # Tương thích với bản HITL cũ đã lưu trong lịch sử phiên.
-    if "thông_tin_thành_viên:" in msg_lower:
-        member_pairs = [
-            (int(age), int(height))
-            for age, height in re.findall(r"(\d{1,3})\s*tuổi.{0,40}?(\d{2,3})\s*cm", msg_lower)
-            if 0 < int(age) <= 120 and 50 <= int(height) <= 250
-        ]
-        expected_count_match = re.search(r"(\d+)\s*người", msg_lower)
-        expected_count = int(expected_count_match.group(1)) if expected_count_match else None
-        if member_pairs and (expected_count is None or expected_count == len(member_pairs)):
-            profile["group_members"] = [
-                {"member_id": f"member_{index}", "age_years": age, "height_cm": height}
-                for index, (age, height) in enumerate(member_pairs, 1)
-            ]
-
     # Nếu chưa có thông tin thành viên
     if not profile.get("group_members"):
         match_height = re.search(r"cao\s+(\d+)\s*cm", msg_lower)
@@ -360,6 +295,9 @@ def extract_or_update_request(
             if not profile.get("group_members"):
                 missing_fields.append("thông_tin_thành_viên")
 
+    if profile.get("needs_activity_count"):
+        missing_fields.append("số_điểm_mong_muốn")
+
     if not profile.get("start_at") or not profile.get("end_by"):
         explicit_window = re.search(
             r"(?:từ\s*)?(\d{1,2})(?::(\d{2}))?\s*h?\s*(?:đến|tới|-|–)\s*(\d{1,2})(?::(\d{2}))?\s*h?",
@@ -385,7 +323,7 @@ def extract_or_update_request(
         "indoor_only": False,
         "max_thrill_level": "moderate",
         "max_wait_minutes_per_stop": 20,
-        "budget_vnd_total": 150000,
+        "budget_vnd_total": None,
         "min_end_buffer_minutes": 10,
         "allow_unknown_crowd": True,
         "excluded_service_ids": [],
@@ -456,11 +394,12 @@ def extract_or_update_request(
             "forward_payload": {},
         })
     else:
-        completed_count = 2 - len(missing_fields)
+        criteria_total = 2 + int("số_điểm_mong_muốn" in missing_fields)
+        completed_count = criteria_total - len(missing_fields)
         routing.update({
             "status": "ready" if not missing_fields else "need_clarification",
             "intent": intent_type,
-            "completeness": f"{completed_count}/2",
+            "completeness": f"{completed_count}/{criteria_total}",
             "filled_criteria": filled_criteria,
             "clarification": clarification or {},
             "fallback_text": "",

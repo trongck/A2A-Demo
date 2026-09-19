@@ -38,7 +38,7 @@ from shared.llm import (
     generate_unfeasible_explanation_with_llm,
     is_llm_available,
 )
-from shared.data_adapter import DATA_REVISION, START_NODE_ID
+from shared.data_adapter import DATA_REVISION, START_NODE_ID, calculate_entry_ticket, members_to_ticket_groups
 
 MCP_URL = "http://127.0.0.1:8003"
 
@@ -161,7 +161,7 @@ def validate_plan(
     indoor_only = hard.get("indoor_only", False)
     max_thrill = hard.get("max_thrill_level", "moderate")
     max_wait = hard.get("max_wait_minutes_per_stop", 20)
-    budget_total = hard.get("budget_vnd_total", 150000)
+    budget_total = hard.get("budget_vnd_total")
     min_buffer = hard.get("min_end_buffer_minutes", 10)
     min_act = hard.get("min_activity_count", 3)
     members = req.get("group_members", [])
@@ -172,7 +172,7 @@ def validate_plan(
 
     # Ràng buộc chi phí
     total_cost = plan.get("total_cost_vnd", 0)
-    if total_cost > budget_total:
+    if budget_total is not None and total_cost > budget_total:
         violations.append(f"Tổng chi phí {total_cost:,} VND vượt ngân sách {budget_total:,} VND")
 
     # Ràng buộc buffer
@@ -239,6 +239,8 @@ def plan_itinerary_logic(
     prefs = req.get("preferences", {})
     num_plans = req.get("number_of_plans", 2)
     members = req.get("group_members", [])
+    ticket_groups = req.get("ticket_groups") or members_to_ticket_groups(members)
+    entry_ticket = calculate_entry_ticket(ticket_groups, req.get("start_at", "2026-09-18T14:00:00+07:00"))
 
     start_node = req.get("start_node_id", START_NODE_ID)
     end_node = req.get("end_node_id", START_NODE_ID)
@@ -253,7 +255,7 @@ def plan_itinerary_logic(
     indoor_only = hard.get("indoor_only", False)
     max_thrill = hard.get("max_thrill_level", "moderate")
     max_wait = hard.get("max_wait_minutes_per_stop", 20)
-    budget_total = hard.get("budget_vnd_total", 150000)
+    budget_total = hard.get("budget_vnd_total")
     min_buffer = hard.get("min_end_buffer_minutes", 10)
     crowd_items = {item["service_id"]: item for item in crowd_analysis.get("items", [])}
     crowd_data_available = any(
@@ -389,7 +391,7 @@ def plan_itinerary_logic(
             curr_time = start_time
             curr_node = start_node
             legs = []
-            total_cost = 0
+            total_cost = entry_ticket["total_vnd"]
             feasible = True
 
             for step_idx, sid in enumerate(seq, 1):
@@ -436,9 +438,7 @@ def plan_itinerary_logic(
                     break
 
                 # Chi phí
-                price_per = attr.get("pricing", {}).get("price_per_person_vnd") or 0
-                step_cost = price_per * len(members)
-                total_cost += step_cost
+                step_cost = 0
 
                 legs.append({
                     "step": step_idx,
@@ -453,7 +453,7 @@ def plan_itinerary_logic(
                     "activity_duration_minutes": dur_min,
                     "cost_vnd": step_cost,
                     "indoor": attr.get("indoor", False),
-                    "note": f"Hàng chờ {wait_min}p, trải nghiệm {dur_min}p",
+                    "note": f"Hàng chờ {wait_min}p, trải nghiệm {dur_min}p; đã bao gồm trong vé cổng",
                 })
 
                 curr_time = act_end
@@ -487,6 +487,7 @@ def plan_itinerary_logic(
                 "total_duration_minutes": total_dur,
                 "end_buffer_minutes": buffer_min,
                 "total_cost_vnd": total_cost,
+                "cost_breakdown": {"entry_ticket": entry_ticket, "addons_vnd": 0},
                 "start_node_id": start_node,
                 "end_node_id": end_node,
                 "return_arrival_time": final_arrival.strftime("%H:%M"),
@@ -543,7 +544,7 @@ def plan_itinerary_logic(
         fallback_rationale = (
             f"{label}: Tổng thời gian {raw['total_duration_minutes']} phút, dự phòng {raw['end_buffer_minutes']} phút trước 16:00. "
             f"Đi qua {len(raw['sequence'])} điểm ({', '.join(attractions_map[s]['name'] for s in raw['sequence'])}), "
-            f"thời gian chờ tích lũy chỉ {raw['total_wait']} phút."
+            f"thời gian chờ tích lũy chỉ {raw['total_wait']} phút; các điểm chơi đã bao gồm trong vé cổng."
         )
         plan_rationale = fallback_rationale
         if is_llm_available():
@@ -568,6 +569,7 @@ def plan_itinerary_logic(
             "total_duration_minutes": raw["total_duration_minutes"],
             "end_buffer_minutes": raw["end_buffer_minutes"],
             "total_cost_vnd": raw["total_cost_vnd"],
+            "cost_breakdown": raw["cost_breakdown"],
             "start_node_id": raw["start_node_id"],
             "end_node_id": raw["end_node_id"],
             "return_arrival_time": raw["return_arrival_time"],
