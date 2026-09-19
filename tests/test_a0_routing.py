@@ -4,6 +4,16 @@ from agents.a0 import orchestrator
 from shared.memory.database import get_or_create_session, init_db
 
 
+def test_unfeasible_reply_does_not_start_another_question_loop():
+    reply = orchestrator.format_unfeasible_reply([
+        "Khách cao dưới 140 cm phải có người lớn đi cùng.",
+    ])
+
+    assert "Khách cao dưới 140 cm" in reply
+    assert "?" not in reply
+    assert "Hãy cho mình biết" not in reply
+
+
 def test_a0_does_not_invent_group_or_time(monkeypatch):
     monkeypatch.setattr(orchestrator, "is_llm_available", lambda: False)
 

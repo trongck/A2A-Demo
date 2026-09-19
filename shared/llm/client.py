@@ -340,33 +340,6 @@ def answer_general_chat_with_llm(
     return call_llm(prompt, system_instruction)
 
 
-def generate_unfeasible_explanation_with_llm(
-    user_message: str,
-    unfeasible_reasons: list[str],
-    current_constraints: dict[str, Any],
-) -> str | None:
-    """Dùng LLM để giải thích một cách thấu cảm khi không tìm thấy lịch trình khả thi và đưa ra gợi ý nới lỏng."""
-    if not is_llm_available():
-        return None
-
-    system_instruction = (
-        "Bạn là V-AI - Chuyên gia tư vấn trải nghiệm tại VinWonders.\n"
-        "Dựa trên các ràng buộc an toàn, thời gian và mật độ thực tế, hiện hệ thống chưa tìm được lịch trình thỏa mãn 100% yêu cầu của khách.\n"
-        "Hãy giải thích ngắn gọn, chân thành lý do vì sao chưa khả thi và đề xuất cụ thể 2-3 giải pháp thay thế "
-        "(ví dụ: tăng thời gian chơi, nới lỏng thời gian chờ tối đa, hoặc cho phép trải nghiệm thêm các điểm ngoài trời)."
-        + VAI_TRAVEL_PERSONA + PUBLIC_RESPONSE_POLICY
-    )
-
-    prompt = (
-        f"Yêu cầu của khách: '{user_message}'\n"
-        f"Các lý do không khả thi từ Validator:\n" + "\n".join(f"- {r}" for r in unfeasible_reasons) + "\n"
-        f"Ràng buộc hiện tại: {json.dumps(current_constraints, ensure_ascii=False)}"
-    )
-
-    return call_llm(prompt, system_instruction)
-
-
-
 def synthesize_chat_response_with_llm(
     user_message: str,
     plans: list[dict[str, Any]],
@@ -621,27 +594,3 @@ def stream_synthesize_chat_response_with_llm(
     )
     yield from stream_call_llm(prompt, system_instruction)
 
-
-def stream_generate_unfeasible_explanation_with_llm(
-    user_message: str,
-    unfeasible_reasons: list[str],
-    current_constraints: dict[str, Any],
-) -> Generator[str, None, None]:
-    """Stream lời giải thích khi không tìm thấy lịch trình khả thi."""
-    if not is_llm_available():
-        return
-
-    system_instruction = (
-        "Bạn là V-AI - Chuyên gia tư vấn trải nghiệm tại VinWonders.\n"
-        "Dựa trên các ràng buộc an toàn, thời gian và mật độ thực tế, hiện hệ thống chưa tìm được lịch trình thỏa mãn 100% yêu cầu của khách.\n"
-        "Hãy giải thích ngắn gọn, chân thành lý do vì sao chưa khả thi và đề xuất cụ thể 2-3 giải pháp thay thế "
-        "bằng danh sách gạch đầu dòng Markdown."
-        + VAI_TRAVEL_PERSONA + PUBLIC_RESPONSE_POLICY
-    )
-
-    prompt = (
-        f"Yêu cầu của khách: '{user_message}'\n"
-        f"Các lý do không khả thi từ Validator:\n" + "\n".join(f"- {r}" for r in unfeasible_reasons) + "\n"
-        f"Ràng buộc hiện tại: {json.dumps(current_constraints, ensure_ascii=False)}"
-    )
-    yield from stream_call_llm(prompt, system_instruction)

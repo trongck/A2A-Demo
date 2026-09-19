@@ -22,10 +22,8 @@ from shared.llm import (
     answer_general_chat_with_llm,
     classify_and_extract_intent_with_llm,
     generate_hitl_questions_with_llm,
-    generate_unfeasible_explanation_with_llm,
     is_llm_available,
     stream_answer_general_chat_with_llm,
-    stream_generate_unfeasible_explanation_with_llm,
     stream_synthesize_chat_response_with_llm,
     synthesize_chat_response_with_llm,
 )
@@ -174,6 +172,12 @@ def parse_time_window(text: str) -> tuple[int, int, int, int] | None:
         return int(sh), int(sm), int(eh), int(em)
 
     return None
+
+
+def format_unfeasible_reply(reasons: list[str]) -> str:
+    """Hiển thị đúng kết quả Validator, không sinh thêm lựa chọn hoặc câu hỏi."""
+    details = "\n".join(f"- {reason}" for reason in reasons)
+    return f"Chưa thể tạo lịch trình với thông tin hiện tại:\n{details}"
 
 
 def extract_or_update_request(
@@ -840,23 +844,7 @@ def run_orchestration(
 
     if plan_status == "no_feasible_plan":
         unfeasible_reasons = plan_result.get("unfeasible_reasons", [])
-        explanation = None
-        if is_llm_available():
-            try:
-                explanation = generate_unfeasible_explanation_with_llm(
-                    user_message=user_message,
-                    unfeasible_reasons=unfeasible_reasons,
-                    current_constraints=updated_profile.get("hard_constraints", {}),
-                )
-            except Exception as e:
-                logger.warning("LLM unfeasible explanation error: %s", e)
-
-        if not explanation:
-            explanation = (
-                "Dựa trên dữ liệu thực tế tại công viên, hiện không có phương án nào đáp ứng trọn vẹn mọi yêu cầu của quý khách.\n"
-                + "\n".join(f"- {r}" for r in unfeasible_reasons)
-                + "\nQuý khách có thể nới lỏng thời gian chờ tối đa, tăng khung giờ chơi hoặc cho phép chơi ngoài trời để tôi lập lại lịch nhé!"
-            )
+        explanation = format_unfeasible_reply(unfeasible_reasons)
         add_message(session_id, turn_id, "assistant", explanation)
 
         record_event(
@@ -1244,26 +1232,8 @@ def run_orchestration_stream(
 
     if plan_status == "no_feasible_plan":
         unfeasible_reasons = plan_result.get("unfeasible_reasons", [])
-        yield f"event: thinking\ndata: {json.dumps({'stage': 'generating', 'message': 'Agent A0 đang giải thích chi tiết các ràng buộc chưa thỏa mãn...'}, ensure_ascii=False)}\n\n"
-        accumulated_reply = ""
-        try:
-            for token in stream_generate_unfeasible_explanation_with_llm(
-                user_message=user_message,
-                unfeasible_reasons=unfeasible_reasons,
-                current_constraints=updated_profile.get("hard_constraints", {}),
-            ):
-                accumulated_reply += token
-                yield f"event: token\ndata: {json.dumps({'token': token}, ensure_ascii=False)}\n\n"
-        except Exception as e:
-            logger.warning("Stream unfeasible explanation error: %s", e)
-
-        if not accumulated_reply:
-            accumulated_reply = (
-                "Dựa trên dữ liệu thực tế tại công viên, hiện không có phương án nào đáp ứng trọn vẹn mọi yêu cầu của quý khách.\n"
-                + "\n".join(f"- {r}" for r in unfeasible_reasons)
-                + "\nQuý khách có thể nới lỏng thời gian chờ tối đa, tăng khung giờ chơi hoặc cho phép chơi ngoài trời để tôi lập lại lịch nhé!"
-            )
-            yield f"event: token\ndata: {json.dumps({'token': accumulated_reply}, ensure_ascii=False)}\n\n"
+        accumulated_reply = format_unfeasible_reply(unfeasible_reasons)
+        yield f"event: token\ndata: {json.dumps({'token': accumulated_reply}, ensure_ascii=False)}\n\n"
 
         add_message(session_id, turn_id, "assistant", accumulated_reply)
         record_event(
